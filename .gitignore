@@ -21,3 +21,4 @@ yarn.lock
 /blob-report/
 dist
 .vscode/mcp.json
+.tanstack
