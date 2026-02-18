@@ -19,29 +19,13 @@ function RouteComponent() {
 	const post = Route.useLoaderData();
 
 	return (
-		<article className="max-w-3xl mx-auto p-8">
-			<header className="mb-8">
-				<h1 className="text-4xl font-bold mb-4">
-					{post.frontMatter?.title || "Untitled"}
-				</h1>
-				{post.frontMatter?.date && (
-					<time className="text-gray-500">
-						{new Date(post.frontMatter.date as string).toLocaleDateString(
-							"en-US",
-							{
-								year: "numeric",
-								month: "long",
-								day: "numeric",
-							},
-						)}
-					</time>
-				)}
-				{post.frontMatter?.author && (
-					<p className="text-gray-600 mt-2">By {post.frontMatter.author}</p>
-				)}
-			</header>
-
-			<Markdown content={post.content} className="prose prose-lg max-w-none" />
+		<article className="max-w-4xl mx-auto p-8">
+			{/* <MainLayout
+				title={post.frontMatter?.title || "Untitled"}
+				intro={post.frontMatter?.description || ""}
+			> */}
+			<Markdown content={post.content} />
+			{/* </MainLayout> */}
 		</article>
 	);
 }
