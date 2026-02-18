@@ -9,6 +9,10 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
+import { Footer } from "~/components/layout/Footer";
+import Header from "~/components/layout/Header";
+
+import "~/styles.css";
 
 export const Route = createRootRoute({
 	component: RootComponent,
@@ -28,8 +32,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			<body>
-				<ClerkProvider>{children}</ClerkProvider>
+			<body className="relative flex flex-col min-h-screen bg-zinc-50 dark:bg-black">
+				<ClerkProvider>
+					<Header />
+					<main className="flex-auto">{children}</main>
+					<Footer />
+				</ClerkProvider>
 
 				<TanStackRouterDevtools position="bottom-right" />
 				<Scripts />
