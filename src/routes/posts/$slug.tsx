@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Markdown } from "~/components/Markdown";
+
+import { Markdown } from "~/components/shared/Markdown";
 import { fetchPost } from "~/shared/services/post";
 
 export const Route = createFileRoute("/posts/$slug")({

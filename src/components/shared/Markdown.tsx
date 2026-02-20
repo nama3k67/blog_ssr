@@ -2,7 +2,8 @@ import { Link } from "@tanstack/react-router";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import { CodeBlock } from "~/components/CodeBlock";
+
+import { CodeBlock } from "./CodeBlock";
 
 type MarkdownProps = {
 	content: string;

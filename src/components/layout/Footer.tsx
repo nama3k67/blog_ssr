@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import { ContainerInner, ContainerOuter } from "~/components/Container";
+import { ContainerInner, ContainerOuter } from "../shared/Container";
 import { NAVBAR_ITEMS } from "./navbar/constant";
 
 function NavLink({
