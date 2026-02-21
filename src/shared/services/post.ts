@@ -38,6 +38,7 @@ export const fetchPostList = createServerFn({ method: "GET" })
 
 		const headers: Record<string, string> = {
 			Accept: "application/vnd.github.v3+json",
+			"User-Agent": "TanStack-Start-App",
 		};
 		if (env.GITHUB_TOKEN) headers.Authorization = `token ${env.GITHUB_TOKEN}`;
 

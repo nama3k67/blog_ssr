@@ -1,8 +1,9 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
+import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
-import viteReact from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
 	server: {
@@ -15,7 +16,13 @@ export default defineConfig({
 		tanstackStart(),
 		viteReact(),
 		tailwindcss(),
+		cloudflare({ viteEnvironment: { name: "ssr" } }),
 	],
+	resolve: {
+		alias: {
+			"pg-native": "./pg-native-stub.js",
+		},
+	},
 	// See https://github.com/TanStack/router/issues/5738
 	// resolve: {
 	//   alias: [

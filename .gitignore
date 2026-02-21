@@ -22,3 +22,4 @@ yarn.lock
 dist
 .vscode/mcp.json
 .tanstack
+.wrangler
