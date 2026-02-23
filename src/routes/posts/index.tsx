@@ -58,6 +58,36 @@ const getPostsList = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createFileRoute("/posts/")({
+	head: () => ({
+		meta: [
+			{
+				title: "Blog - Articles on Nutrition, Training & Technology",
+			},
+			{
+				name: "description",
+				content:
+					"Read articles about running nutrition, training methods, and technology insights from a passionate long-distance runner.",
+			},
+			{
+				property: "og:title",
+				content: "Blog - Articles on Nutrition, Training & Technology",
+			},
+			{
+				property: "og:description",
+				content:
+					"Read articles about running nutrition, training methods, and technology insights.",
+			},
+			{
+				name: "twitter:title",
+				content: "Blog - Articles on Nutrition, Training & Technology",
+			},
+			{
+				name: "twitter:description",
+				content:
+					"Read articles about running nutrition, training methods, and technology insights.",
+			},
+		],
+	}),
 	loader: async () => {
 		return getPostsList();
 	},

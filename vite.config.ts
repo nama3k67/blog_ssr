@@ -19,14 +19,10 @@ export default defineConfig({
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
 	],
 	resolve: {
-		alias: {
-			"pg-native": "./pg-native-stub.js",
-		},
+		alias: [
+			{ find: "pg-native", replacement: "./pg-native-stub.js" },
+			// See https://github.com/TanStack/router/issues/5738
+			{ find: "use-sync-external-store/shim/index.js", replacement: "react" },
+		],
 	},
-	// See https://github.com/TanStack/router/issues/5738
-	// resolve: {
-	//   alias: [
-	//     { find: 'use-sync-external-store/shim/index.js', replacement: 'react', }
-	//   ]
-	// }
 });

@@ -7,6 +7,18 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
+	head: () => ({
+		meta: [
+			{
+				title: "Home - Nutrition, Training & Technology Blog",
+			},
+			{
+				name: "description",
+				content:
+					"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
+			},
+		],
+	}),
 	component: Home,
 });
 

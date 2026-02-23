@@ -13,6 +13,43 @@ export const Route = createFileRoute("/posts/$slug")({
 			},
 		});
 	},
+	head: ({ loaderData }) => ({
+		meta: [
+			{
+				title: `${loaderData?.frontMatter?.title || "Blog Post"} - My Blog`,
+			},
+			{
+				name: "description",
+				content:
+					loaderData?.frontMatter?.description ||
+					"Read this article on my blog.",
+			},
+			{
+				property: "og:title",
+				content: loaderData?.frontMatter?.title || "Blog Post",
+			},
+			{
+				property: "og:description",
+				content: loaderData?.frontMatter?.description || "Read this article.",
+			},
+			{
+				property: "og:type",
+				content: "article",
+			},
+			{
+				name: "article:published_time",
+				content: loaderData?.frontMatter?.date || new Date().toISOString(),
+			},
+			{
+				name: "twitter:title",
+				content: loaderData?.frontMatter?.title || "Blog Post",
+			},
+			{
+				name: "twitter:description",
+				content: loaderData?.frontMatter?.description || "Read this article.",
+			},
+		],
+	}),
 	component: RouteComponent,
 });
 
