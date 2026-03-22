@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/tanstack-react-start";
+import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
@@ -35,7 +35,11 @@ export default function UserMenu() {
 						{t.userMenu.blogCreate}
 					</Link>
 				</DropdownMenuItem>
-				<DropdownMenuItem>{t.userMenu.logout}</DropdownMenuItem>
+				<SignOutButton redirectUrl={localizedPath("/")}>
+					<DropdownMenuItem>
+						{t.userMenu.logout}
+					</DropdownMenuItem>
+				</SignOutButton>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
