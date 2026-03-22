@@ -12,7 +12,7 @@ import * as schema from "./schema";
 let db: NodePgDatabase<typeof schema> | NeonHttpDatabase<typeof schema>;
 
 // Use pg driver for local development or traditional PostgreSQL
-if (env.USE_LOCAL_DB || env.NODE_ENV === "development") {
+if (env.USE_LOCAL_DB) {
 	const { drizzle: drizzlePostgres } = await import(
 		"drizzle-orm/node-postgres"
 	);
