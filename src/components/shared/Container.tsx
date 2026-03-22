@@ -31,7 +31,7 @@ export const ContainerInner: FC<IProps> = ({
 			className={clsx("relative px-4 sm:px-8 lg:px-12", className)}
 			{...props}
 		>
-			<div className="mx-auto max-w-2xl lg:max-w-4xl">{children}</div>
+			<div className="mx-auto max-w-2xl lg:max-w-5xl">{children}</div>
 		</div>
 	);
 };
