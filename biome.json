@@ -29,7 +29,14 @@
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "double",
+			"jsxQuoteStyle": "single"
 		}
-	}
+	},
+  "typescript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "single"
+    }
+  }
 }
