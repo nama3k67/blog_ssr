@@ -1,0 +1,79 @@
+# Portfolio Blog Platform - Product Requirements Document
+
+## Overview
+A bilingual (EN/VI) portfolio blog platform built with TanStack Start + React 19, deployed on Cloudflare Workers. Features admin approval workflow, Markdown content with syntax highlighting, image uploads to R2, and i18n support.
+
+## Tech Stack
+- TanStack Start v1.159.5, React 19, TanStack Router, TanStack Query
+- Drizzle ORM + Neon PostgreSQL (serverless)
+- Clerk Auth, Cloudflare R2 Storage
+- Tailwind CSS 4 + shadcn/ui, Shiki 3 syntax highlighting
+- Deployed to Cloudflare Workers (3MB gzip limit)
+
+## User Stories
+
+### US1 - Public Post Reading (P1 MVP) - ~80% COMPLETE
+Visitors can discover and read blog posts without authentication.
+- Post listing with pagination
+- Post detail with Markdown rendering and syntax highlighting
+- Language fallback (try requested lang → opposite → 404)
+- Translation toggle between EN/VI versions
+- Fallback banner when viewing post in non-requested language
+REMAINING: PostItem translation badge (T032), localization strings for fallback (T034)
+
+### US2 - Post Creation & Management (P1 MVP) - ~50% COMPLETE
+Authenticated authors can create, edit, and delete blog posts.
+- Create post with title, slug, content, category, tags, featured image
+- Edit existing posts with authorization checks
+- Delete posts with confirmation dialog
+- Translation workflow (create translation linked via translationGroupId)
+- Real-time slug validation
+REMAINING: updatePostFn with auth (T037), deletePostFn with auth (T038), edit route (T046-T047), delete dialog (T048-T049), translation UI (T053-T054)
+
+### US2.5 - Admin Post Approval (P1 MVP) - ~70% COMPLETE
+Site admin can review and approve/reject submitted posts.
+- Approval queue with pending posts
+- Approve/reject with feedback
+- Submit for approval workflow
+- Unpublish functionality
+REMAINING: All posts management page (T064), admin badge in header (T071), edit page feedback display (T069-T070)
+
+### US4 - Pagination (P2) - 100% COMPLETE
+Post listing with Previous/Next navigation and URL search params.
+
+### US5 - Search & Filter (P3) - NOT STARTED
+Full-text search with PostgreSQL, category/tag filtering, search bar, filter components.
+
+### US6 - Responsive Design (P2) - NOT STARTED
+Mobile-first responsive layout across all pages and components.
+
+### US7 - Dark Mode (P3) - ~25% COMPLETE
+Theme toggle with light/dark/system modes and localStorage persistence.
+REMAINING: Audit all components for dark mode classes, test contrast.
+
+### US8 - SEO Optimization (P2) - ~30% COMPLETE
+Meta tags, hreflang, canonical URLs, sitemap, JSON-LD structured data.
+REMAINING: hreflang (T091), canonical (T092), sitemap (T093-T095), JSON-LD (T096), Lighthouse audit (T099-T100).
+
+### US9 - Performance Benchmarking (P3) - ~17% COMPLETE
+Lighthouse audits, Core Web Vitals, bundle analysis.
+COMPLETED: Bundle analysis, dynamic imports for heavy components.
+REMAINING: Image optimization, caching, TTFB measurement, performance budget CI.
+
+### Polish - ~15% COMPLETE
+Error boundaries, loading skeletons, toast notifications, accessibility audit, code cleanup.
+COMPLETED: R2 upload, seed data.
+REMAINING: Error boundaries (T140), loading skeletons (T141), toasts (T142), confirmation dialogs (T143), optimistic UI (T144), accessibility (T145-T146), code cleanup (T147), README (T148).
+
+## Database Schema
+- users (synced from Clerk)
+- posts (bilingual with status enum: draft/pending/published/rejected, translationGroupId)
+- categories (1:N with posts)
+- tags (M:N with posts via post_tags junction)
+- post_tags (composite PK)
+
+## Priority Order
+1. Complete MVP (US1 + US2 + US2.5 remaining tasks)
+2. P2 features (US6 responsive, US8 SEO)
+3. P3 features (US5 search, US7 dark mode, US9 performance)
+4. Polish (Phase 12)
