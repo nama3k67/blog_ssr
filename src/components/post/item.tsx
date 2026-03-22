@@ -1,5 +1,5 @@
 import type { LinkProps } from "@tanstack/react-router";
-import type { PostSummary } from "~/routes/posts";
+import type { PostSummary } from "~/shared/types/post";
 import { formatDate } from "~/shared/utils/date";
 import { Card } from "../shared/card";
 

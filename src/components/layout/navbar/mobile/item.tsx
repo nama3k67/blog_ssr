@@ -1,13 +1,20 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import type { FileRoutesByTo } from "~/routeTree.gen";
+import { useI18n } from "~/shared/providers/i18n";
+import { getLocalizedPath } from "~/shared/utils/i18n";
 
 interface IProps {
-	href: keyof FileRoutesByTo;
+	baseHref: string;
 	children: React.ReactNode;
 	setOpen: (open: boolean) => void;
 }
 
-export default function MobileNavbarItem({ href, setOpen, children }: IProps) {
+export default function MobileNavbarItem({
+	baseHref,
+	setOpen,
+	children,
+}: IProps) {
+	const { language } = useI18n();
+	const href = getLocalizedPath(baseHref, language);
 	const navigate = useNavigate();
 
 	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {

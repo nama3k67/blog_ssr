@@ -1,15 +1,20 @@
 import { Link } from "@tanstack/react-router";
+import { useI18n } from "~/shared/providers/i18n";
 
+import { getLocalizedPath } from "~/shared/utils/i18n";
 import { ContainerInner, ContainerOuter } from "../shared/Container";
 import { NAVBAR_ITEMS } from "./navbar/constant";
 
 function NavLink({
-	href,
+	baseHref,
 	children,
 }: {
-	href: string;
+	baseHref: string;
 	children: React.ReactNode;
 }) {
+	const { language } = useI18n();
+	const href = getLocalizedPath(baseHref, language);
+
 	return (
 		<Link
 			to={href}
@@ -21,6 +26,7 @@ function NavLink({
 }
 
 export function Footer() {
+	const { t } = useI18n();
 	return (
 		<footer className="mt-32 flex-none">
 			<ContainerOuter>
@@ -29,8 +35,8 @@ export function Footer() {
 						<div className="flex flex-col items-center justify-between gap-6 md:flex-row">
 							<div className="flex flex-wrap justify-center gap-x-6 gap-y-1 text-sm font-medium text-zinc-800 dark:text-zinc-200">
 								{NAVBAR_ITEMS.map((item) => (
-									<NavLink key={item.href} href={item.href}>
-										{item.name}
+									<NavLink key={item.baseHref} baseHref={item.baseHref}>
+										{t.navbar[item.key]}
 									</NavLink>
 								))}
 							</div>

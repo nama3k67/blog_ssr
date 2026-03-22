@@ -1,18 +1,21 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import clsx from "clsx";
 
-import type { FileRoutesByTo } from "~/routeTree.gen";
+import { useI18n } from "~/shared/providers/i18n";
+import { getLocalizedPath } from "~/shared/utils/i18n";
 
 interface IProps {
-	href: keyof FileRoutesByTo;
+	baseHref: string;
 	children: React.ReactNode;
 }
 
-export default function NavItem({ href, children }: IProps) {
-	const isActive =
-		useLocation({
-			select: (location) => location.pathname,
-		}) === href;
+export default function NavItem({ baseHref, children }: IProps) {
+	const { language } = useI18n();
+	const href = getLocalizedPath(baseHref, language);
+	const pathname = useLocation({
+		select: (location) => location.pathname,
+	});
+	const isActive = pathname === `/${language}${baseHref}`;
 
 	return (
 		<li>
