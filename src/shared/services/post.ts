@@ -1,59 +1,207 @@
+import { auth } from "@clerk/tanstack-react-start/server";
 import { createServerFn } from "@tanstack/react-start";
-import matter from "gray-matter";
+import { z } from "zod";
 
-import { env } from "~/env";
-import type { FetchPostParams, GitHubContent } from "../types";
+import {
+	countPublishedPosts,
+	createPost,
+	getAllCategories,
+	getAllTags,
+	getPostBySlugAndLang,
+	getPostTranslation,
+	getPublishedPostsPaginated,
+	getUserByClerkId,
+} from "~/server/db/queries";
+import { createPostSchema, type CreatePostInput } from "~/shared/schemas/post";
 
-export const fetchPost = createServerFn({ method: "GET" })
-	.inputValidator((params: FetchPostParams) => params)
-	.handler(async ({ data: { repo, branch, path } }) => {
-		const url = `https://raw.githubusercontent.com/${repo}/${branch}/${path}`;
+// ============ READ ============
 
-		const headers: Record<string, string> = {};
-		if (env.GITHUB_TOKEN) headers.Authorization = `token ${env.GITHUB_TOKEN}`;
+const fetchPostsListSchema = z.object({
+	lang: z.string(),
+	page: z.number().min(1).optional().default(1),
+	pageSize: z.number().min(1).max(100).optional().default(10),
+});
 
-		const response = await fetch(url, { headers });
+export const fetchPostsList = createServerFn({ method: "GET" })
+	.inputValidator((data: z.infer<typeof fetchPostsListSchema>) =>
+		fetchPostsListSchema.parse(data),
+	)
+	.handler(async ({ data }) => {
+		const { lang, page, pageSize } = data;
 
-		if (!response.ok) {
-			throw new Error(
-				`Failed to fetch file from GitHub: ${response.statusText}`,
-			);
-		}
+		const postsData = await getPublishedPostsPaginated(lang, page, pageSize);
+		const totalCount = await countPublishedPosts(lang);
+		const totalPages = Math.ceil(totalCount / pageSize);
 
-		const rawContent = await response.text();
-		const { data: frontMatter, content } = matter(rawContent);
+const postsWithTranslationCheck = await Promise.all(
+  postsData.map(async (post) => {
+    // Check if translation exists
+    const otherLang = lang === "en" ? "vi" : "en";
+    const translation = await getPostTranslation(
+      post.translationGroupId,
+      otherLang,
+    );
+
+    return {
+      slug: post.slug,
+      title: post.title,
+      description: post.description,
+      date: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+      path: `/${lang}/posts/${post.slug}`,
+    };
+  }),
+);
 
 		return {
-			frontMatter,
-			content,
-			path,
+			posts: postsWithTranslationCheck,
+			totalCount,
+			currentPage: page,
+			totalPages,
 		};
 	});
 
-export const fetchPostList = createServerFn({ method: "GET" })
-	.inputValidator((params: FetchPostParams) => params)
-	.handler(async (input) => {
-		const { repo, branch, path } = input.data;
-		const url = `https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`;
+export const fetchPost = createServerFn({ method: "GET" })
+	.inputValidator((params: { slug: string; lang: string }) => params)
+	.handler(async ({ data: { slug, lang } }) => {
+		// Try requested language first
+		let post = await getPostBySlugAndLang(slug, lang);
+		let isFallback = false;
+		let originalLang = lang;
 
-		const headers: Record<string, string> = {
-			Accept: "application/vnd.github.v3+json",
-			"User-Agent": "TanStack-Start-App",
-		};
-		if (env.GITHUB_TOKEN) headers.Authorization = `token ${env.GITHUB_TOKEN}`;
+		// If not found, try opposite language
+		if (!post) {
+			const fallbackLang = lang === "en" ? "vi" : "en";
+			post = await getPostBySlugAndLang(slug, fallbackLang);
 
-		const response = await fetch(url, { headers });
-
-		if (!response.ok) {
-			throw new Error(`Failed to fetch contents: ${response.status}`);
+			if (post) {
+				isFallback = true;
+				originalLang = fallbackLang;
+			}
 		}
 
-		const contents: Array<GitHubContent> = await response.json();
+		if (!post) {
+			throw new Error("Post not found");
+		}
 
-		return contents
-			.filter((item) => item.type === "file" && item.name.endsWith(".md"))
-			.map((item) => ({
-				name: item.name.replace(/\.md$/, ""),
-				path: item.path,
-			}));
+		// Check for translation
+		const targetLang = lang === "en" ? "vi" : "en";
+		const translation = await getPostTranslation(
+			post.translationGroupId,
+			targetLang,
+		);
+
+		return {
+			post: {
+				id: post.id,
+				slug: post.slug,
+				title: post.title,
+				lang: post.lang,
+				content: post.content,
+				description: post.description,
+				publishedAt:
+					post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+				featuredImage: post.featuredImage,
+				translationGroupId: post.translationGroupId,
+				author: post.author
+					? {
+							id: post.author.id,
+							firstName: post.author.firstName,
+							lastName: post.author.lastName,
+							imageUrl: post.author.imageUrl,
+						}
+					: null,
+				category: post.category
+					? {
+							id: post.category.id,
+							name: post.category.name,
+							slug: post.category.slug,
+						}
+					: null,
+				tags: post.postTags.map((pt) => ({
+					id: pt.tag.id,
+					name: pt.tag.name,
+					slug: pt.tag.slug,
+				})),
+			},
+			isFallback,
+			originalLang,
+			translationSlug: translation?.slug,
+		};
+	});
+
+// ============ CHECK ============
+
+export const checkSlugAvailability = createServerFn({ method: "GET" })
+	.inputValidator((params: { slug: string; lang: string }) => params)
+	.handler(async ({ data: { slug, lang } }) => {
+		const existing = await getPostBySlugAndLang(slug, lang);
+		return { available: !existing };
+	});
+
+// ============ CATEGORIES & TAGS ============
+
+export const getCategoriesList = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const categories = await getAllCategories();
+		return categories.map((cat) => ({
+			id: cat.id,
+			name: cat.name,
+			slug: cat.slug,
+		}));
+	},
+);
+
+export const getTagsList = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const tags = await getAllTags();
+		return tags.map((tag) => ({
+			id: tag.id,
+			name: tag.name,
+			slug: tag.slug,
+		}));
+	},
+);
+
+// ============ WRITE ============
+
+export { type CreatePostInput } from "~/shared/schemas/post";
+
+export const createPostFn = createServerFn({ method: "POST" })
+	.inputValidator((data: CreatePostInput) => createPostSchema.parse(data))
+	.handler(async ({ data }) => {
+		// Authenticate
+		const { userId: clerkId } = await auth();
+		if (!clerkId) {
+			throw new Error("Unauthorized");
+		}
+
+		// Resolve Clerk ID → DB user UUID
+		const user = await getUserByClerkId(clerkId);
+		if (!user) {
+			throw new Error("User not found in database");
+		}
+
+		// Check slug uniqueness
+		const existing = await getPostBySlugAndLang(data.slug, data.lang);
+		if (existing) {
+			throw new Error("SLUG_TAKEN");
+		}
+
+		// Create post
+		const post = await createPost({
+			userId: user.id,
+			categoryId: data.categoryId || null,
+			title: data.title,
+			slug: data.slug,
+			lang: data.lang,
+			description: data.description || null,
+			content: data.content,
+			featuredImage: data.featuredImage || null,
+			status: data.published ? "pending" : "draft",
+			publishedAt: null, // Set by admin on approval
+		});
+
+		// TODO: Add tags via postTags junction table if data.tagIds provided
+
+		return post;
 	});

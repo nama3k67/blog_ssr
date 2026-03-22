@@ -1,11 +1,7 @@
-export type GitHubContent = {
-	name: string;
-	path: string;
-	type: "file" | "dir";
-};
-
-export type FetchPostParams = {
-	repo: string;
-	branch: string;
+export type PostSummary = {
+	slug: string;
+	title: string;
+	description?: string | null;
+	date: string;
 	path: string;
 };
