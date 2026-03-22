@@ -23,3 +23,4 @@ dist
 .vscode/mcp.json
 .tanstack
 .wrangler
+bundled

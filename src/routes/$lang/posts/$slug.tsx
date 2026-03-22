@@ -1,10 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Suspense, lazy } from "react";
 
 import { Badge } from "~/components/ui/badge";
 import { Container } from "~/components/shared/Container";
-import { Markdown } from "~/components/shared/Markdown";
 import { fetchPost } from "~/shared/services/post";
 import { formatDate } from "~/shared/utils/date";
+
+const Markdown = lazy(() =>
+	import("~/components/shared/Markdown").then((m) => ({
+		default: m.Markdown,
+	})),
+);
 
 export const Route = createFileRoute("/$lang/posts/$slug")({
 	loader: async ({ params }) => {
@@ -126,7 +132,17 @@ function RouteComponent() {
 							)}
 						</header>
 						<div className="mt-8">
-							<Markdown content={post.content} />
+							<Suspense
+								fallback={
+									<div className="animate-pulse space-y-4">
+										<div className="h-4 w-3/4 rounded bg-muted" />
+										<div className="h-4 w-full rounded bg-muted" />
+										<div className="h-4 w-5/6 rounded bg-muted" />
+									</div>
+								}
+							>
+								<Markdown content={post.content} />
+							</Suspense>
 						</div>
 					</article>
 				</div>

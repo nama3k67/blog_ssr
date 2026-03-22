@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { highlightCode } from "~/shared/utils/markdown";
 
 type CodeBlockProps = {
@@ -7,11 +6,7 @@ type CodeBlockProps = {
 };
 
 export function CodeBlock({ code, language }: CodeBlockProps) {
-	const [highlighted, setHighlighted] = useState<string>("");
-
-	useEffect(() => {
-		highlightCode(code, language).then(setHighlighted);
-	}, [code, language]);
+	const highlighted = highlightCode(code, language);
 
 	return (
 		<div className="relative w-full my-4 rounded-lg overflow-hidden bg-slate-950">
