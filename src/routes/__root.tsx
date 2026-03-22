@@ -6,12 +6,18 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
+	useLocation,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type * as React from "react";
+
 import { Footer } from "~/components/layout/Footer";
 import Header from "~/components/layout/Header";
+import { Toaster } from "~/components/ui/sonner";
+import { I18nProvider } from "~/shared/providers/i18n";
+import { TanstackQueryProvider } from "~/shared/providers/tanstackQuery";
 import { ThemeProvider } from "~/shared/providers/theme";
+import { getValidLanguage } from "~/shared/utils/i18n";
 
 import "~/styles.css";
 
@@ -72,26 +78,49 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-	return (
-		<html lang="en">
-			<head>
-				<HeadContent />
-			</head>
-			<body
-				className="relative flex flex-col min-h-screen bg-zinc-50 dark:bg-black"
-				suppressHydrationWarning
-			>
-				<ClerkProvider>
-					<ThemeProvider defaultTheme="system" storageKey="my-app-theme">
-						<Header />
-						<main className="flex-auto">{children}</main>
-						<Footer />
-					</ThemeProvider>
-				</ClerkProvider>
+	const location = useLocation();
+	const pathname = location.pathname;
 
-				<TanStackRouterDevtools position="bottom-right" />
-				<Scripts />
-			</body>
-		</html>
+	const langFromPath = pathname.split("/")[1];
+	const currentLanguage = getValidLanguage(langFromPath);
+
+	return (
+		<I18nProvider language={currentLanguage}>
+			<html lang={currentLanguage}>
+				<head>
+					<HeadContent />
+				</head>
+				<body
+					className="bg-zinc-50 dark:bg-black"
+					suppressHydrationWarning
+				>
+					<ClerkProvider>
+						<TanstackQueryProvider>
+						<ThemeProvider defaultTheme="system" storageKey="my-app-theme">
+							<div className="flex min-h-screen w-full">
+								<div className="relative flex min-h-screen w-full flex-col">
+									{/* Spotlight background column */}
+									<div className="fixed inset-0 flex justify-center sm:px-8">
+										<div className="flex w-full max-w-7xl lg:px-8">
+											<div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20" />
+										</div>
+									</div>
+									<div className="relative flex min-h-screen w-full flex-col">
+										<Header />
+										<main className="flex-auto">{children}</main>
+										<Footer />
+									</div>
+								</div>
+							</div>
+							<Toaster richColors closeButton />
+						</ThemeProvider>
+						</TanstackQueryProvider>
+					</ClerkProvider>
+
+					<TanStackRouterDevtools position="bottom-right" />
+					<Scripts />
+				</body>
+			</html>
+		</I18nProvider>
 	);
 }

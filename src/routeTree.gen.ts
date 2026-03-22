@@ -9,168 +9,193 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProjectsRouteImport } from './routes/projects'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as ProtectedRouteRouteImport } from './routes/_protected/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PostsIndexRouteImport } from './routes/posts/index'
-import { Route as PostsSlugRouteImport } from './routes/posts/$slug'
-import { Route as ProtectedNewRouteImport } from './routes/_protected/new'
+import { Route as LangIndexRouteImport } from './routes/$lang/index'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
+import { Route as LangProjectsRouteImport } from './routes/$lang/projects'
+import { Route as LangLoginRouteImport } from './routes/$lang/login'
+import { Route as LangAboutRouteImport } from './routes/$lang/about'
+import { Route as LangProtectedRouteRouteImport } from './routes/$lang/_protected/route'
+import { Route as LangPostsIndexRouteImport } from './routes/$lang/posts/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/clerk'
+import { Route as LangPostsSlugRouteImport } from './routes/$lang/posts/$slug'
+import { Route as LangProtectedNewRouteImport } from './routes/$lang/_protected/new'
+import { Route as LangProtectedAdminRouteRouteImport } from './routes/$lang/_protected/admin/route'
+import { Route as LangProtectedAdminQueueRouteImport } from './routes/$lang/_protected/admin/queue'
 
-const ProjectsRoute = ProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProtectedRouteRoute = ProtectedRouteRouteImport.update({
-  id: '/_protected',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsIndexRoute = PostsIndexRouteImport.update({
-  id: '/posts/',
-  path: '/posts/',
+const LangIndexRoute = LangIndexRouteImport.update({
+  id: '/$lang/',
+  path: '/$lang/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PostsSlugRoute = PostsSlugRouteImport.update({
-  id: '/posts/$slug',
-  path: '/posts/$slug',
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedNewRoute = ProtectedNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => ProtectedRouteRoute,
+const LangProjectsRoute = LangProjectsRouteImport.update({
+  id: '/$lang/projects',
+  path: '/$lang/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LangLoginRoute = LangLoginRouteImport.update({
+  id: '/$lang/login',
+  path: '/$lang/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LangAboutRoute = LangAboutRouteImport.update({
+  id: '/$lang/about',
+  path: '/$lang/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LangProtectedRouteRoute = LangProtectedRouteRouteImport.update({
+  id: '/$lang/_protected',
+  path: '/$lang',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LangPostsIndexRoute = LangPostsIndexRouteImport.update({
+  id: '/$lang/posts/',
+  path: '/$lang/posts/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   id: '/api/webhooks/clerk',
   path: '/api/webhooks/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LangPostsSlugRoute = LangPostsSlugRouteImport.update({
+  id: '/$lang/posts/$slug',
+  path: '/$lang/posts/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LangProtectedNewRoute = LangProtectedNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => LangProtectedRouteRoute,
+} as any)
+const LangProtectedAdminRouteRoute = LangProtectedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => LangProtectedRouteRoute,
+} as any)
+const LangProtectedAdminQueueRoute = LangProtectedAdminQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => LangProtectedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/login': typeof LoginRoute
-  '/projects': typeof ProjectsRoute
-  '/new': typeof ProtectedNewRoute
-  '/posts/$slug': typeof PostsSlugRoute
-  '/posts/': typeof PostsIndexRoute
+  '/$lang': typeof LangProtectedRouteRouteWithChildren
+  '/$lang/about': typeof LangAboutRoute
+  '/$lang/login': typeof LangLoginRoute
+  '/$lang/projects': typeof LangProjectsRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/$lang/': typeof LangIndexRoute
+  '/$lang/admin': typeof LangProtectedAdminRouteRouteWithChildren
+  '/$lang/new': typeof LangProtectedNewRoute
+  '/$lang/posts/$slug': typeof LangPostsSlugRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/$lang/posts/': typeof LangPostsIndexRoute
+  '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/login': typeof LoginRoute
-  '/projects': typeof ProjectsRoute
-  '/new': typeof ProtectedNewRoute
-  '/posts/$slug': typeof PostsSlugRoute
-  '/posts': typeof PostsIndexRoute
+  '/$lang': typeof LangIndexRoute
+  '/$lang/about': typeof LangAboutRoute
+  '/$lang/login': typeof LangLoginRoute
+  '/$lang/projects': typeof LangProjectsRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/$lang/admin': typeof LangProtectedAdminRouteRouteWithChildren
+  '/$lang/new': typeof LangProtectedNewRoute
+  '/$lang/posts/$slug': typeof LangPostsSlugRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/$lang/posts': typeof LangPostsIndexRoute
+  '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/_protected': typeof ProtectedRouteRouteWithChildren
-  '/about': typeof AboutRoute
-  '/login': typeof LoginRoute
-  '/projects': typeof ProjectsRoute
-  '/_protected/new': typeof ProtectedNewRoute
-  '/posts/$slug': typeof PostsSlugRoute
-  '/posts/': typeof PostsIndexRoute
+  '/$lang/_protected': typeof LangProtectedRouteRouteWithChildren
+  '/$lang/about': typeof LangAboutRoute
+  '/$lang/login': typeof LangLoginRoute
+  '/$lang/projects': typeof LangProjectsRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/$lang/': typeof LangIndexRoute
+  '/$lang/_protected/admin': typeof LangProtectedAdminRouteRouteWithChildren
+  '/$lang/_protected/new': typeof LangProtectedNewRoute
+  '/$lang/posts/$slug': typeof LangPostsSlugRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/$lang/posts/': typeof LangPostsIndexRoute
+  '/$lang/_protected/admin/queue': typeof LangProtectedAdminQueueRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
-    | '/login'
-    | '/projects'
-    | '/new'
-    | '/posts/$slug'
-    | '/posts/'
+    | '/$lang'
+    | '/$lang/about'
+    | '/$lang/login'
+    | '/$lang/projects'
+    | '/api/upload'
+    | '/$lang/'
+    | '/$lang/admin'
+    | '/$lang/new'
+    | '/$lang/posts/$slug'
     | '/api/webhooks/clerk'
+    | '/$lang/posts/'
+    | '/$lang/admin/queue'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/login'
-    | '/projects'
-    | '/new'
-    | '/posts/$slug'
-    | '/posts'
+    | '/$lang'
+    | '/$lang/about'
+    | '/$lang/login'
+    | '/$lang/projects'
+    | '/api/upload'
+    | '/$lang/admin'
+    | '/$lang/new'
+    | '/$lang/posts/$slug'
     | '/api/webhooks/clerk'
+    | '/$lang/posts'
+    | '/$lang/admin/queue'
   id:
     | '__root__'
     | '/'
-    | '/_protected'
-    | '/about'
-    | '/login'
-    | '/projects'
-    | '/_protected/new'
-    | '/posts/$slug'
-    | '/posts/'
+    | '/$lang/_protected'
+    | '/$lang/about'
+    | '/$lang/login'
+    | '/$lang/projects'
+    | '/api/upload'
+    | '/$lang/'
+    | '/$lang/_protected/admin'
+    | '/$lang/_protected/new'
+    | '/$lang/posts/$slug'
     | '/api/webhooks/clerk'
+    | '/$lang/posts/'
+    | '/$lang/_protected/admin/queue'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProtectedRouteRoute: typeof ProtectedRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
-  LoginRoute: typeof LoginRoute
-  ProjectsRoute: typeof ProjectsRoute
-  PostsSlugRoute: typeof PostsSlugRoute
-  PostsIndexRoute: typeof PostsIndexRoute
+  LangProtectedRouteRoute: typeof LangProtectedRouteRouteWithChildren
+  LangAboutRoute: typeof LangAboutRoute
+  LangLoginRoute: typeof LangLoginRoute
+  LangProjectsRoute: typeof LangProjectsRoute
+  ApiUploadRoute: typeof ApiUploadRoute
+  LangIndexRoute: typeof LangIndexRoute
+  LangPostsSlugRoute: typeof LangPostsSlugRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
+  LangPostsIndexRoute: typeof LangPostsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/projects': {
-      id: '/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -178,26 +203,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts/': {
-      id: '/posts/'
-      path: '/posts'
-      fullPath: '/posts/'
-      preLoaderRoute: typeof PostsIndexRouteImport
+    '/$lang/': {
+      id: '/$lang/'
+      path: '/$lang'
+      fullPath: '/$lang/'
+      preLoaderRoute: typeof LangIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/posts/$slug': {
-      id: '/posts/$slug'
-      path: '/posts/$slug'
-      fullPath: '/posts/$slug'
-      preLoaderRoute: typeof PostsSlugRouteImport
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_protected/new': {
-      id: '/_protected/new'
-      path: '/new'
-      fullPath: '/new'
-      preLoaderRoute: typeof ProtectedNewRouteImport
-      parentRoute: typeof ProtectedRouteRoute
+    '/$lang/projects': {
+      id: '/$lang/projects'
+      path: '/$lang/projects'
+      fullPath: '/$lang/projects'
+      preLoaderRoute: typeof LangProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$lang/login': {
+      id: '/$lang/login'
+      path: '/$lang/login'
+      fullPath: '/$lang/login'
+      preLoaderRoute: typeof LangLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$lang/about': {
+      id: '/$lang/about'
+      path: '/$lang/about'
+      fullPath: '/$lang/about'
+      preLoaderRoute: typeof LangAboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$lang/_protected': {
+      id: '/$lang/_protected'
+      path: '/$lang'
+      fullPath: '/$lang'
+      preLoaderRoute: typeof LangProtectedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$lang/posts/': {
+      id: '/$lang/posts/'
+      path: '/$lang/posts'
+      fullPath: '/$lang/posts/'
+      preLoaderRoute: typeof LangPostsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/webhooks/clerk': {
       id: '/api/webhooks/clerk'
@@ -206,30 +259,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksClerkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$lang/posts/$slug': {
+      id: '/$lang/posts/$slug'
+      path: '/$lang/posts/$slug'
+      fullPath: '/$lang/posts/$slug'
+      preLoaderRoute: typeof LangPostsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$lang/_protected/new': {
+      id: '/$lang/_protected/new'
+      path: '/new'
+      fullPath: '/$lang/new'
+      preLoaderRoute: typeof LangProtectedNewRouteImport
+      parentRoute: typeof LangProtectedRouteRoute
+    }
+    '/$lang/_protected/admin': {
+      id: '/$lang/_protected/admin'
+      path: '/admin'
+      fullPath: '/$lang/admin'
+      preLoaderRoute: typeof LangProtectedAdminRouteRouteImport
+      parentRoute: typeof LangProtectedRouteRoute
+    }
+    '/$lang/_protected/admin/queue': {
+      id: '/$lang/_protected/admin/queue'
+      path: '/queue'
+      fullPath: '/$lang/admin/queue'
+      preLoaderRoute: typeof LangProtectedAdminQueueRouteImport
+      parentRoute: typeof LangProtectedAdminRouteRoute
+    }
   }
 }
 
-interface ProtectedRouteRouteChildren {
-  ProtectedNewRoute: typeof ProtectedNewRoute
+interface LangProtectedAdminRouteRouteChildren {
+  LangProtectedAdminQueueRoute: typeof LangProtectedAdminQueueRoute
 }
 
-const ProtectedRouteRouteChildren: ProtectedRouteRouteChildren = {
-  ProtectedNewRoute: ProtectedNewRoute,
+const LangProtectedAdminRouteRouteChildren: LangProtectedAdminRouteRouteChildren =
+  {
+    LangProtectedAdminQueueRoute: LangProtectedAdminQueueRoute,
+  }
+
+const LangProtectedAdminRouteRouteWithChildren =
+  LangProtectedAdminRouteRoute._addFileChildren(
+    LangProtectedAdminRouteRouteChildren,
+  )
+
+interface LangProtectedRouteRouteChildren {
+  LangProtectedAdminRouteRoute: typeof LangProtectedAdminRouteRouteWithChildren
+  LangProtectedNewRoute: typeof LangProtectedNewRoute
 }
 
-const ProtectedRouteRouteWithChildren = ProtectedRouteRoute._addFileChildren(
-  ProtectedRouteRouteChildren,
-)
+const LangProtectedRouteRouteChildren: LangProtectedRouteRouteChildren = {
+  LangProtectedAdminRouteRoute: LangProtectedAdminRouteRouteWithChildren,
+  LangProtectedNewRoute: LangProtectedNewRoute,
+}
+
+const LangProtectedRouteRouteWithChildren =
+  LangProtectedRouteRoute._addFileChildren(LangProtectedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProtectedRouteRoute: ProtectedRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
-  LoginRoute: LoginRoute,
-  ProjectsRoute: ProjectsRoute,
-  PostsSlugRoute: PostsSlugRoute,
-  PostsIndexRoute: PostsIndexRoute,
+  LangProtectedRouteRoute: LangProtectedRouteRouteWithChildren,
+  LangAboutRoute: LangAboutRoute,
+  LangLoginRoute: LangLoginRoute,
+  LangProjectsRoute: LangProjectsRoute,
+  ApiUploadRoute: ApiUploadRoute,
+  LangIndexRoute: LangIndexRoute,
+  LangPostsSlugRoute: LangPostsSlugRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
+  LangPostsIndexRoute: LangPostsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
