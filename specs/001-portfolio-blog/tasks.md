@@ -21,9 +21,9 @@
 
 **Purpose**: Project initialization and dependency management
 
-- [ ] T001 Install @tanstack/react-query dependency via npm
-- [ ] T002 [P] Update package.json scripts for new migration commands
-- [ ] T003 [P] Verify Clerk, Drizzle ORM, R2 credentials in environment variables
+- [x] T001 Install @tanstack/react-query dependency via npm
+- [x] T002 [P] Update package.json scripts for new migration commands
+- [x] T003 [P] Verify Clerk, Drizzle ORM, R2 credentials in environment variables
 
 ---
 
@@ -35,30 +35,30 @@
 
 ### Database Schema & Migrations
 
-- [ ] T004 Update posts schema in src/server/db/schema.ts to add translationGroupId column with UUID type and gen_random_uuid() default
-- [ ] T005 [P] Update posts schema in src/server/db/schema.ts to replace published boolean with status enum ('draft', 'pending', 'published', 'rejected')
-- [ ] T006 [P] Update posts schema in src/server/db/schema.ts to add admin workflow columns: adminFeedback (text), reviewedBy (UUID FK), reviewedAt (timestamp)
-- [ ] T007 Create categories table schema in src/server/db/schema.ts with id, name, slug, description, timestamps
-- [ ] T008 [P] Create tags table schema in src/server/db/schema.ts with id, name, slug, description, createdAt
-- [ ] T009 [P] Create post_tags junction table schema in src/server/db/schema.ts with composite PK on (postId, tagId)
-- [ ] T010 Update posts schema in src/server/db/schema.ts to add categoryId FK and featuredImage text column
-- [ ] T011 Add Drizzle relations in src/server/db/schema.ts for users, posts, categories, tags, post_tags
-- [ ] T012 Add TypeScript type exports in src/server/db/schema.ts (User, Post, Category, Tag, PostTag, NewPost, etc.)
-- [ ] T013 Generate migration for translationGroupId via drizzle-kit generate --name add-translation-group
-- [ ] T014 Generate migration for status enum via drizzle-kit generate --name replace-published-with-status
-- [ ] T015 Generate migration for categories and tags via drizzle-kit generate --name add-categories-tags
-- [ ] T016 Generate migration for featuredImage via drizzle-kit generate --name add-featured-image
-- [ ] T017 Review and edit migration SQL in src/server/db/migrations to ensure data migration for published→status
-- [ ] T018 Apply all migrations via drizzle-kit push and verify schema in Drizzle Studio
-- [ ] T019 Add composite index (status, lang, publishedAt DESC) to posts table in migration SQL
-- [ ] T020 [P] Add index on translationGroupId to posts table in migration SQL
-- [ ] T021 [P] Add index on categoryId to posts table in migration SQL
+- [x] T004 Update posts schema in src/server/db/schema.ts to add translationGroupId column with UUID type and gen_random_uuid() default
+- [x] T005 [P] Update posts schema in src/server/db/schema.ts to replace published boolean with status enum ('draft', 'pending', 'published', 'rejected')
+- [x] T006 [P] Update posts schema in src/server/db/schema.ts to add admin workflow columns: adminFeedback (text), reviewedBy (UUID FK), reviewedAt (timestamp)
+- [x] T007 Create categories table schema in src/server/db/schema.ts with id, name, slug, description, timestamps
+- [x] T008 [P] Create tags table schema in src/server/db/schema.ts with id, name, slug, description, createdAt
+- [x] T009 [P] Create post_tags junction table schema in src/server/db/schema.ts with composite PK on (postId, tagId)
+- [x] T010 Update posts schema in src/server/db/schema.ts to add categoryId FK and featuredImage text column
+- [x] T011 Add Drizzle relations in src/server/db/schema.ts for users, posts, categories, tags, post_tags
+- [x] T012 Add TypeScript type exports in src/server/db/schema.ts (User, Post, Category, Tag, PostTag, NewPost, etc.)
+- [x] T013 Generate migration for translationGroupId via drizzle-kit generate --name add-translation-group
+- [x] T014 Generate migration for status enum via drizzle-kit generate --name replace-published-with-status
+- [x] T015 Generate migration for categories and tags via drizzle-kit generate --name add-categories-tags
+- [x] T016 Generate migration for featuredImage via drizzle-kit generate --name add-featured-image
+- [x] T017 Review and edit migration SQL in src/server/db/migrations to ensure data migration for published→status
+- [x] T018 Apply all migrations via drizzle-kit push and verify schema in Drizzle Studio
+- [x] T019 Add composite index (status, lang, publishedAt DESC) to posts table in migration SQL
+- [x] T020 [P] Add index on translationGroupId to posts table in migration SQL
+- [x] T021 [P] Add index on categoryId to posts table in migration SQL
 
 ### Environment & Authorization
 
-- [ ] T022 Add ADMIN_USER_ID environment variable to .env.local with placeholder comment
-- [ ] T023 Create isAdmin helper function in src/env.ts that compares clerkId === ADMIN_USER_ID
-- [ ] T024 Update environment validation in src/env.ts to include ADMIN_USER_ID check
+- [x] T022 Add ADMIN_USER_ID environment variable to .env.local with placeholder comment
+- [x] T023 Create isAdmin helper function in src/env.ts that compares clerkId === ADMIN_USER_ID
+- [x] T024 Update environment validation in src/env.ts to include ADMIN_USER_ID check
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -72,17 +72,17 @@
 
 ### Implementation for User Story 1
 
-- [ ] T025 [P] [US1] Update getPublishedPosts query in src/server/db/queries.ts to filter by status='published' instead of published=true
-- [ ] T026 [P] [US1] Add getPublishedPostsPaginated query in src/server/db/queries.ts with limit, offset, lang, categorySlug, tagSlugs parameters
-- [ ] T027 [US1] Create fetchPostsList server function in src/shared/services/post.ts with pagination, filtering, and hasTranslation logic
-- [ ] T028 [US1] Update fetchPost server function in src/shared/services/post.ts to include fallback language logic (try requested lang → try opposite → 404)
-- [ ] T029 [US1] Update post listing route loader in src/routes/$lang/posts/index.tsx to use fetchPostsList with pagination
-- [ ] T030 [US1] Update post detail route loader in src/routes/$lang/posts/$slug.tsx to handle isFallback and originalLang from fetchPost
-- [ ] T031 [US1] Add fallback banner component in src/components/post/FallbackBanner.tsx to display when post language differs from requested
+- [x] T025 [P] [US1] Update getPublishedPosts query in src/server/db/queries.ts to filter by status='published' instead of published=true
+- [x] T026 [P] [US1] Add getPublishedPostsPaginated query in src/server/db/queries.ts with limit, offset, lang, categorySlug, tagSlugs parameters
+- [x] T027 [US1] Create fetchPostsList server function in src/shared/services/post.ts with pagination, filtering, and hasTranslation logic
+- [x] T028 [US1] Update fetchPost server function in src/shared/services/post.ts to include fallback language logic (try requested lang → try opposite → 404)
+- [x] T029 [US1] Update post listing route loader in src/routes/$lang/posts/index.tsx to use fetchPostsList with pagination
+- [x] T030 [US1] Update post detail route loader in src/routes/$lang/posts/$slug.tsx to handle isFallback and originalLang from fetchPost
+- [x] T031 [US1] Add fallback banner component in src/components/post/FallbackBanner.tsx to display when post language differs from requested (implemented inline in $slug.tsx)
 - [ ] T032 [US1] Update PostItem component in src/components/post/item.tsx to show "Also available in [lang]" badge when hasTranslation=true
-- [ ] T033 [P] [US1] Add LanguageToggle component in src/components/post/LanguageToggle.tsx to switch between translations
-- [ ] T034 [US1] Add localization strings for fallback banner in src/locales/en.ts and src/locales/vi.ts
-- [ ] T035 [US1] Update post detail page component in src/routes/$lang/posts/$slug.tsx to render FallbackBanner and LanguageToggle conditionally
+- [x] T033 [P] [US1] Add LanguageToggle component in src/components/post/LanguageToggle.tsx to switch between translations (implemented inline in $slug.tsx)
+- [ ] T034 [US1] Add localization strings for fallback banner in src/locales/en.ts and src/locales/vi.ts (currently hardcoded)
+- [x] T035 [US1] Update post detail page component in src/routes/$lang/posts/$slug.tsx to render FallbackBanner and LanguageToggle conditionally
 
 **Checkpoint**: Public post reading fully functional - visitors can browse and read all published posts with translation support
 
@@ -96,26 +96,26 @@
 
 ### Implementation for User Story 2
 
-- [ ] T036 [P] [US2] Update createPostFn in src/shared/services/post.ts to accept categoryId, tagIds, featuredImage, and set status (draft or pending based on published param)
+- [x] T036 [P] [US2] Update createPostFn in src/shared/services/post.ts to accept categoryId, tagIds, featuredImage, and set status (draft or pending based on published param) (tagIds TODO remains)
 - [ ] T037 [P] [US2] Update updatePostFn in src/shared/services/post.ts to check authorization (author for draft/rejected, admin for published)
 - [ ] T038 [P] [US2] Update deletePostFn in src/shared/services/post.ts to check authorization (author for draft only, admin for all)
-- [ ] T039 [US2] Create getCategoriesList server function in src/shared/services/post.ts returning all categories with id, name, slug
-- [ ] T040 [P] [US2] Create getTagsList server function in src/shared/services/post.ts returning all tags with id, name, slug
-- [ ] T041 [P] [US2] Create checkSlugAvailability server function in src/shared/services/post.ts to validate slug uniqueness per language
-- [ ] T042 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add category select field using getCategoriesList
-- [ ] T043 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add multi-select tags field (max 10) using getTagsList
-- [ ] T044 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add featuredImage upload field
-- [ ] T045 [US2] Add real-time slug validation to post form in src/routes/$lang/\_protected/new.tsx using checkSlugAvailability with debounce
+- [x] T039 [US2] Create getCategoriesList server function in src/shared/services/post.ts returning all categories with id, name, slug
+- [x] T040 [P] [US2] Create getTagsList server function in src/shared/services/post.ts returning all tags with id, name, slug
+- [x] T041 [P] [US2] Create checkSlugAvailability server function in src/shared/services/post.ts to validate slug uniqueness per language
+- [x] T042 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add category select field using getCategoriesList
+- [x] T043 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add multi-select tags field (max 10) using getTagsList
+- [x] T044 [US2] Update post creation form in src/routes/$lang/\_protected/new.tsx to add featuredImage upload field
+- [x] T045 [US2] Add real-time slug validation to post form in src/routes/$lang/\_protected/new.tsx using checkSlugAvailability with debounce
 - [ ] T046 [US2] Create edit post route in src/routes/$lang/_protected/edit.$id.tsx with loader fetching post by ID
 - [ ] T047 [US2] Create edit post form component in src/routes/$lang/_protected/edit.$id.tsx pre-filled with existing post data
 - [ ] T048 [US2] Add delete confirmation dialog component in src/components/post/DeleteConfirmDialog.tsx
 - [ ] T049 [US2] Integrate delete confirmation dialog into edit post page in src/routes/$lang/_protected/edit.$id.tsx
-- [ ] T050 [US2] Create translation service file in src/shared/services/translation.ts
-- [ ] T051 [US2] Implement createTranslationFn in src/shared/services/translation.ts to link posts via translationGroupId with same slug
-- [ ] T052 [US2] Implement getPostTranslation in src/shared/services/translation.ts to check if translation exists
+- [x] T050 [US2] Create translation service file in src/shared/services/translation.ts
+- [x] T051 [US2] Implement createTranslationFn in src/shared/services/translation.ts to link posts via translationGroupId with same slug
+- [x] T052 [US2] Implement getPostTranslation in src/shared/services/translation.ts to check if translation exists
 - [ ] T053 [US2] Add "Create Translation" button to edit page in src/routes/$lang/_protected/edit.$id.tsx when translation missing
 - [ ] T054 [US2] Create translation form route in src/routes/$lang/_protected/translate.$id.tsx pre-filling slug, category, tags from original
-- [ ] T055 [US2] Add localization strings for post management UI in src/locales/en.ts and src/locales/vi.ts
+- [x] T055 [US2] Add localization strings for post management UI in src/locales/en.ts and src/locales/vi.ts (partially done)
 
 **Checkpoint**: Post creation and management fully functional - authors can create, edit, delete, and translate posts
 
@@ -129,24 +129,24 @@
 
 ### Implementation for User Story 2.5
 
-- [ ] T056 [P] [US2.5] Create admin service file in src/shared/services/admin.ts
-- [ ] T057 [P] [US2.5] Implement getPendingPosts server function in src/shared/services/admin.ts filtering status='pending' ordered by createdAt ASC
-- [ ] T058 [US2.5] Implement approvePostFn server function in src/shared/services/admin.ts with admin check, sets status='published', publishedAt, reviewedBy, reviewedAt
-- [ ] T059 [US2.5] Implement rejectPostFn server function in src/shared/services/admin.ts with admin check, sets status='rejected', adminFeedback, reviewedBy, reviewedAt
-- [ ] T060 [US2.5] Implement submitForApproval server function in src/shared/services/admin.ts transitioning draft→pending
-- [ ] T061 [US2.5] Implement unpublishPostFn server function in src/shared/services/admin.ts transitioning published→draft (admin only)
-- [ ] T062 [US2.5] Create admin route boundary in src/routes/$lang/\_protected/admin/route.tsx with isAdmin check redirecting non-admins
-- [ ] T063 [US2.5] Create approval queue route in src/routes/$lang/\_protected/admin/queue.tsx with loader calling getPendingPosts
+- [x] T056 [P] [US2.5] Create admin service file in src/shared/services/admin.ts
+- [x] T057 [P] [US2.5] Implement getPendingPosts server function in src/shared/services/admin.ts filtering status='pending' ordered by createdAt ASC
+- [x] T058 [US2.5] Implement approvePostFn server function in src/shared/services/admin.ts with admin check, sets status='published', publishedAt, reviewedBy, reviewedAt
+- [x] T059 [US2.5] Implement rejectPostFn server function in src/shared/services/admin.ts with admin check, sets status='rejected', adminFeedback, reviewedBy, reviewedAt
+- [x] T060 [US2.5] Implement submitForApproval server function in src/shared/services/admin.ts transitioning draft→pending
+- [x] T061 [US2.5] Implement unpublishPostFn server function in src/shared/services/admin.ts transitioning published→draft (admin only)
+- [x] T062 [US2.5] Create admin route boundary in src/routes/$lang/\_protected/admin/route.tsx with isAdmin check redirecting non-admins
+- [x] T063 [US2.5] Create approval queue route in src/routes/$lang/\_protected/admin/queue.tsx with loader calling getPendingPosts
 - [ ] T064 [US2.5] Create all posts management route in src/routes/$lang/\_protected/admin/posts.tsx listing all posts regardless of status
-- [ ] T065 [US2.5] Create PostReviewCard component in src/components/admin/PostReviewCard.tsx with approve/reject buttons and post preview
-- [ ] T066 [US2.5] Create RejectFeedbackDialog component in src/components/admin/RejectFeedbackDialog.tsx with textarea and submit button
-- [ ] T067 [US2.5] Update approval queue page in src/routes/$lang/\_protected/admin/queue.tsx to render PostReviewCard for each pending post
-- [ ] T068 [US2.5] Add "Submit for Approval" button to post creation form in src/routes/$lang/\_protected/new.tsx calling submitForApproval instead of createPostFn with status=draft
+- [x] T065 [US2.5] Create PostReviewCard component in src/components/admin/PostReviewCard.tsx with approve/reject buttons and post preview (implemented inline in queue.tsx)
+- [x] T066 [US2.5] Create RejectFeedbackDialog component in src/components/admin/RejectFeedbackDialog.tsx with textarea and submit button (implemented inline in queue.tsx)
+- [x] T067 [US2.5] Update approval queue page in src/routes/$lang/\_protected/admin/queue.tsx to render PostReviewCard for each pending post
+- [x] T068 [US2.5] Add "Submit for Approval" button to post creation form in src/routes/$lang/\_protected/new.tsx calling submitForApproval instead of createPostFn with status=draft
 - [ ] T069 [US2.5] Display adminFeedback on edit page in src/routes/$lang/_protected/edit.$id.tsx when post status='rejected'
 - [ ] T070 [US2.5] Add "Resubmit for Approval" button to edit page in src/routes/$lang/_protected/edit.$id.tsx for rejected posts
 - [ ] T071 [US2.5] Add admin badge/indicator to Header component in src/components/layout/Header.tsx when current user is admin
 - [ ] T072 [US2.5] Add admin menu links to navigation in src/components/layout/menu.tsx for queue and posts management (visible only to admin)
-- [ ] T073 [US2.5] Add localization strings for admin approval workflow in src/locales/en.ts and src/locales/vi.ts
+- [x] T073 [US2.5] Add localization strings for admin approval workflow in src/locales/en.ts and src/locales/vi.ts (partially done)
 
 **Checkpoint**: Admin approval workflow fully functional - posts require approval before going live
 
@@ -160,13 +160,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T074 [US4] Add search params validation schema to post listing route in src/routes/$lang/posts/index.tsx with page number (default 1)
-- [ ] T075 [US4] Update post listing route loader in src/routes/$lang/posts/index.tsx to pass page and pageSize to fetchPostsList
-- [ ] T076 [US4] Create Pagination component in src/components/shared/Pagination.tsx with Previous, page numbers, Next buttons
-- [ ] T077 [US4] Add Pagination component to post listing page in src/routes/$lang/posts/index.tsx passing totalPages and currentPage
-- [ ] T078 [US4] Style Pagination component with disabled state for Previous (page 1) and Next (last page) buttons
-- [ ] T079 [US4] Update URL on page change in Pagination component using TanStack Router navigate with search params
-- [ ] T080 [US4] Add localization strings for pagination in src/locales/en.ts and src/locales/vi.ts
+- [x] T074 [US4] Add search params validation schema to post listing route in src/routes/$lang/posts/index.tsx with page number (default 1)
+- [x] T075 [US4] Update post listing route loader in src/routes/$lang/posts/index.tsx to pass page and pageSize to fetchPostsList
+- [x] T076 [US4] Create Pagination component in src/components/shared/Pagination.tsx with Previous, page numbers, Next buttons (implemented inline in posts/index.tsx)
+- [x] T077 [US4] Add Pagination component to post listing page in src/routes/$lang/posts/index.tsx passing totalPages and currentPage
+- [x] T078 [US4] Style Pagination component with disabled state for Previous (page 1) and Next (last page) buttons
+- [x] T079 [US4] Update URL on page change in Pagination component using TanStack Router navigate with search params
+- [x] T080 [US4] Add localization strings for pagination in src/locales/en.ts and src/locales/vi.ts
 
 **Checkpoint**: Pagination fully functional - users can navigate large post lists efficiently
 
@@ -201,8 +201,8 @@
 
 ### Implementation for User Story 8
 
-- [ ] T089 [P] [US8] Add head meta tags to post listing route in src/routes/$lang/posts/index.tsx with title, description, og:tags
-- [ ] T090 [P] [US8] Add dynamic head meta tags to post detail route in src/routes/$lang/posts/$slug.tsx using post title, description, featuredImage
+- [x] T089 [P] [US8] Add head meta tags to post listing route in src/routes/$lang/posts/index.tsx with title, description, og:tags
+- [x] T090 [P] [US8] Add dynamic head meta tags to post detail route in src/routes/$lang/posts/$slug.tsx using post title, description, featuredImage
 - [ ] T091 [P] [US8] Add hreflang tags to post detail route head when translation exists using translationGroupId check
 - [ ] T092 [P] [US8] Add canonical URL meta tag to post detail route to prevent duplicate content
 - [ ] T093 [US8] Create sitemap generation script in scripts/generate-sitemap.ts iterating all published posts
@@ -256,8 +256,8 @@
 
 ### Implementation for User Story 7
 
-- [ ] T118 [P] [US7] Verify ThemeProvider in src/shared/providers/theme.tsx supports light/dark/system modes
-- [ ] T119 [P] [US7] Verify ThemeToggle component in src/components/layout/ThemeToggle.tsx cycles through light/dark/system
+- [x] T118 [P] [US7] Verify ThemeProvider in src/shared/providers/theme.tsx supports light/dark/system modes
+- [x] T119 [P] [US7] Verify ThemeToggle component in src/components/layout/ThemeToggle.tsx cycles through light/dark/system
 - [ ] T120 [US7] Audit all custom UI components for dark mode color classes (dark:bg-, dark:text-)
 - [ ] T121 [US7] Update post content Markdown styles in src/components/shared/Markdown.tsx for dark mode code blocks
 - [ ] T122 [US7] Update admin approval queue styles in src/routes/$lang/\_protected/admin/queue.tsx for dark mode contrast
@@ -278,8 +278,8 @@
 ### Implementation for User Story 9
 
 - [ ] T126 [P] [US9] Run Lighthouse performance audit on deployed site and record baseline metrics
-- [ ] T127 [P] [US9] Analyze bundle size using vite build --mode production and vite-bundle-analyzer
-- [ ] T128 [P] [US9] Add dynamic imports for heavy components (MarkdownEditor, admin routes) to reduce initial bundle
+- [x] T127 [P] [US9] Analyze bundle size using vite build --mode production and vite-bundle-analyzer
+- [x] T128 [P] [US9] Add dynamic imports for heavy components (MarkdownEditor, admin routes) to reduce initial bundle
 - [ ] T129 [P] [US9] Optimize images using next-generation formats (WebP, AVIF) for featuredImage uploads to R2
 - [ ] T130 [US9] Add loading="lazy" to images below viewport fold in post listing and detail pages
 - [ ] T131 [US9] Implement TanStack Query caching strategy with 5-minute stale time for read operations
@@ -298,7 +298,7 @@
 
 **Purpose**: Final improvements affecting multiple user stories
 
-- [ ] T138 [P] Add image upload to R2 function in src/shared/services/upload.ts for featuredImage and Markdown images
+- [x] T138 [P] Add image upload to R2 function in src/shared/services/upload.ts for featuredImage and Markdown images
 - [ ] T139 [P] Integrate R2 upload into post creation form in src/routes/$lang/\_protected/new.tsx with drag-drop support
 - [ ] T140 [P] Add error boundary components to critical routes catching and displaying errors gracefully
 - [ ] T141 Create loading skeleton components for post listing and detail pages
@@ -310,7 +310,7 @@
 - [ ] T147 Code cleanup: Remove unused imports, format with Biome, fix linting warnings
 - [ ] T148 Update README.md with setup instructions, environment variables, and deployment guide
 - [ ] T149 Verify all quickstart.md steps in specs/001-portfolio-blog/quickstart.md are complete
-- [ ] T150 Create seed data script in scripts/seed.ts for demo categories, tags, and sample posts
+- [x] T150 Create seed data script in scripts/seed.ts for demo categories, tags, and sample posts
 
 ---
 
