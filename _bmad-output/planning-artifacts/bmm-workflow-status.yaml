@@ -1,0 +1,72 @@
+# BMAD Method Workflow Status
+# Generated: 2026-03-23T00:00:00Z
+# Project: blog app
+
+project_name: "blog app"
+project_type: "web-app"
+project_level: 3
+communication_language: "English"
+output_language: "English"
+last_updated: "2026-03-26T00:00:00Z"
+current_phase: "implementation"
+
+# Workflow Status Tracking
+# Status values:
+#   - "required" - Must be completed
+#   - "optional" - Can be skipped
+#   - "recommended" - Strongly suggested
+#   - "conditional" - Required based on project level
+#   - "{file-path}" - Completed (path to output file)
+#   - "skipped" - Explicitly skipped
+
+workflow_status:
+  # Phase 1: Analysis (Optional but recommended)
+  - name: product-brief
+    phase: 1
+    status: "recommended"
+    description: "Create comprehensive product brief"
+
+  - name: brainstorm-project
+    phase: 1
+    status: "optional"
+    description: "Structured brainstorming session"
+
+  - name: research
+    phase: 1
+    status: "optional"
+    description: "Market and competitive research"
+
+  # Phase 2: Planning (Required - choose one based on project level)
+  - name: prd
+    phase: 2
+    status: "_bmad-output/planning-artifacts/prd.md"
+    description: "Product Requirements Document — 33 FRs, 25 NFRs, 4 user journeys, completed 2026-03-25"
+
+  - name: tech-spec
+    phase: 2
+    status: "optional"  # required for level 0-1, optional for 2+
+    description: "Technical Specification"
+
+  - name: create-ux-design
+    phase: 2
+    status: "optional"
+    description: "UX/UI design workflow"
+
+  # Phase 3: Solutioning (Conditional on project level)
+  - name: architecture
+    phase: 3
+    status: "_bmad-output/planning-artifacts/architecture.md"
+    description: "Architecture Decision Document — 7 sections, 6 ADRs, 12 enforcement rules, completed 2026-03-26"
+
+  - name: solutioning-gate-check
+    phase: 3
+    status: "optional"
+    description: "Validate architecture against requirements"
+
+  # Phase 4: Implementation (Required)
+  - name: sprint-planning
+    phase: 4
+    status: "_bmad-output/planning-artifacts/sprint-plan-blog-app-2026-03-24.md"
+    description: "Sprint planning complete — 7 sprints, 20 stories, 89 points"
+
+  # Implementation tracked in _bmad-output/planning-artifacts/sprint-status.yaml
