@@ -27,29 +27,35 @@
 - **Database queries**: Drizzle ORM with typed relations
 - **Validation**: Zod schemas at system boundaries
 - **Commits**: Group by purpose (feat/fix/chore), separate commits per concern
+- **UI/Styling**: Spotlight-inspired design system — see `.claude/rules/design-system.md` (zinc/teal palette, auto-loaded when editing components/routes)
 
 ## Development Workflow
 
-- **Planning**: Use BMAD skills (`/workflow-init`, `/product-brief`, `/architecture`, `/dev-story`)
-- **Task Management**: Task Master MCP for structured task tracking
-- **Specs**: Feature specs live in `specs/{feature-id}/` with spec.md, plan.md, research.md, data-model.md, tasks.md, contracts/
+- **Methodology**: BMAD Method v6.2.0 (original install via `npx bmad-method@latest install`)
+  - Config: `_bmad/_config/manifest.yaml` | Modules: core, bmm (Agile-AI), bmb, cis, tea, wds
+  - Key skills: `/bmad-help`, `/bmad-create-prd`, `/bmad-create-architecture`, `/bmad-dev-story`, `/bmad-sprint-planning`
+  - Output: `_bmad-output/` (planning-artifacts, implementation-artifacts, test-artifacts)
+- **Specs**: Feature specs live in `specs/{feature-id}/` with spec.md, research.md, data-model.md, tasks.md, contracts/
 - **Current Feature**: `specs/001-portfolio-blog/`
 
 ## Key Directories
 
 ```
+_bmad/                          # BMAD Method v6 (agents, config, modules)
+_bmad-output/                   # BMAD outputs (sprint plans, workflow status)
+specs/                          # Feature specs (spec.md, research.md, tasks.md)
 src/
-├── server/db/          # Schema, queries, migrations, seed
-├── server/r2/          # R2 upload client
-├── shared/services/    # Server functions (post, admin, translation)
-├── shared/providers/   # React context (i18n, theme, query)
-├── shared/utils/       # Utilities (markdown, slug, date, i18n)
-├── shared/schemas/     # Zod validation schemas
-├── components/         # UI (layout/, post/, admin/, shared/, form/, ui/)
-├── routes/$lang/       # Language-scoped public routes
-├── routes/$lang/_protected/  # Auth-required routes (new post, admin)
-├── routes/api/         # API endpoints (upload, webhooks)
-└── locales/            # Translation files (en.ts, vi.ts)
+├── server/db/                  # Schema, queries, migrations, seed
+├── server/r2/                  # R2 upload client
+├── shared/services/            # Server functions (post, admin, translation)
+├── shared/providers/           # React context (i18n, theme, query)
+├── shared/utils/               # Utilities (markdown, slug, date, i18n)
+├── shared/schemas/             # Zod validation schemas
+├── components/                 # UI (layout/, post/, admin/, shared/, form/, ui/)
+├── routes/$lang/               # Language-scoped public routes
+├── routes/$lang/_protected/    # Auth-required routes (new post, admin)
+├── routes/api/                 # API endpoints (upload, webhooks)
+└── locales/                    # Translation files (en.ts, vi.ts)
 ```
 
 ## Scripts
