@@ -1,15 +1,19 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { defaultLanguage } from "~/shared/constants";
-import { getBrowserLanguage } from "~/shared/utils/i18n";
+import { getBrowserLanguage, getValidLanguage } from "~/shared/utils/i18n";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: () => {
-		// Try to detect browser language, fallback to default
-		const preferredLang =
-			typeof window !== "undefined" ? getBrowserLanguage() : defaultLanguage;
+		let preferredLang = defaultLanguage;
+
+		if (typeof window !== "undefined") {
+			// Priority: localStorage preference → browser language → default
+			const stored = localStorage.getItem("language");
+			preferredLang = stored ? getValidLanguage(stored) : getBrowserLanguage();
+		}
 
 		throw redirect({
-			to: `/${preferredLang}/` as '/$lang',
+			to: `/${preferredLang}/` as "/$lang",
 			params: { lang: preferredLang },
 		});
 	},

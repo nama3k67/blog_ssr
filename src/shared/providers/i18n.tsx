@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext, useEffect } from "react";
 
 import { type Dictionary, dictionaries } from "../../locales";
 import { defaultLanguage, type Language } from "../constants";
@@ -20,6 +20,14 @@ interface I18nProviderProps {
 	children: ReactNode;
 }
 export function I18nProvider({ language, children }: I18nProviderProps) {
+	useEffect(() => {
+		try {
+			localStorage.setItem("language", language);
+		} catch {
+			// Ignore storage errors (private browsing, quota exceeded, etc.)
+		}
+	}, [language]);
+
 	return (
 		<I18nContext.Provider
 			value={{
