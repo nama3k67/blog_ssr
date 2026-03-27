@@ -35,7 +35,7 @@ export default function MobileNavbarItem({
 				to={href}
 				onClick={handleClick}
 				className={clsx(
-					"block px-2 py-3 transition",
+					"block px-2 py-3 transition focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400",
 					isActive
 						? "text-teal-500 dark:text-teal-400"
 						: "hover:text-teal-500 dark:hover:text-teal-400",

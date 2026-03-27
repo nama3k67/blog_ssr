@@ -25,8 +25,12 @@ export default function MobileNavbar({
 		<div {...props}>
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button variant='outline' className='rounded-full'>
-						<List />
+					<Button
+						variant='outline'
+						className='rounded-full'
+						aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+					>
+						<List aria-hidden='true' />
 					</Button>
 				</DialogTrigger>
 				<DialogPortal>

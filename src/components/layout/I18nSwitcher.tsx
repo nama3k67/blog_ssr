@@ -26,6 +26,7 @@ function I18nSwitcher() {
 		<Select defaultValue={currentLang} onValueChange={onLocaleChange}>
 			<SelectTrigger
 				showIcon={false}
+				aria-label='Switch language'
 				className='border-none shadow-none w-fit hover:bg-accent hover:text-accent-foreground rounded-full px-2'
 			>
 				<Globe
