@@ -26,9 +26,13 @@ export const en = {
 			title: "Home - Nutrition, Training & Technology Blog",
 			description:
 				"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
-			heading: "Index Route",
-			signedIn: "You are signed in",
-			signedOut: "You are signed out",
+			heading: "Hi, I'm Nama",
+			role: "Full-Stack Developer & Long-Distance Runner",
+			bio: "I'm a software developer and passionate long-distance runner based in Vietnam. I write about the intersection of technology, training, and nutrition — because building great software and running marathons require the same systematic thinking.",
+			github: "Follow on GitHub",
+			ctaProjects: "See my projects",
+			ctaBlogs: "Read the blog",
+			ctaAbout: "About me",
 		},
 		about: {
 			title: "About - Long-Distance Runner & Tech Enthusiast",

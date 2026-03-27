@@ -1,6 +1,6 @@
 # Story 2.1: Home Page
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -49,32 +49,32 @@ GitHub profile URL, author name, role, and bio are personal/static — store the
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1: Update locale strings** (AC: #1, #2, #3, #6)
-  - [ ] 1.1: Replace `pages.home.heading` from `"Index Route"` → author's actual intro heading (e.g., `"Hi, I'm [Name]"`)
-  - [ ] 1.2: Add `pages.home.role` — author's professional role (both en/vi)
-  - [ ] 1.3: Add `pages.home.bio` — 2–3 sentence bio paragraph (both en/vi)
-  - [ ] 1.4: Add `pages.home.github` — label for GitHub link (both en/vi)
-  - [ ] 1.5: Add `pages.home.ctaProjects`, `ctaBlogs`, `ctaAbout` — CTA button labels (both en/vi)
-  - [ ] 1.6: Remove unused `pages.home.signedIn` / `signedOut` keys from both locale files
+- [x] **Task 1: Update locale strings** (AC: #1, #2, #3, #6)
+  - [x] 1.1: Replace `pages.home.heading` from `"Index Route"` → author's actual intro heading (e.g., `"Hi, I'm [Name]"`)
+  - [x] 1.2: Add `pages.home.role` — author's professional role (both en/vi)
+  - [x] 1.3: Add `pages.home.bio` — 2–3 sentence bio paragraph (both en/vi)
+  - [x] 1.4: Add `pages.home.github` — label for GitHub link (both en/vi)
+  - [x] 1.5: Add `pages.home.ctaProjects`, `ctaBlogs`, `ctaAbout` — CTA button labels (both en/vi)
+  - [x] 1.6: Remove unused `pages.home.signedIn` / `signedOut` keys from both locale files
 
-- [ ] **Task 2: Create author static data** (AC: #2)
-  - [ ] 2.1: Create `src/shared/data/author.ts` exporting `GITHUB_URL` constant (e.g., `export const GITHUB_URL = "https://github.com/..."`)
-  - [ ] 2.2: Keep URL a single source of truth — do not duplicate in locale files
+- [x] **Task 2: Create author static data** (AC: #2)
+  - [x] 2.1: Create `src/shared/data/author.ts` exporting `GITHUB_URL` constant (e.g., `export const GITHUB_URL = "https://github.com/..."`)
+  - [x] 2.2: Keep URL a single source of truth — do not duplicate in locale files
 
-- [ ] **Task 3: Rewrite Home component** (AC: #1–#8)
-  - [ ] 3.1: Remove `SignedIn`, `SignedOut`, `SignInButton`, `UserButton` imports and JSX block
-  - [ ] 3.2: Render intro section: heading (`text-4xl sm:text-5xl font-bold tracking-tight text-foreground`), role subtitle (`text-lg font-medium text-foreground`), bio paragraph (`text-base text-muted-foreground`)
-  - [ ] 3.3: Render GitHub link with GitHub icon (lucide-react `Github` or SVG), `target="_blank" rel="noopener noreferrer"`, social icon classes
-  - [ ] 3.4: Render CTA links to `localizedPath("/projects")`, `localizedPath("/posts")`, `localizedPath("/about")` using secondary button style
-  - [ ] 3.5: Use `localizedPath()` from `useI18n()` for all internal links (NOT hardcoded `/$lang/...`)
-  - [ ] 3.6: Wrap all content in `<Container className='mt-16 sm:mt-32'>`
-  - [ ] 3.7: Ensure `max-w-2xl` on inner content container per Spotlight layout
+- [x] **Task 3: Rewrite Home component** (AC: #1–#8)
+  - [x] 3.1: Remove `SignedIn`, `SignedOut`, `SignInButton`, `UserButton` imports and JSX block
+  - [x] 3.2: Render intro section: heading (`text-4xl sm:text-5xl font-bold tracking-tight text-foreground`), role subtitle (`text-lg font-medium text-foreground`), bio paragraph (`text-base text-muted-foreground`)
+  - [x] 3.3: Render GitHub link with GitHub icon (lucide-react `Github` or SVG), `target="_blank" rel="noopener noreferrer"`, social icon classes
+  - [x] 3.4: Render CTA links to `localizedPath("/projects")`, `localizedPath("/posts")`, `localizedPath("/about")` using secondary button style
+  - [x] 3.5: Use `localizedPath()` from `useI18n()` for all internal links (NOT hardcoded `/$lang/...`)
+  - [x] 3.6: Wrap all content in `<Container className='mt-16 sm:mt-32'>`
+  - [x] 3.7: Ensure `max-w-2xl` on inner content container per Spotlight layout
 
-- [ ] **Task 4: Verify all acceptance criteria** (AC: #1–#8)
-  - [ ] 4.1: Check all text is via `t()` — no hardcoded English strings in JSX
-  - [ ] 4.2: Verify `dark:` variants on all visual classes
-  - [ ] 4.3: Check Biome passes: `npm run biome check` (or `npx biome check src/`)
-  - [ ] 4.4: Check build passes: `npm run build`
+- [x] **Task 4: Verify all acceptance criteria** (AC: #1–#8)
+  - [x] 4.1: Check all text is via `t()` — no hardcoded English strings in JSX
+  - [x] 4.2: Verify `dark:` variants on all visual classes
+  - [x] 4.3: Check Biome passes: `npm run biome check` (or `npx biome check src/`)
+  - [x] 4.4: Check build passes: `npm run build`
 
 ## Dev Notes
 
@@ -138,6 +138,10 @@ claude-sonnet-4-6
 ### Debug Log References
 
 ### Completion Notes List
+- All tasks completed. Locale files updated with heading, role, bio, github, ctaProjects, ctaBlogs, ctaAbout keys. Removed signedIn/signedOut keys.
+- Created `src/shared/data/author.ts` with `GITHUB_URL` constant.
+- Rewrote `src/routes/$lang/index.tsx`: removed Clerk debug block, added personal intro + GitHub link + 3 CTA links.
+- Biome auto-fixed import sort (`createFileRoute, Link` → alphabetical). Build passed (4.60s).
 
 ### File List
 - src/routes/$lang/index.tsx
