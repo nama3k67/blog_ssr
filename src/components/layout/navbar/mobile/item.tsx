@@ -18,7 +18,10 @@ export default function MobileNavbarItem({
 	const href = getLocalizedPath(baseHref, language);
 	const navigate = useNavigate();
 	const pathname = useLocation({ select: (location) => location.pathname });
-	const isActive = pathname === `/${language}${baseHref}`;
+	const isActive =
+		baseHref === "/"
+			? pathname === `/${language}/` || pathname === `/${language}`
+			: pathname.startsWith(`/${language}${baseHref}`);
 
 	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
 		e.preventDefault();

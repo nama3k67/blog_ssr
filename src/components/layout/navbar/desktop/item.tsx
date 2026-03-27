@@ -15,7 +15,10 @@ export default function NavItem({ baseHref, children }: IProps) {
 	const pathname = useLocation({
 		select: (location) => location.pathname,
 	});
-	const isActive = pathname === `/${language}${baseHref}`;
+	const isActive =
+		baseHref === "/"
+			? pathname === `/${language}/` || pathname === `/${language}`
+			: pathname.startsWith(`/${language}${baseHref}`);
 
 	return (
 		<li>

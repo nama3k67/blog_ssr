@@ -95,11 +95,11 @@
   --foreground: var(--color-zinc-800);
 
   /* Card: white surface */
-  --card: oklch(1 0 0);
+  --card: var(--color-white);
   --card-foreground: var(--color-zinc-800);
 
   /* Popover: white */
-  --popover: oklch(1 0 0);
+  --popover: var(--color-white);
   --popover-foreground: var(--color-zinc-800);
 
   /* Primary: zinc-800 (Spotlight button primary) */
@@ -146,7 +146,7 @@
 /* ─── Dark Theme (Spotlight: black bg, zinc-900 content, zinc text, teal-400 accent) ─── */
 .dark {
   /* Page: black */
-  --background: oklch(0 0 0);
+  --background: var(--color-black);
   /* Text: zinc-100 */
   --foreground: var(--color-zinc-100);
 

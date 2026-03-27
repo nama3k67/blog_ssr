@@ -14,7 +14,7 @@ const useHeader = () => {
 
 	const location = useLocation();
 	// All routes are /{lang}/... so the home page is /{lang} or /{lang}/ (never bare /)
-	const isHomePage = /^\/[a-z]{2}\/?$/.test(location.pathname);
+	const isHomePage = /^\/(en|vi)\/?$/.test(location.pathname);
 
 	// Helper functions for manipulating CSS properties
 	const setProperty = useCallback((property: string, value: string) => {

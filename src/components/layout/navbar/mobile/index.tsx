@@ -9,6 +9,7 @@ import {
 	DialogHeader,
 	DialogOverlay,
 	DialogPortal,
+	DialogTitle,
 	DialogTrigger,
 } from "~/components/ui/dialog";
 import { useI18n } from "~/shared/providers/i18n";
@@ -37,7 +38,9 @@ export default function MobileNavbar({
 					<DialogOverlay className='bg-zinc-800/40! backdrop-blur-sm' />
 
 					<DialogContent className='sm:max-w-106.25 gap-0'>
-						<DialogHeader className='text-start mb-4' />
+						<DialogHeader className='text-start mb-4'>
+							<DialogTitle className='sr-only'>Navigation menu</DialogTitle>
+						</DialogHeader>
 
 						<nav>
 							<ul className='-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300'>
