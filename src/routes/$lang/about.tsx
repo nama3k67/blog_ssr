@@ -47,15 +47,15 @@ function RouteComponent() {
 						</div>
 
 						<section className='mt-8'>
-							<h2 className='text-sm font-semibold text-foreground'>
+							<p className='text-sm font-semibold text-foreground'>
 								{t.pages.about.skills}
-							</h2>
+							</p>
 							<div className='mt-4 flex flex-col gap-4'>
 								{SKILLS.map((group) => (
 									<div key={group.category.en}>
-										<h3 className='text-xs font-medium text-muted-foreground'>
+										<h2 className='text-xs font-medium text-muted-foreground'>
 											{group.category[language]}
-										</h3>
+										</h2>
 										<div className='mt-2 flex flex-wrap gap-2'>
 											{group.skills.map((skill) => (
 												<span
@@ -104,14 +104,20 @@ function RouteComponent() {
 				</div>
 
 				{/* Right column — avatar */}
-				<div className='lg:pl-20'>
+				<div className='lg:order-none lg:pl-20'>
 					<div className='max-w-xs px-2.5 lg:max-w-none'>
-						<img
-							src={AVATAR_URL}
-							alt=''
-							loading='eager'
-							className='aspect-square rounded-2xl object-cover bg-zinc-100 dark:bg-zinc-800'
-						/>
+						{AVATAR_URL ? (
+							<img
+								src={AVATAR_URL}
+								alt=''
+								width={320}
+								height={320}
+								loading='eager'
+								className='aspect-square rounded-2xl object-cover'
+							/>
+						) : (
+							<div className='aspect-square rounded-2xl bg-zinc-100 dark:bg-zinc-800' />
+						)}
 					</div>
 				</div>
 			</div>

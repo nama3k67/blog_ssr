@@ -18,6 +18,8 @@ export const ProjectCard = ({ project, language, githubLabel }: Props) => {
 					loading='lazy'
 					src={project.thumbnailUrl}
 					alt=''
+					width={800}
+					height={450}
 					className='relative z-10 w-full rounded-2xl object-cover aspect-video'
 				/>
 			) : (
@@ -45,16 +47,18 @@ export const ProjectCard = ({ project, language, githubLabel }: Props) => {
 				</div>
 			)}
 
-			<a
-				href={project.githubUrl}
-				target='_blank'
-				rel='noopener noreferrer'
-				aria-label={`${githubLabel} — ${project.title[language]}`}
-				className='relative z-10 mt-4 flex items-center gap-1 text-sm font-medium text-teal-500 transition hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400'
-			>
-				<Github className='h-4 w-4' aria-hidden='true' />
-				{githubLabel}
-			</a>
+			{project.githubUrl && (
+				<a
+					href={project.githubUrl}
+					target='_blank'
+					rel='noopener noreferrer'
+					aria-label={`${githubLabel} — ${project.title[language]}`}
+					className='relative z-10 mt-4 flex items-center gap-1 text-sm font-medium text-teal-500 transition hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400'
+				>
+					<Github className='h-4 w-4' aria-hidden='true' />
+					{githubLabel}
+				</a>
+			)}
 		</li>
 	);
 };

@@ -1,11 +1,9 @@
-import type { Language } from "~/shared/constants/i18n";
-
 export interface Project {
 	id: string;
 	title: { en: string; vi: string };
 	description: { en: string; vi: string };
 	tags: string[];
-	githubUrl: string;
+	githubUrl?: string;
 	thumbnailUrl?: string;
 }
 
@@ -31,11 +29,3 @@ export const PROJECTS: Project[] = [
 		githubUrl: "https://github.com/nama3k67/blog-app",
 	},
 ];
-
-// Type helper for indexing bilingual fields
-export function getLocalizedField(
-	field: { en: string; vi: string },
-	language: Language,
-): string {
-	return field[language];
-}

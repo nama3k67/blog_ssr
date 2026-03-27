@@ -47,7 +47,7 @@ function Home() {
 						className='group -m-1 flex items-center gap-2 p-1 text-sm text-zinc-600 transition hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200'
 					>
 						<Github
-							className='h-5 w-5 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300'
+							className='h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300'
 							aria-hidden='true'
 						/>
 						{t.pages.home.github}

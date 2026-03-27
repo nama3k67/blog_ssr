@@ -1,6 +1,6 @@
 export const GITHUB_URL = "https://github.com/nama3k67";
 
-export const AVATAR_URL = "/avatar.jpg";
+export const AVATAR_URL: string | undefined = "/avatar.jpg";
 
 export const CONTACT_EMAIL = "nama3k67@gmail.com";
 
@@ -27,7 +27,7 @@ export const SKILLS: SkillGroup[] = [
 export interface SocialLink {
 	label: string;
 	href: string;
-	icon: "github" | "linkedin";
+	icon: "github";
 }
 
 export const SOCIAL_LINKS: SocialLink[] = [
