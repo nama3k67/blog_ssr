@@ -46,6 +46,7 @@ export const vi = {
 			description:
 				"Khám phá các dự án và danh mục của tôi, giới thiệu công việc của tôi trong lĩnh vực công nghệ và phát triển web.",
 			heading: "Dự án",
+			githubLink: "Xem trên GitHub",
 		},
 		posts: {
 			title: "Blog - Bài viết về Dinh dưỡng, Luyện tập & Công nghệ",

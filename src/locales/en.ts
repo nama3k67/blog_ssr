@@ -45,6 +45,7 @@ export const en = {
 			description:
 				"Explore my projects and portfolio showcasing my work in technology and web development.",
 			heading: "Projects",
+			githubLink: "View on GitHub",
 		},
 		posts: {
 			title: "Blog - Articles on Nutrition, Training & Technology",
