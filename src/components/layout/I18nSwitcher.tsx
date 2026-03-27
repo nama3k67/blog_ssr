@@ -1,5 +1,3 @@
-"use client";
-
 import { useRouter } from "@tanstack/react-router";
 import { Globe } from "lucide-react";
 
@@ -28,15 +26,15 @@ function I18nSwitcher() {
 		<Select defaultValue={currentLang} onValueChange={onLocaleChange}>
 			<SelectTrigger
 				showIcon={false}
-				className="border-none shadow-none w-fit hover:bg-accent hover:text-accent-foreground rounded-full px-2"
+				className='border-none shadow-none w-fit hover:bg-accent hover:text-accent-foreground rounded-full px-2'
 			>
 				<Globe
 					strokeWidth={1.5}
-					className="size-6! stroke-teal-500 transition group-hover:fill-zinc-200 group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:fill-teal-50 dark:group-hover:stroke-teal-600"
+					className='size-6! stroke-teal-500 transition group-hover:fill-zinc-200 group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:fill-teal-50 dark:group-hover:stroke-teal-600'
 				/>
 			</SelectTrigger>
 
-			<SelectContent position="popper" align="end" sideOffset={1}>
+			<SelectContent position='popper' align='end' sideOffset={1}>
 				<SelectGroup>
 					{languages.map((lang) => (
 						<SelectItem key={lang} value={lang}>

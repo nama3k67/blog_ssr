@@ -25,26 +25,18 @@ export default function MobileNavbar({
 		<div {...props}>
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button variant="outline" className="rounded-full">
+					<Button variant='outline' className='rounded-full'>
 						<List />
 					</Button>
 				</DialogTrigger>
 				<DialogPortal>
-					<DialogOverlay className="bg-zinc-800/40! backdrop-blur-sm" />
+					<DialogOverlay className='bg-zinc-800/40! backdrop-blur-sm' />
 
-					<DialogContent className="sm:max-w-106.25 gap-0">
-						<DialogHeader className="text-start mb-4">
-							{/* <DialogTitle className="text-zinc-600 font-medium text-base">
-								<div className="flex">
-									<ThemeToggle />
-								</div>
-							</DialogTitle>
-
-							<DialogDescription hidden>{navigation.title}</DialogDescription> */}
-						</DialogHeader>
+					<DialogContent className='sm:max-w-106.25 gap-0'>
+						<DialogHeader className='text-start mb-4' />
 
 						<nav>
-							<ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300">
+							<ul className='-my-2 divide-y divide-zinc-100 text-base text-zinc-800 dark:divide-zinc-100/5 dark:text-zinc-300'>
 								{NAVBAR_ITEMS.map((item) => (
 									<MobileNavbarItem
 										key={item.key}

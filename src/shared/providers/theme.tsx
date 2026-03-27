@@ -45,6 +45,13 @@ export function ThemeProvider({
 	useEffect(() => {
 		const root = window.document.documentElement;
 
+		// Persist theme choice to localStorage
+		try {
+			localStorage.setItem(storageKey, theme);
+		} catch {
+			// Ignore storage errors (private browsing, quota exceeded, etc.)
+		}
+
 		// Remove old classes first
 		root.classList.remove("light", "dark");
 
@@ -74,7 +81,7 @@ export function ThemeProvider({
 
 		mediaQuery.addEventListener("change", handleChange);
 		return () => mediaQuery.removeEventListener("change", handleChange);
-	}, [theme]);
+	}, [theme, storageKey]);
 
 	const value = { theme, setTheme, resolvedTheme };
 
