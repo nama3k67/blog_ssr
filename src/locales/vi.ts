@@ -40,6 +40,11 @@ export const vi = {
 			description:
 				"Tìm hiểu về hành trình của tôi với tư cách là một vận động viên chạy đường dài và niềm đam mê với dinh dưỡng, luyện tập và công nghệ.",
 			heading: "Giới thiệu",
+			bio1: "Tôi là một lập trình viên full-stack tại Việt Nam, chuyên xây dựng các ứng dụng web với trọng tâm vào hiệu suất và trải nghiệm lập trình. Tôi thích làm việc toàn diện — từ thiết kế giao diện với React và Tailwind CSS đến xây dựng API với Drizzle ORM và Cloudflare Workers.",
+			bio2: "Ngoài lập trình, tôi là một vận động viên chạy đường dài đầy đam mê. Luyện tập marathon đã định hình cách tôi tiếp cận phần mềm: kiên nhẫn, tư duy hệ thống và niềm tin rằng những cải thiện nhỏ đều đặn sẽ tích lũy thành điều tuyệt vời.",
+			skills: "Kỹ năng",
+			cta: "Liên hệ",
+			ctaAriaLabel: "Gửi email cho Nama",
 		},
 		projects: {
 			title: "Dự án - Danh mục & Mẫu công việc",
