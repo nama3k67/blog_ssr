@@ -2,9 +2,47 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@plugin '@tailwindcss/typography';
+@config '../typography.ts';
+
 @custom-variant dark (&:is(.dark *));
 
+/* ─── Design System: Spotlight Theme ─── */
+/* Color palette: zinc (neutral) + teal (accent) */
+/* Typography: @tailwindcss/typography with custom prose config */
+/* Layout: max-w-7xl outer → max-w-2xl/lg:max-w-5xl inner */
+/* Glass morphism: bg-white/90 backdrop-blur-sm + ring/shadow */
+
 @theme inline {
+  /* Text scale (Spotlight custom) */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.5rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.5rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.75rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 3.5rem;
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1;
+  --text-7xl: 4.5rem;
+  --text-7xl--line-height: 1;
+  --text-8xl: 6rem;
+  --text-8xl--line-height: 1;
+  --text-9xl: 8rem;
+  --text-9xl--line-height: 1;
+
+  /* Radii */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -12,6 +50,8 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* shadcn color bindings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -45,73 +85,117 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ─── Light Theme (Spotlight: zinc-50 bg, white content, zinc text, teal accent) ─── */
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+
+  /* Page: zinc-50 background */
+  --background: var(--color-zinc-50);
+  /* Text: zinc-800 (Spotlight heading tone) */
+  --foreground: var(--color-zinc-800);
+
+  /* Card: white surface */
+  --card: var(--color-white);
+  --card-foreground: var(--color-zinc-800);
+
+  /* Popover: white */
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-zinc-800);
+
+  /* Primary: zinc-800 (Spotlight button primary) */
+  --primary: var(--color-zinc-800);
+  --primary-foreground: var(--color-zinc-100);
+
+  /* Secondary: zinc-100 (Spotlight button secondary) */
+  --secondary: var(--color-zinc-100);
+  --secondary-foreground: var(--color-zinc-900);
+
+  /* Muted: zinc-100 */
+  --muted: var(--color-zinc-100);
+  /* Body text: zinc-600 (Spotlight body tone) */
+  --muted-foreground: var(--color-zinc-600);
+
+  /* Accent: zinc-100 (for shadcn hover states) */
+  --accent: var(--color-zinc-100);
+  --accent-foreground: var(--color-zinc-900);
+
+  --destructive: var(--color-red-600);
+
+  /* Border: zinc-200 */
+  --border: var(--color-zinc-200);
+  --input: var(--color-zinc-200);
+  /* Ring: teal-500 (accent focus ring) */
+  --ring: var(--color-teal-500);
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  --sidebar: var(--color-zinc-50);
+  --sidebar-foreground: var(--color-zinc-800);
+  --sidebar-primary: var(--color-zinc-800);
+  --sidebar-primary-foreground: var(--color-zinc-50);
+  --sidebar-accent: var(--color-zinc-100);
+  --sidebar-accent-foreground: var(--color-zinc-900);
+  --sidebar-border: var(--color-zinc-200);
+  --sidebar-ring: var(--color-teal-500);
 }
 
+/* ─── Dark Theme (Spotlight: black bg, zinc-900 content, zinc text, teal-400 accent) ─── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Page: black */
+  --background: var(--color-black);
+  /* Text: zinc-100 */
+  --foreground: var(--color-zinc-100);
+
+  /* Card: zinc-900 */
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-100);
+
+  /* Popover: zinc-900 */
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-100);
+
+  /* Primary: zinc-700 (dark mode button) */
+  --primary: var(--color-zinc-700);
+  --primary-foreground: var(--color-zinc-100);
+
+  /* Secondary: zinc-800/50 */
+  --secondary: color-mix(in oklch, var(--color-zinc-800) 50%, transparent);
+  --secondary-foreground: var(--color-zinc-300);
+
+  /* Muted: zinc-800 */
+  --muted: var(--color-zinc-800);
+  --muted-foreground: var(--color-zinc-400);
+
+  /* Accent: zinc-800/50 (for shadcn hover states) */
+  --accent: color-mix(in oklch, var(--color-zinc-800) 50%, transparent);
+  --accent-foreground: var(--color-zinc-100);
+
+  --destructive: var(--color-red-400);
+
+  /* Border: zinc-700/40 (Spotlight dark border) */
+  --border: color-mix(in oklch, var(--color-zinc-700) 40%, transparent);
+  --input: var(--color-zinc-700);
+  /* Ring: teal-400 */
+  --ring: var(--color-teal-400);
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+
+  --sidebar: var(--color-zinc-900);
+  --sidebar-foreground: var(--color-zinc-100);
+  --sidebar-primary: var(--color-teal-400);
+  --sidebar-primary-foreground: var(--color-zinc-100);
+  --sidebar-accent: var(--color-zinc-800);
+  --sidebar-accent-foreground: var(--color-zinc-100);
+  --sidebar-border: color-mix(in oklch, var(--color-zinc-700) 40%, transparent);
+  --sidebar-ring: var(--color-teal-400);
 }
 
 @layer base {
@@ -120,5 +204,69 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ─── Syntax Highlighting (Spotlight Prism theme) ─── */
+@layer components {
+  /* Exclude .w-md-editor-text-pre — the MD editor's syntax overlay pre also
+     carries a language-* class, and this zinc-100 color makes it invisible
+     on light backgrounds. The editor manages its own text color via
+     --color-fg-default on the parent .w-md-editor element. */
+  pre[class*="language-"]:not(.w-md-editor-text-pre) {
+    color: var(--color-zinc-100);
+  }
+
+  .token.tag,
+  .token.class-name,
+  .token.selector,
+  .token.selector .class,
+  .token.selector.class,
+  .token.function {
+    color: var(--color-pink-400);
+  }
+
+  .token.attr-name,
+  .token.keyword,
+  .token.rule,
+  .token.pseudo-class,
+  .token.important {
+    color: var(--color-zinc-300);
+  }
+
+  .token.module {
+    color: var(--color-pink-400);
+  }
+
+  .token.attr-value,
+  .token.class,
+  .token.string,
+  .token.property {
+    color: var(--color-teal-300);
+  }
+
+  .token.punctuation,
+  .token.attr-equals {
+    color: var(--color-zinc-500);
+  }
+
+  .token.unit,
+  .language-css .token.function {
+    color: var(--color-sky-200);
+  }
+
+  .token.comment,
+  .token.operator,
+  .token.combinator {
+    color: var(--color-zinc-400);
   }
 }

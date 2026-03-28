@@ -1,39 +1,20 @@
-import {
-	SignedIn,
-	SignedOut,
-	SignInButton,
-	UserButton,
-} from "@clerk/tanstack-react-start";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { defaultLanguage } from "~/shared/constants";
+import { getBrowserLanguage, getValidLanguage } from "~/shared/utils/i18n";
 
 export const Route = createFileRoute("/")({
-	head: () => ({
-		meta: [
-			{
-				title: "Home - Nutrition, Training & Technology Blog",
-			},
-			{
-				name: "description",
-				content:
-					"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
-			},
-		],
-	}),
-	component: Home,
-});
+	beforeLoad: () => {
+		let preferredLang = defaultLanguage;
 
-function Home() {
-	return (
-		<div>
-			<h1>Index Route</h1>
-			<SignedIn>
-				<p>You are signed in</p>
-				<UserButton />
-			</SignedIn>
-			<SignedOut>
-				<p>You are signed out</p>
-				<SignInButton />
-			</SignedOut>
-		</div>
-	);
-}
+		if (typeof window !== "undefined") {
+			// Priority: localStorage preference → browser language → default
+			const stored = localStorage.getItem("language");
+			preferredLang = stored ? getValidLanguage(stored) : getBrowserLanguage();
+		}
+
+		throw redirect({
+			to: `/${preferredLang}/` as "/$lang",
+			params: { lang: preferredLang },
+		});
+	},
+});

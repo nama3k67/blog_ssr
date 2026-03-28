@@ -1,0 +1,194 @@
+version: "6.0.0"
+project_name: "blog app"
+project_level: 3
+current_sprint: 1
+sprint_plan_path: "docs/sprint-plan-blog-app-2026-03-24.md"
+
+sprints:
+  - sprint_number: 1
+    start_date: "2026-03-24"
+    end_date: "2026-03-28"
+    capacity_points: 15
+    committed_points: 12
+    completed_points: 0
+    status: "not_started"
+    goal: "Complete MVP core — post editing, authorization, and admin navigation"
+    stories:
+      - story_id: "STORY-001"
+        title: "US1 Translation Badges & Localization"
+        points: 2
+        status: "not_started"
+        tasks: ["T032", "T034"]
+      - story_id: "STORY-003"
+        title: "Post Authorization Guards"
+        points: 3
+        status: "not_started"
+        tasks: ["T037", "T038"]
+      - story_id: "STORY-002"
+        title: "Post Edit & Delete Flow"
+        points: 5
+        status: "not_started"
+        tasks: ["T046", "T047", "T048", "T049"]
+      - story_id: "STORY-007"
+        title: "Admin Navigation"
+        points: 2
+        status: "not_started"
+        tasks: ["T071", "T072"]
+
+  - sprint_number: 2
+    start_date: "2026-03-31"
+    end_date: "2026-04-04"
+    capacity_points: 15
+    committed_points: 11
+    completed_points: 0
+    status: "not_started"
+    goal: "Complete MVP — translation workflow and full admin management"
+    stories:
+      - story_id: "STORY-005"
+        title: "Admin All Posts Management"
+        points: 3
+        status: "not_started"
+        tasks: ["T064"]
+      - story_id: "STORY-006"
+        title: "Admin Feedback & Resubmit Flow"
+        points: 3
+        status: "not_started"
+        tasks: ["T069", "T070"]
+      - story_id: "STORY-004"
+        title: "Translation Workflow"
+        points: 5
+        status: "not_started"
+        tasks: ["T053", "T054"]
+
+  - sprint_number: 3
+    start_date: "2026-04-07"
+    end_date: "2026-04-11"
+    capacity_points: 15
+    committed_points: 13
+    completed_points: 0
+    status: "not_started"
+    goal: "Responsive design foundations and SEO meta infrastructure"
+    stories:
+      - story_id: "STORY-008"
+        title: "Responsive Layout – Core Pages"
+        points: 5
+        status: "not_started"
+        tasks: ["T081", "T082", "T083", "T084"]
+      - story_id: "STORY-010"
+        title: "SEO Meta & Structured Data"
+        points: 5
+        status: "not_started"
+        tasks: ["T091", "T092", "T096", "T098"]
+      - story_id: "STORY-011"
+        title: "Sitemap & Robots"
+        points: 3
+        status: "not_started"
+        tasks: ["T093", "T094", "T095"]
+
+  - sprint_number: 4
+    start_date: "2026-04-14"
+    end_date: "2026-04-18"
+    capacity_points: 15
+    committed_points: 13
+    completed_points: 0
+    status: "not_started"
+    goal: "Complete responsive polish, SEO validation, and dark mode"
+    stories:
+      - story_id: "STORY-009"
+        title: "Responsive Layout – Forms & Admin"
+        points: 5
+        status: "not_started"
+        tasks: ["T085", "T086", "T087", "T088"]
+      - story_id: "STORY-012"
+        title: "SEO Validation"
+        points: 3
+        status: "not_started"
+        tasks: ["T097", "T099", "T100"]
+      - story_id: "STORY-016"
+        title: "Dark Mode Polish"
+        points: 5
+        status: "not_started"
+        tasks: ["T120", "T121", "T122", "T123", "T124", "T125"]
+
+  - sprint_number: 5
+    start_date: "2026-04-21"
+    end_date: "2026-04-25"
+    capacity_points: 15
+    committed_points: 13
+    completed_points: 0
+    status: "not_started"
+    goal: "Search and filter — full-text search with category/tag filtering"
+    stories:
+      - story_id: "STORY-013"
+        title: "Search Infrastructure"
+        points: 5
+        status: "not_started"
+        tasks: ["T101", "T102", "T103", "T104"]
+      - story_id: "STORY-014"
+        title: "Search & Filter UI"
+        points: 8
+        status: "not_started"
+        tasks: ["T105", "T106", "T107", "T108", "T109", "T110", "T111", "T112", "T113"]
+
+  - sprint_number: 6
+    start_date: "2026-04-28"
+    end_date: "2026-05-01"
+    capacity_points: 15
+    committed_points: 13
+    completed_points: 0
+    status: "not_started"
+    goal: "Category/tag routes and UX polish"
+    stories:
+      - story_id: "STORY-015"
+        title: "Category & Tag Detail Routes"
+        points: 5
+        status: "not_started"
+        tasks: ["T114", "T115", "T116", "T117"]
+      - story_id: "STORY-019"
+        title: "UX Polish"
+        points: 8
+        status: "not_started"
+        tasks: ["T139", "T140", "T141", "T142", "T143", "T144"]
+
+  - sprint_number: 7
+    start_date: "2026-05-05"
+    end_date: "2026-05-09"
+    capacity_points: 15
+    committed_points: 15
+    completed_points: 0
+    status: "not_started"
+    goal: "Performance optimization, benchmarking, accessibility, and final cleanup"
+    stories:
+      - story_id: "STORY-017"
+        title: "Performance Audit & Optimization"
+        points: 5
+        status: "not_started"
+        tasks: ["T126", "T129", "T130", "T131", "T132"]
+      - story_id: "STORY-018"
+        title: "Performance Benchmarking"
+        points: 5
+        status: "not_started"
+        tasks: ["T133", "T134", "T135", "T136", "T137"]
+      - story_id: "STORY-020"
+        title: "Accessibility & Final Cleanup"
+        points: 5
+        status: "not_started"
+        tasks: ["T145", "T146", "T147", "T148", "T149"]
+
+velocity:
+  sprint_1: null
+  sprint_2: null
+  sprint_3: null
+  sprint_4: null
+  sprint_5: null
+  sprint_6: null
+  sprint_7: null
+  rolling_average: null
+
+team:
+  size: 1
+  experience: "senior"
+  sprint_length_weeks: 1
+  productive_hours_per_day: 6
+  capacity_per_sprint: 15
+  committed_per_sprint: 13

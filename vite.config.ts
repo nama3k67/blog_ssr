@@ -16,7 +16,11 @@ export default defineConfig({
 		tanstackStart(),
 		viteReact(),
 		tailwindcss(),
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		cloudflare({
+			viteEnvironment: { name: "ssr" },
+			// Use local Miniflare in CI — remote proxy requires Cloudflare auth
+			remoteBindings: !process.env.CI,
+		}),
 	],
 	resolve: {
 		alias: [

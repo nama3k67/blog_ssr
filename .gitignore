@@ -1,5 +1,4 @@
 node_modules
-package-lock.json
 yarn.lock
 
 .DS_Store
@@ -18,8 +17,10 @@ yarn.lock
 # Sentry Config File
 .env.sentry-build-plugin
 /test-results/
+/playwright-report/
 /blob-report/
 dist
 .vscode/mcp.json
 .tanstack
 .wrangler
+bundled

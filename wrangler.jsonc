@@ -1,37 +1,51 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
-  "compatibility_date": "2025-09-02",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry",
-  "env": {
-    "production": {
-      "vars": {
-        "VITE_CLERK_PUBLISHABLE_KEY": "pk_test_Y2hlZXJmdWwtbWFybW9zZXQtMzMuY2xlcmsuYWNjb3VudHMuZGV2JA",
-        "USE_LOCAL_DB": "false",
-        "NODE_ENV": "production"
-      }
-    },
-    "development": {
-      "vars": {
-        "USE_LOCAL_DB": "true",
-        "NODE_ENV": "development"
-      }
-    }
-  },
-  "observability": {
-    "enabled": false,
-    "head_sampling_rate": 1,
-    "logs": {
-      "enabled": true,
-      "head_sampling_rate": 1,
-      "persist": true,
-      "invocation_logs": true
-    },
-    "traces": {
-      "enabled": false,
-      "persist": true,
-      "head_sampling_rate": 1
-    }
-  }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "tanstack-start-app",
+	"compatibility_date": "2025-09-02",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"main": "@tanstack/react-start/server-entry",
+	"env": {
+		"production": {
+			"vars": {
+				"VITE_CLERK_PUBLISHABLE_KEY": "pk_test_Y2hlZXJmdWwtbWFybW9zZXQtMzMuY2xlcmsuYWNjb3VudHMuZGV2JA",
+				"USE_LOCAL_DB": "false",
+				"NODE_ENV": "production"
+			}
+		},
+		"development": {
+			"vars": {
+				"USE_LOCAL_DB": "true",
+				"NODE_ENV": "development"
+			}
+		}
+	},
+	// R2 bucket binding (for direct Worker binding access)
+	// Uncomment after creating bucket: npx wrangler r2 bucket create blog-images
+	// "r2_buckets": [
+	//   { "binding": "BLOG_IMAGES", "bucket_name": "blog-images" }
+	// ],
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true
+		},
+		"traces": {
+			"enabled": false,
+			"persist": true,
+			"head_sampling_rate": 1
+		}
+	},
+	"r2_buckets": [
+		{
+			"bucket_name": "blog-images",
+			"binding": "blog_images",
+			"remote": true
+		}
+	]
 }
