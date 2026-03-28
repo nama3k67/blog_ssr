@@ -1,15 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { lazy, Suspense } from "react";
 import { Container } from "~/components/shared/Container";
+import { Markdown } from "~/components/shared/Markdown";
 import { Badge } from "~/components/ui/badge";
+import { useI18n } from "~/shared/providers/i18n";
 import { fetchPost } from "~/shared/services/post";
 import { formatDate } from "~/shared/utils/date";
-
-const Markdown = lazy(() =>
-	import("~/components/shared/Markdown").then((m) => ({
-		default: m.Markdown,
-	})),
-);
 
 export const Route = createFileRoute("/$lang/posts/$slug")({
 	loader: async ({ params }) => {
@@ -56,13 +51,40 @@ export const Route = createFileRoute("/$lang/posts/$slug")({
 			},
 		],
 	}),
+	errorComponent: PostError,
 	component: RouteComponent,
 });
+
+function PostError() {
+	const { lang } = Route.useParams();
+	const { t } = useI18n();
+	return (
+		<Container className='mt-16 sm:mt-32'>
+			<div className='mx-auto max-w-2xl text-center'>
+				<h1 className='text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100'>
+					{t.pages.posts.notFound}
+				</h1>
+				<p className='mt-4 text-base text-zinc-600 dark:text-zinc-400'>
+					{t.pages.posts.notFoundMessage}
+				</p>
+				<Link
+					to='/$lang/posts'
+					params={{ lang }}
+					search={{ page: 1 }}
+					className='mt-8 inline-flex items-center text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300'
+				>
+					← {t.pages.posts.heading}
+				</Link>
+			</div>
+		</Container>
+	);
+}
 
 function RouteComponent() {
 	const { post, isFallback, originalLang, translationSlug } =
 		Route.useLoaderData();
 	const { lang } = Route.useParams();
+	const { t } = useI18n();
 
 	return (
 		<Container className='mt-16 sm:mt-32'>
@@ -70,17 +92,15 @@ function RouteComponent() {
 				<div className='mx-auto max-w-2xl'>
 					{/* Fallback language banner */}
 					{isFallback && (
-						<div className='mb-6 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive'>
-							{lang === "en"
-								? `This article is not available in English. Showing Vietnamese version.`
-								: `Bài viết này không có bản tiếng Việt. Đang hiển thị bản tiếng Anh.`}
+						<div className='mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-950/20 dark:text-red-400'>
+							{`${t.pages.posts.fallbackOnly} ${lang === "en" ? t.pages.posts.langVi : t.pages.posts.langEn}.`}
 							{translationSlug && (
 								<Link
 									to='/$lang/posts/$slug'
 									params={{ lang: originalLang, slug: translationSlug }}
 									className='ml-2 underline'
 								>
-									{lang === "en" ? "View original" : "Xem bản gốc"}
+									{t.pages.posts.viewOriginal}
 								</Link>
 							)}
 						</div>
@@ -88,9 +108,9 @@ function RouteComponent() {
 
 					{/* Translation toggle */}
 					{!isFallback && translationSlug && (
-						<div className='mb-6 flex items-center justify-between rounded-2xl border border-border bg-muted/50 p-4'>
-							<span className='text-sm text-muted-foreground'>
-								{lang === "en" ? "Also available in:" : "Cũng có sẵn bằng:"}
+						<div className='mb-6 flex items-center justify-between rounded-2xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-700/40 dark:bg-zinc-800/50'>
+							<span className='text-sm text-zinc-600 dark:text-zinc-400'>
+								{t.pages.posts.translationAvailable}
 							</span>
 							<Link
 								to='/$lang/posts/$slug'
@@ -98,16 +118,16 @@ function RouteComponent() {
 									lang: lang === "en" ? "vi" : "en",
 									slug: translationSlug,
 								}}
-								className='text-sm font-medium text-primary hover:text-primary/80'
+								className='text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300'
 							>
-								{lang === "en" ? "🇻🇳 Tiếng Việt" : "🇬🇧 English"}
+								{lang === "en" ? t.pages.posts.langVi : t.pages.posts.langEn}
 							</Link>
 						</div>
 					)}
 
 					<article>
 						<header className='flex flex-col'>
-							<h1 className='mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
+							<h1 className='mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100'>
 								{post.title}
 							</h1>
 							<time
@@ -117,8 +137,31 @@ function RouteComponent() {
 								<span className='h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500' />
 								<span className='ml-3'>{formatDate(post.publishedAt)}</span>
 							</time>
+
+							{/* Author info */}
+							{post.author && (
+								<div className='mt-4 flex items-center gap-3'>
+									{post.author.imageUrl && (
+										<img
+											src={post.author.imageUrl}
+											alt={[post.author.firstName, post.author.lastName]
+												.filter(Boolean)
+												.join(" ")}
+											loading='eager'
+											className='h-8 w-8 rounded-full object-cover'
+										/>
+									)}
+									<span className='text-sm text-zinc-600 dark:text-zinc-400'>
+										{t.pages.posts.by}{" "}
+										{[post.author.firstName, post.author.lastName]
+											.filter(Boolean)
+											.join(" ")}
+									</span>
+								</div>
+							)}
+
 							{post.description && (
-								<p className='mt-4 text-base text-muted-foreground'>
+								<p className='mt-4 text-base text-zinc-600 dark:text-zinc-400'>
 									{post.description}
 								</p>
 							)}
@@ -135,18 +178,19 @@ function RouteComponent() {
 								</div>
 							)}
 						</header>
+
+						{/* Featured image */}
+						{post.featuredImage && (
+							<img
+								src={post.featuredImage}
+								alt={post.title || "Post featured image"}
+								loading='lazy'
+								className='mt-8 w-full rounded-2xl object-cover'
+							/>
+						)}
+
 						<div className='mt-8'>
-							<Suspense
-								fallback={
-									<div className='animate-pulse space-y-4'>
-										<div className='h-4 w-3/4 rounded bg-muted' />
-										<div className='h-4 w-full rounded bg-muted' />
-										<div className='h-4 w-5/6 rounded bg-muted' />
-									</div>
-								}
-							>
-								<Markdown content={post.content} />
-							</Suspense>
+							<Markdown content={post.content} />
 						</div>
 					</article>
 				</div>

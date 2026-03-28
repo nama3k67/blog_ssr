@@ -64,6 +64,15 @@ export const en = {
 			noPostsFound: "No posts found.",
 			pageNum: "Page",
 			pageOf: "of",
+			notFound: "Post not found",
+			notFoundMessage:
+				"The article you're looking for doesn't exist or has been removed.",
+			fallbackOnly: "This article is only available in",
+			viewOriginal: "View original",
+			translationAvailable: "Also available in:",
+			langVi: "Vietnamese",
+			langEn: "English",
+			by: "By",
 		},
 	},
 	common: {
