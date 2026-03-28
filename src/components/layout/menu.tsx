@@ -20,25 +20,21 @@ export default function UserMenu() {
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger
 				asChild
-				className="pointer-events-auto rounded-full shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur transition dark:bg-zinc-800/90 dark:ring-white/10 dark:hover:ring-white/20"
+				className='pointer-events-auto rounded-full shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 backdrop-blur transition dark:bg-zinc-800/90 dark:ring-white/10 dark:hover:ring-white/20'
 			>
-				<Button variant="ghost" className="border-none">
+				<Button variant='ghost' className='border-none'>
 					<div>{capitalizeFirstLetter(user?.firstName)}</div>
 					<ChevronDown />
 				</Button>
 			</DropdownMenuTrigger>
 
-			<DropdownMenuContent className="pointer-events-auto" align="end">
+			<DropdownMenuContent className='pointer-events-auto' align='end'>
 				<DropdownMenuItem>{t.userMenu.userInfo}</DropdownMenuItem>
 				<DropdownMenuItem asChild>
-					<Link to={localizedPath("/new")}>
-						{t.userMenu.blogCreate}
-					</Link>
+					<Link to={localizedPath("/new")}>{t.userMenu.blogCreate}</Link>
 				</DropdownMenuItem>
 				<SignOutButton redirectUrl={localizedPath("/")}>
-					<DropdownMenuItem>
-						{t.userMenu.logout}
-					</DropdownMenuItem>
+					<DropdownMenuItem>{t.userMenu.logout}</DropdownMenuItem>
 				</SignOutButton>
 			</DropdownMenuContent>
 		</DropdownMenu>

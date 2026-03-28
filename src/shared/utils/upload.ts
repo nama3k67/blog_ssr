@@ -1,12 +1,4 @@
-const ALLOWED_EXTENSIONS = [
-	"jpg",
-	"jpeg",
-	"png",
-	"gif",
-	"webp",
-	"svg",
-	"avif",
-];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"];
 
 export function isImageFile(file: File): boolean {
 	return (
@@ -70,9 +62,7 @@ export function insertImageMarkdown(
 /**
  * Extract files from a paste or drop event that are images.
  */
-export function extractImageFiles(
-	dataTransfer: DataTransfer | null,
-): File[] {
+export function extractImageFiles(dataTransfer: DataTransfer | null): File[] {
 	if (!dataTransfer) return [];
 
 	const files: File[] = [];

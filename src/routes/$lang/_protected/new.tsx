@@ -4,8 +4,8 @@ import { toast } from "sonner";
 
 import { NewPostForm } from "~/components/post/NewPostForm";
 import { dictionaries } from "~/locales";
-import { browserQueryClient } from "~/shared/providers/tanstackQuery";
 import { useI18n } from "~/shared/providers/i18n";
+import { browserQueryClient } from "~/shared/providers/tanstackQuery";
 import type { CreatePostFormInput } from "~/shared/schemas/post";
 import { createPostFn } from "~/shared/services/post";
 import { categoriesOptions, tagsOptions } from "~/shared/tanstackQueries/post";
@@ -52,7 +52,7 @@ function NewPostPage() {
 			toast.success(t.editor.draftSaved);
 		},
 		onError: (err) => {
-			console.log("🚀 ~ NewPostPage ~ err:", err)
+			console.log("🚀 ~ NewPostPage ~ err:", err);
 			const message =
 				err instanceof Error && err.message === "SLUG_TAKEN"
 					? t.editor.slugTaken
@@ -62,8 +62,8 @@ function NewPostPage() {
 	});
 
 	return (
-		<div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-			<h1 className="mb-8 text-3xl font-bold tracking-tight text-foreground">
+		<div className='mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8'>
+			<h1 className='mb-8 text-3xl font-bold tracking-tight text-foreground'>
 				{t.common.newPost}
 			</h1>
 

@@ -18,18 +18,10 @@ export function Markdown({ content, className }: MarkdownProps) {
 				remarkPlugins={[remarkGfm]}
 				rehypePlugins={[rehypeRaw]}
 				components={{
-					code({
-						className: codeClassName,
-						children,
-						...props
-					}) {
+					code({ className: codeClassName, children, ...props }) {
 						const isInline = !String(children).includes("\n");
 						if (isInline) {
-							return (
-								<code {...props}>
-									{children}
-								</code>
-							);
+							return <code {...props}>{children}</code>;
 						}
 
 						const match = /language-(\w+)/.exec(codeClassName || "");

@@ -90,34 +90,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<head>
 					<HeadContent />
 				</head>
-				<body
-					className="bg-zinc-50 dark:bg-black"
-					suppressHydrationWarning
-				>
+				<body className='bg-zinc-50 dark:bg-black' suppressHydrationWarning>
 					<ClerkProvider>
 						<TanstackQueryProvider>
-						<ThemeProvider defaultTheme="system" storageKey="my-app-theme">
-							<div className="flex min-h-screen w-full">
-								<div className="relative flex min-h-screen w-full flex-col">
-									{/* Spotlight background column */}
-									<div className="fixed inset-0 flex justify-center sm:px-8">
-										<div className="flex w-full max-w-7xl lg:px-8">
-											<div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20" />
+							<ThemeProvider defaultTheme='system' storageKey='my-app-theme'>
+								<div className='flex min-h-screen w-full'>
+									<div className='relative flex min-h-screen w-full flex-col'>
+										{/* Spotlight background column */}
+										<div className='fixed inset-0 flex justify-center sm:px-8'>
+											<div className='flex w-full max-w-7xl lg:px-8'>
+												<div className='w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20' />
+											</div>
+										</div>
+										<div className='relative flex min-h-screen w-full flex-col'>
+											<Header />
+											<main className='flex-auto'>{children}</main>
+											<Footer />
 										</div>
 									</div>
-									<div className="relative flex min-h-screen w-full flex-col">
-										<Header />
-										<main className="flex-auto">{children}</main>
-										<Footer />
-									</div>
 								</div>
-							</div>
-							<Toaster richColors closeButton />
-						</ThemeProvider>
+								<Toaster richColors closeButton />
+							</ThemeProvider>
 						</TanstackQueryProvider>
 					</ClerkProvider>
 
-					<TanStackRouterDevtools position="bottom-right" />
+					<TanStackRouterDevtools position='bottom-right' />
 					<Scripts />
 				</body>
 			</html>

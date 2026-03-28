@@ -1,12 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-
+import { FormField } from "~/components/form/FormField";
 import { FormInput } from "~/components/form/FormInput";
 import { FormSelect } from "~/components/form/FormSelect";
 import { FormTextarea } from "~/components/form/FormTextarea";
-import { FormField } from "~/components/form/FormField";
 import { MarkdownEditor } from "~/components/post/MarkdownEditor";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -21,8 +20,8 @@ import { languageNames, languages } from "~/shared/constants/i18n";
 import { cn } from "~/shared/lib/utils";
 import { useI18n } from "~/shared/providers/i18n";
 import {
-	createPostFormSchema,
 	type CreatePostFormInput,
+	createPostFormSchema,
 } from "~/shared/schemas/post";
 import {
 	categoriesOptions,
@@ -37,7 +36,11 @@ interface NewPostFormProps {
 	isSubmitting: boolean;
 }
 
-export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) {
+export function NewPostForm({
+	lang,
+	onSubmit,
+	isSubmitting,
+}: NewPostFormProps) {
 	const { t } = useI18n();
 
 	const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
@@ -101,10 +104,10 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 				void form.handleSubmit({ publish: true });
 			}}
 		>
-			<div className="flex flex-col gap-6">
-				<div className="grid gap-6 sm:grid-cols-[1fr_160px]">
+			<div className='flex flex-col gap-6'>
+				<div className='grid gap-6 sm:grid-cols-[1fr_160px]'>
 					<form.Field
-						name="title"
+						name='title'
 						validators={{
 							onBlur: ({ value }) =>
 								!value.trim() ? t.editor.titleRequired : undefined,
@@ -120,7 +123,7 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 						)}
 					</form.Field>
 
-					<form.Field name="lang">
+					<form.Field name='lang'>
 						{(field) => (
 							<FormSelect
 								field={field}
@@ -134,29 +137,29 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 					</form.Field>
 				</div>
 
-				<form.Field name="slug">
+				<form.Field name='slug'>
 					{(field) => (
 						<Field data-invalid={!!slugError || undefined}>
-							<FieldLabel htmlFor="slug">
+							<FieldLabel htmlFor='slug'>
 								{t.editor.slug}
 								{isCheckingSlug && (
-									<span className="text-xs text-muted-foreground">
+									<span className='text-xs text-muted-foreground'>
 										{t.common.loading}
 									</span>
 								)}
 								{isAvailable && (
-									<span className="text-xs text-green-600 dark:text-green-400">
+									<span className='text-xs text-green-600 dark:text-green-400'>
 										✓
 									</span>
 								)}
 							</FieldLabel>
 							<Input
-								id="slug"
+								id='slug'
 								value={field.state.value}
 								onChange={(e) => handleSlugChange(e.target.value)}
 								onBlur={field.handleBlur}
 								placeholder={t.editor.slugPlaceholder}
-								className="font-mono text-sm"
+								className='font-mono text-sm'
 								aria-invalid={!!slugError || undefined}
 							/>
 							{slugError && <FieldError>{slugError}</FieldError>}
@@ -164,7 +167,7 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 					)}
 				</form.Field>
 
-				<form.Field name="description">
+				<form.Field name='description'>
 					{(field) => (
 						<FormTextarea
 							field={field}
@@ -175,29 +178,29 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 					)}
 				</form.Field>
 
-				<form.Field name="categoryId">
+				<form.Field name='categoryId'>
 					{(field) => (
 						<FormSelect
 							field={field}
-							label="Category"
-							placeholder="Select a category..."
-							emptyLabel="No category"
+							label='Category'
+							placeholder='Select a category...'
+							emptyLabel='No category'
 							options={categories.map((category) => ({
 								value: category.id,
 								label: category.name,
 							}))}
-							description="Optional - group this post under a topic."
+							description='Optional - group this post under a topic.'
 						/>
 					)}
 				</form.Field>
 
-				<form.Field name="tagIds">
+				<form.Field name='tagIds'>
 					{(field) => {
 						const selectedTagIds = field.state.value;
 						return (
 							<Field>
 								<FieldLabel>Tags</FieldLabel>
-								<div className="flex flex-wrap gap-2">
+								<div className='flex flex-wrap gap-2'>
 									{tags.map((tag) => {
 										const isSelected = selectedTagIds.includes(tag.id);
 										return (
@@ -232,7 +235,7 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 				</form.Field>
 
 				<form.Field
-					name="content"
+					name='content'
 					validators={{
 						onBlur: ({ value }) =>
 							value.trim() ? undefined : t.editor.contentRequired,
@@ -252,10 +255,10 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 					)}
 				</form.Field>
 
-				<div className="flex items-center justify-end gap-3 border-t border-border pt-6">
+				<div className='flex items-center justify-end gap-3 border-t border-border pt-6'>
 					<Button
-						type="button"
-						variant="outline"
+						type='button'
+						variant='outline'
 						onClick={() => {
 							void form.handleSubmit({ publish: false });
 						}}
@@ -263,7 +266,7 @@ export function NewPostForm({ lang, onSubmit, isSubmitting }: NewPostFormProps) 
 					>
 						{isSubmitting ? t.editor.saving : t.editor.saveDraft}
 					</Button>
-					<Button type="submit" disabled={isSubmitting || isTaken}>
+					<Button type='submit' disabled={isSubmitting || isTaken}>
 						{isSubmitting ? t.editor.publishing : t.editor.publish}
 					</Button>
 				</div>

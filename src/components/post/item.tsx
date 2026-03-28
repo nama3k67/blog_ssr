@@ -10,16 +10,16 @@ type Props = {
 
 export const PostItem = ({ data, linkProps }: Props) => {
 	return (
-		<article className="md:grid md:grid-cols-4 md:items-baseline">
-			<Card className="md:col-span-3">
+		<article className='md:grid md:grid-cols-4 md:items-baseline'>
+			<Card className='md:col-span-3'>
 				<Card.Link {...linkProps}>
 					<Card.Title>{data.title}</Card.Title>
 				</Card.Link>
 
 				<Card.Eyebrow
-					as="time"
+					as='time'
 					dateTime={data.date}
-					className="md:hidden"
+					className='md:hidden'
 					decorate
 				>
 					{formatDate(data.date)}
@@ -31,9 +31,9 @@ export const PostItem = ({ data, linkProps }: Props) => {
 			</Card>
 
 			<Card.Eyebrow
-				as="time"
+				as='time'
 				dateTime={data.date}
-				className="mt-1 hidden md:block"
+				className='mt-1 hidden md:block'
 			>
 				{formatDate(data.date)}
 			</Card.Eyebrow>

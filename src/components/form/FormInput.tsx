@@ -1,11 +1,18 @@
 import type { ComponentProps } from "react";
-
-import { Field, FieldDescription, FieldError, FieldLabel } from "~/components/ui/field";
+import type { FormFieldMeta } from "~/components/form/form-field-meta";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldLabel,
+} from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 
-import type { FormFieldMeta } from "~/components/form/form-field-meta";
-
-interface FormInputProps extends Omit<ComponentProps<typeof Input>, "value" | "onChange" | "onBlur" | "id"> {
+interface FormInputProps
+	extends Omit<
+		ComponentProps<typeof Input>,
+		"value" | "onChange" | "onBlur" | "id"
+	> {
 	field: FormFieldMeta<string>;
 	label: string;
 	description?: string;
@@ -13,8 +20,15 @@ interface FormInputProps extends Omit<ComponentProps<typeof Input>, "value" | "o
 	onValueChange?: (value: string) => void;
 }
 
-export function FormInput({ field, label, description, onValueChange, ...inputProps }: FormInputProps) {
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+export function FormInput({
+	field,
+	label,
+	description,
+	onValueChange,
+	...inputProps
+}: FormInputProps) {
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<Field data-invalid={hasError || undefined}>

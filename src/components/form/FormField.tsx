@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
-
-import { Field, FieldDescription, FieldError, FieldLabel } from "~/components/ui/field";
-
 import type { FormFieldMeta } from "~/components/form/form-field-meta";
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldLabel,
+} from "~/components/ui/field";
 
 interface FormFieldProps {
 	/** TanStack Form field instance – only the `.state.meta` shape is needed */
@@ -22,7 +25,8 @@ export function FormField({
 	description,
 	children,
 }: FormFieldProps) {
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<Field data-invalid={hasError || undefined}>

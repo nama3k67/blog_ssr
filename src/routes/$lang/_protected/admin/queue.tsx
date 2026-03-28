@@ -64,69 +64,70 @@ function QueuePage() {
 
 	const handleRejectSubmit = () => {
 		if (!rejectPostId || !rejectFeedback.trim()) return;
-		rejectMutation.mutate({ postId: rejectPostId, feedback: rejectFeedback.trim() });
+		rejectMutation.mutate({
+			postId: rejectPostId,
+			feedback: rejectFeedback.trim(),
+		});
 	};
 
 	const isProcessing = approveMutation.isPending || rejectMutation.isPending;
 
 	return (
-		<Container className="mt-16 sm:mt-32">
-			<header className="max-w-2xl">
-				<h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+		<Container className='mt-16 sm:mt-32'>
+			<header className='max-w-2xl'>
+				<h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
 					Approval Queue
 				</h1>
-				<p className="mt-6 text-base text-muted-foreground">
+				<p className='mt-6 text-base text-muted-foreground'>
 					Review and approve posts submitted by authors
 				</p>
 			</header>
 
-			<div className="mt-16 sm:mt-20">
+			<div className='mt-16 sm:mt-20'>
 				{posts.length === 0 ? (
-					<div className="rounded-2xl border border-border bg-muted/50 p-8 text-center">
-						<p className="text-muted-foreground">
-							No pending posts to review
-						</p>
+					<div className='rounded-2xl border border-border bg-muted/50 p-8 text-center'>
+						<p className='text-muted-foreground'>No pending posts to review</p>
 					</div>
 				) : (
-					<div className="flex flex-col gap-6">
+					<div className='flex flex-col gap-6'>
 						{posts.map((post) => (
 							<div
 								key={post.id}
-								className="rounded-2xl border border-border p-6"
+								className='rounded-2xl border border-border p-6'
 							>
-								<div className="flex items-start justify-between gap-4">
-									<div className="flex-1">
-										<h3 className="text-xl font-semibold text-foreground">
+								<div className='flex items-start justify-between gap-4'>
+									<div className='flex-1'>
+										<h3 className='text-xl font-semibold text-foreground'>
 											{post.title}
 										</h3>
-										<p className="mt-2 text-sm text-muted-foreground">
+										<p className='mt-2 text-sm text-muted-foreground'>
 											{post.description}
 										</p>
-										<div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+										<div className='mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
 											<span>
 												{post.author?.firstName} {post.author?.lastName}
 											</span>
-											<Badge variant="outline">{post.lang.toUpperCase()}</Badge>
-											<span className="font-mono text-xs">/{post.slug}</span>
+											<Badge variant='outline'>{post.lang.toUpperCase()}</Badge>
+											<span className='font-mono text-xs'>/{post.slug}</span>
 											{post.category && (
-												<Badge variant="secondary">{post.category.name}</Badge>
+												<Badge variant='secondary'>{post.category.name}</Badge>
 											)}
 										</div>
-										<div className="mt-2 text-xs text-muted-foreground">
+										<div className='mt-2 text-xs text-muted-foreground'>
 											Submitted: {new Date(post.createdAt).toLocaleString()}
 										</div>
 									</div>
-									<div className="flex gap-2">
+									<div className='flex gap-2'>
 										<Button
-											size="sm"
-											variant="outline"
+											size='sm'
+											variant='outline'
 											onClick={() => handleRejectClick(post.id)}
 											disabled={isProcessing}
 										>
 											{t.common.reject}
 										</Button>
 										<Button
-											size="sm"
+											size='sm'
 											onClick={() => approveMutation.mutate(post.id)}
 											disabled={isProcessing}
 										>
@@ -146,25 +147,26 @@ function QueuePage() {
 					<DialogHeader>
 						<DialogTitle>Reject Post</DialogTitle>
 						<DialogDescription>
-							Provide feedback to the author explaining why this post was rejected.
+							Provide feedback to the author explaining why this post was
+							rejected.
 						</DialogDescription>
 					</DialogHeader>
-					<div className="mt-4 flex flex-col gap-4">
+					<div className='mt-4 flex flex-col gap-4'>
 						<Textarea
 							value={rejectFeedback}
 							onChange={(e) => setRejectFeedback(e.target.value)}
-							placeholder="Enter feedback for the author..."
+							placeholder='Enter feedback for the author...'
 							rows={4}
 						/>
-						<div className="flex justify-end gap-2">
+						<div className='flex justify-end gap-2'>
 							<Button
-								variant="outline"
+								variant='outline'
 								onClick={() => setRejectDialogOpen(false)}
 							>
 								{t.common.cancel}
 							</Button>
 							<Button
-								variant="destructive"
+								variant='destructive'
 								onClick={handleRejectSubmit}
 								disabled={!rejectFeedback.trim() || rejectMutation.isPending}
 							>

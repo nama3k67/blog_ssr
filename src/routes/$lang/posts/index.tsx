@@ -18,12 +18,12 @@ export const Route = createFileRoute("/$lang/posts/")({
 	loaderDeps: ({ search }) => ({ page: search.page }),
 	loader: async ({ params, deps }) => {
 		try {
-			return await fetchPostsList({ 
+			return await fetchPostsList({
 				data: {
 					lang: params.lang,
 					page: deps.page,
 					pageSize: 10,
-				}
+				},
 			});
 		} catch (err) {
 			console.error("Failed to fetch posts list:", err);
@@ -76,42 +76,46 @@ function RouteComponent() {
 
 	return (
 		<MainLayout title={t.pages.posts.heading} intro={t.pages.posts.intro}>
-			<div className="md:border-l md:border-border md:pl-6">
+			<div className='md:border-l md:border-border md:pl-6'>
 				{posts.length === 0 ? (
-					<p className="text-muted-foreground">{t.pages.posts.noPostsFound}</p>
+					<p className='text-muted-foreground'>{t.pages.posts.noPostsFound}</p>
 				) : (
 					<>
-						<div className="flex flex-col gap-16">
-{posts.map((post) => (
-  <PostItem
-    key={post.slug}
-    data={post}
-    linkProps={{
-      to: "/$lang/posts/$slug" as const,
-      params: { slug: post.slug, lang },
-    }}
-  />
-))}
+						<div className='flex flex-col gap-16'>
+							{posts.map((post) => (
+								<PostItem
+									key={post.slug}
+									data={post}
+									linkProps={{
+										to: "/$lang/posts/$slug" as const,
+										params: { slug: post.slug, lang },
+									}}
+								/>
+							))}
 						</div>
-						
+
 						{/* Pagination */}
 						{totalPages > 1 && (
-							<div className="mt-16 flex items-center justify-center gap-4">
+							<div className='mt-16 flex items-center justify-center gap-4'>
 								<Button
-									variant="ghost"
-									size="sm"
-									onClick={() => navigate({ search: { page: currentPage - 1 } })}
+									variant='ghost'
+									size='sm'
+									onClick={() =>
+										navigate({ search: { page: currentPage - 1 } })
+									}
 									disabled={currentPage === 1}
 								>
 									← {t.common.previous}
 								</Button>
-								<span className="text-sm text-muted-foreground">
+								<span className='text-sm text-muted-foreground'>
 									Page {currentPage} of {totalPages}
 								</span>
 								<Button
-									variant="ghost"
-									size="sm"
-									onClick={() => navigate({ search: { page: currentPage + 1 } })}
+									variant='ghost'
+									size='sm'
+									onClick={() =>
+										navigate({ search: { page: currentPage + 1 } })
+									}
 									disabled={currentPage === totalPages}
 								>
 									{t.common.next} →

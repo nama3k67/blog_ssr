@@ -31,12 +31,12 @@ function RouteComponent() {
 	const { t } = useI18n();
 
 	return (
-		<Container className="mt-16 sm:mt-32">
-			<div className="flex flex-col items-center">
-				<h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+		<Container className='mt-16 sm:mt-32'>
+			<div className='flex flex-col items-center'>
+				<h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
 					{t.common.login || "Login"}
 				</h1>
-				<div className="mt-10">
+				<div className='mt-10'>
 					<SignIn fallbackRedirectUrl={redirect} />
 				</div>
 			</div>

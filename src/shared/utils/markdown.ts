@@ -1,6 +1,5 @@
 import { createHighlighterCoreSync } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
-import nord from "shiki/themes/nord.mjs";
 import css from "shiki/langs/css.mjs";
 import html from "shiki/langs/html.mjs";
 import javascript from "shiki/langs/javascript.mjs";
@@ -10,20 +9,11 @@ import shell from "shiki/langs/shellscript.mjs";
 import sql from "shiki/langs/sql.mjs";
 import tsx from "shiki/langs/tsx.mjs";
 import typescript from "shiki/langs/typescript.mjs";
+import nord from "shiki/themes/nord.mjs";
 
 const highlighter = createHighlighterCoreSync({
 	themes: [nord],
-	langs: [
-		css,
-		html,
-		javascript,
-		json,
-		markdown,
-		shell,
-		sql,
-		tsx,
-		typescript,
-	],
+	langs: [css, html, javascript, json, markdown, shell, sql, tsx, typescript],
 	engine: createJavaScriptRegexEngine(),
 });
 

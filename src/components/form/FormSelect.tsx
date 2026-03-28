@@ -1,3 +1,4 @@
+import type { FormFieldMeta } from "~/components/form/form-field-meta";
 import {
 	Field,
 	FieldDescription,
@@ -11,8 +12,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "~/components/ui/select";
-
-import type { FormFieldMeta } from "~/components/form/form-field-meta";
 
 interface SelectOption {
 	value: string;
@@ -37,7 +36,8 @@ export function FormSelect({
 	options,
 	emptyLabel,
 }: FormSelectProps) {
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<Field data-invalid={hasError || undefined}>
@@ -53,7 +53,7 @@ export function FormSelect({
 					<SelectValue placeholder={placeholder} />
 				</SelectTrigger>
 				<SelectContent>
-					{emptyLabel && <SelectItem value="none">{emptyLabel}</SelectItem>}
+					{emptyLabel && <SelectItem value='none'>{emptyLabel}</SelectItem>}
 					{options.map((opt) => (
 						<SelectItem key={opt.value} value={opt.value}>
 							{opt.label}

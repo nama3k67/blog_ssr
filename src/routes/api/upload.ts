@@ -35,10 +35,7 @@ export const Route = createFileRoute("/api/upload")({
 					// Authenticate
 					const { userId } = await auth();
 					if (!userId) {
-						return Response.json(
-							{ error: "Unauthorized" },
-							{ status: 401 },
-						);
+						return Response.json({ error: "Unauthorized" }, { status: 401 });
 					}
 
 					// Parse multipart form data
@@ -84,10 +81,7 @@ export const Route = createFileRoute("/api/upload")({
 					console.error("[Upload] Error:", err);
 					return Response.json(
 						{
-							error:
-								err instanceof Error
-									? err.message
-									: "Upload failed",
+							error: err instanceof Error ? err.message : "Upload failed",
 						},
 						{ status: 500 },
 					);

@@ -81,18 +81,12 @@ export function MarkdownEditor({
 							api.replaceSelection(`![${altText}](${url})`);
 						} else {
 							// Fallback: append to content using accumulator
-							currentValue = insertImageMarkdown(
-								currentValue,
-								url,
-								altText,
-							);
+							currentValue = insertImageMarkdown(currentValue, url, altText);
 							onChangeRef.current(currentValue);
 						}
 					} catch (err) {
 						const message =
-							err instanceof Error
-								? err.message
-								: t.editor.uploadFailed;
+							err instanceof Error ? err.message : t.editor.uploadFailed;
 						setUploadError(message);
 					}
 				}
@@ -142,7 +136,7 @@ export function MarkdownEditor({
 			name: "upload-image",
 			keyCommand: "upload-image",
 			shortcuts: "ctrlcmd+shift+i",
-			icon: <ImageIcon className="size-3.5" />,
+			icon: <ImageIcon className='size-3.5' />,
 			execute: (_state, api) => {
 				// Store the api ref for later use by file input handler
 				textApiRef.current = api;
@@ -155,7 +149,7 @@ export function MarkdownEditor({
 	const skeletonFallback = useMemo(
 		() => (
 			<div
-				className="animate-pulse rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800"
+				className='animate-pulse rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800'
 				style={{ height }}
 			/>
 		),
@@ -164,21 +158,21 @@ export function MarkdownEditor({
 
 	return (
 		<ClientOnly fallback={skeletonFallback}>
-			<div data-color-mode={resolvedTheme} className="relative">
+			<div data-color-mode={resolvedTheme} className='relative'>
 				{/* Hidden file input */}
 				<input
 					ref={fileInputRef}
-					type="file"
-					accept="image/*"
-					className="hidden"
+					type='file'
+					accept='image/*'
+					className='hidden'
 					onChange={handleFileInputChange}
 					multiple
 				/>
 
 				{/* Upload status overlay */}
 				{uploading && (
-					<div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-black/20 backdrop-blur-[1px]">
-						<div className="rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-lg dark:bg-zinc-800">
+					<div className='absolute inset-0 z-10 flex items-center justify-center rounded-md bg-black/20 backdrop-blur-[1px]'>
+						<div className='rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-lg dark:bg-zinc-800'>
 							{t.editor.uploading}
 						</div>
 					</div>
@@ -186,12 +180,12 @@ export function MarkdownEditor({
 
 				{/* Upload error */}
 				{uploadError && (
-					<div className="mb-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+					<div className='mb-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400'>
 						{uploadError}
 						<button
-							type="button"
+							type='button'
 							onClick={() => setUploadError(null)}
-							className="ml-2 font-medium underline"
+							className='ml-2 font-medium underline'
 						>
 							✕
 						</button>
@@ -203,7 +197,7 @@ export function MarkdownEditor({
 						value={value}
 						onChange={(val) => onChange(val || "")}
 						height={height}
-						preview="live"
+						preview='live'
 						extraCommands={[uploadImageCommand]}
 						textareaProps={{
 							placeholder,

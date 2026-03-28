@@ -1,11 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import {
-	fetchPostsList,
+	checkSlugAvailability,
 	fetchPost,
+	fetchPostsList,
 	getCategoriesList,
 	getTagsList,
-	checkSlugAvailability,
 } from "~/shared/services/post";
 
 // ============ Post List Queries ============

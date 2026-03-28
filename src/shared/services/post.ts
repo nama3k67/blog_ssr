@@ -12,7 +12,7 @@ import {
 	getPublishedPostsPaginated,
 	getUserByClerkId,
 } from "~/server/db/queries";
-import { createPostSchema, type CreatePostInput } from "~/shared/schemas/post";
+import { type CreatePostInput, createPostSchema } from "~/shared/schemas/post";
 
 // ============ READ ============
 
@@ -33,24 +33,24 @@ export const fetchPostsList = createServerFn({ method: "GET" })
 		const totalCount = await countPublishedPosts(lang);
 		const totalPages = Math.ceil(totalCount / pageSize);
 
-const postsWithTranslationCheck = await Promise.all(
-  postsData.map(async (post) => {
-    // Check if translation exists
-    const otherLang = lang === "en" ? "vi" : "en";
-    const translation = await getPostTranslation(
-      post.translationGroupId,
-      otherLang,
-    );
+		const postsWithTranslationCheck = await Promise.all(
+			postsData.map(async (post) => {
+				// Check if translation exists
+				const otherLang = lang === "en" ? "vi" : "en";
+				const _translation = await getPostTranslation(
+					post.translationGroupId,
+					otherLang,
+				);
 
-    return {
-      slug: post.slug,
-      title: post.title,
-      description: post.description,
-      date: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
-      path: `/${lang}/posts/${post.slug}`,
-    };
-  }),
-);
+				return {
+					slug: post.slug,
+					title: post.title,
+					description: post.description,
+					date: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+					path: `/${lang}/posts/${post.slug}`,
+				};
+			}),
+		);
 
 		return {
 			posts: postsWithTranslationCheck,
@@ -164,7 +164,7 @@ export const getTagsList = createServerFn({ method: "GET" }).handler(
 
 // ============ WRITE ============
 
-export { type CreatePostInput } from "~/shared/schemas/post";
+export type { CreatePostInput } from "~/shared/schemas/post";
 
 export const createPostFn = createServerFn({ method: "POST" })
 	.inputValidator((data: CreatePostInput) => createPostSchema.parse(data))
