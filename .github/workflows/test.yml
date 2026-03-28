@@ -118,7 +118,7 @@ jobs:
           fi
 
       - name: Start dev server
-        run: npm run dev > /tmp/dev-server.log 2>&1 &
+        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -128,9 +128,9 @@ jobs:
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000 --timeout 120000
 
-      - name: Print dev server log on failure
-        if: failure()
-        run: cat /tmp/dev-server.log
+      - name: Print dev server log
+        if: always()
+        run: cat /tmp/dev-server.log || echo "(log file not found)"
 
       - name: Run E2E tests (${{ matrix.project }})
         run: npx playwright test --project=${{ matrix.project }}
@@ -180,7 +180,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Start dev server
-        run: npm run dev > /tmp/dev-server.log 2>&1 &
+        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -190,9 +190,9 @@ jobs:
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000 --timeout 120000
 
-      - name: Print dev server log on failure
-        if: failure()
-        run: cat /tmp/dev-server.log
+      - name: Print dev server log
+        if: always()
+        run: cat /tmp/dev-server.log || echo "(log file not found)"
 
       - name: Run burn-in loop (10 iterations)
         run: |
