@@ -20,7 +20,7 @@ test.describe("About page", () => {
 		await page.goto(localizedUrl("/about"));
 
 		// Then the skills section has h2 category headings
-		const skillsSection = page.locator("section");
+		const skillsSection = page.locator("article section");
 		await expect(skillsSection).toBeVisible();
 
 		const categoryHeadings = skillsSection.getByRole("heading", { level: 2 });
@@ -31,8 +31,8 @@ test.describe("About page", () => {
 		// Given I visit the about page
 		await page.goto(localizedUrl("/about"));
 
-		// When I tab to the CTA
-		const cta = page.getByRole("link", { name: /get in touch|liên hệ/i });
+		// When I tab to the CTA (matched by aria-label which overrides visible text)
+		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
 		await cta.focus();
 
 		// Then it is focused and visible
@@ -44,8 +44,8 @@ test.describe("About page", () => {
 		// Given I visit the about page
 		await page.goto(localizedUrl("/about"));
 
-		// Then the CTA href is a mailto link
-		const cta = page.getByRole("link", { name: /get in touch|liên hệ/i });
+		// Then the CTA href is a mailto link (matched by aria-label which overrides visible text)
+		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
 		await expect(cta).toHaveAttribute("href", /^mailto:/);
 	});
 
@@ -53,9 +53,9 @@ test.describe("About page", () => {
 		// Given I visit the Vietnamese about page
 		await page.goto("/vi/about");
 
-		// Then the CTA is in Vietnamese
+		// Then the CTA is in Vietnamese (matched by aria-label which overrides visible text)
 		await expect(
-			page.getByRole("link", { name: /liên hệ/i }),
+			page.getByRole("link", { name: /gửi email/i }),
 		).toBeVisible();
 	});
 });

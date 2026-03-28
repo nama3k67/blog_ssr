@@ -6,7 +6,7 @@ test.describe("Projects page", () => {
 		await page.goto(localizedUrl("/projects"));
 
 		// Then at least one project card is visible
-		const cards = page.locator("ul > li");
+		const cards = page.locator("main ul > li");
 		await expect(cards.first()).toBeVisible();
 	});
 
@@ -14,7 +14,7 @@ test.describe("Projects page", () => {
 		// Given I visit the projects page
 		await page.goto(localizedUrl("/projects"));
 
-		const firstCard = page.locator("ul > li").first();
+		const firstCard = page.locator("main ul > li").first();
 
 		// Then the card has an h2 title
 		await expect(firstCard.getByRole("heading", { level: 2 })).toBeVisible();
@@ -30,7 +30,7 @@ test.describe("Projects page", () => {
 		// Given I visit the projects page
 		await page.goto(localizedUrl("/projects"));
 
-		const githubLink = page.locator("ul > li").first().getByRole("link", { name: /github/i });
+		const githubLink = page.locator("main ul > li").first().getByRole("link", { name: /github/i });
 
 		// Then the link opens in a new tab
 		await expect(githubLink).toHaveAttribute("target", "_blank");
