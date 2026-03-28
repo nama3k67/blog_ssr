@@ -108,7 +108,8 @@ function RouteComponent() {
 									← {t.common.previous}
 								</Button>
 								<span className='text-sm text-muted-foreground'>
-									Page {currentPage} of {totalPages}
+									{t.pages.posts.pageNum} {currentPage} {t.pages.posts.pageOf}{" "}
+									{totalPages}
 								</span>
 								<Button
 									variant='ghost'

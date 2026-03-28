@@ -62,6 +62,8 @@ export const en = {
 			intro:
 				"As a passionate long-distance runner, I want to share my knowledge about nutrition, training methods, and technology",
 			noPostsFound: "No posts found.",
+			pageNum: "Page",
+			pageOf: "of",
 		},
 	},
 	common: {

@@ -33,27 +33,22 @@ export const fetchPostsList = createServerFn({ method: "GET" })
 		const totalCount = await countPublishedPosts(lang);
 		const totalPages = Math.ceil(totalCount / pageSize);
 
-		const postsWithTranslationCheck = await Promise.all(
-			postsData.map(async (post) => {
-				// Check if translation exists
-				const otherLang = lang === "en" ? "vi" : "en";
-				const _translation = await getPostTranslation(
-					post.translationGroupId,
-					otherLang,
-				);
-
-				return {
-					slug: post.slug,
-					title: post.title,
-					description: post.description,
-					date: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
-					path: `/${lang}/posts/${post.slug}`,
-				};
-			}),
-		);
+		const mappedPosts = postsData.map((post) => ({
+			slug: post.slug,
+			title: post.title,
+			description: post.description,
+			date: post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+			path: `/${lang}/posts/${post.slug}`,
+			category: post.category
+				? { name: post.category.name, slug: post.category.slug }
+				: null,
+			featuredImage: post.featuredImage?.startsWith("https://")
+				? post.featuredImage
+				: null,
+		}));
 
 		return {
-			posts: postsWithTranslationCheck,
+			posts: mappedPosts,
 			totalCount,
 			currentPage: page,
 			totalPages,

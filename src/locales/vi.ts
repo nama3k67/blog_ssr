@@ -63,6 +63,8 @@ export const vi = {
 			intro:
 				"Là một vận động viên chạy đường dài đầy đam mê, tôi muốn chia sẻ kiến thức của mình về dinh dưỡng, phương pháp luyện tập và công nghệ",
 			noPostsFound: "Không tìm thấy bài viết nào.",
+			pageNum: "Trang",
+			pageOf: "trên",
 		},
 	},
 	common: {
