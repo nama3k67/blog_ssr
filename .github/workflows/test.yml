@@ -118,7 +118,7 @@ jobs:
           fi
 
       - name: Start dev server
-        run: npm run dev &
+        run: npm run dev > /tmp/dev-server.log 2>&1 &
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -126,7 +126,11 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
       - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000 --timeout 60000
+        run: npx wait-on http://localhost:3000 --timeout 120000
+
+      - name: Print dev server log on failure
+        if: failure()
+        run: cat /tmp/dev-server.log
 
       - name: Run E2E tests (${{ matrix.project }})
         run: npx playwright test --project=${{ matrix.project }}
@@ -176,7 +180,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Start dev server
-        run: npm run dev &
+        run: npm run dev > /tmp/dev-server.log 2>&1 &
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -184,7 +188,11 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
       - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000 --timeout 60000
+        run: npx wait-on http://localhost:3000 --timeout 120000
+
+      - name: Print dev server log on failure
+        if: failure()
+        run: cat /tmp/dev-server.log
 
       - name: Run burn-in loop (10 iterations)
         run: |
