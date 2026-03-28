@@ -117,19 +117,27 @@ jobs:
             npx playwright install --with-deps ${{ matrix.project }}
           fi
 
-      - name: Start dev server
-        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
+      - name: Create .dev.vars for Miniflare
+        run: |
+          cat > .dev.vars << EOF
+          DATABASE_URL=$DATABASE_URL
+          CLERK_SECRET_KEY=$CLERK_SECRET_KEY
+          VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+          EOF
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+
+      - name: Start dev server
+        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000 --timeout 120000
 
-      - name: Print dev server log
-        if: always()
+      - name: Print dev server log on failure
+        if: failure()
         run: cat /tmp/dev-server.log || echo "(log file not found)"
 
       - name: Run E2E tests (${{ matrix.project }})
@@ -179,19 +187,27 @@ jobs:
       - name: Install Playwright browsers (Chromium)
         run: npx playwright install --with-deps chromium
 
-      - name: Start dev server
-        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
+      - name: Create .dev.vars for Miniflare
+        run: |
+          cat > .dev.vars << EOF
+          DATABASE_URL=$DATABASE_URL
+          CLERK_SECRET_KEY=$CLERK_SECRET_KEY
+          VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+          EOF
         env:
           # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+
+      - name: Start dev server
+        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000 --timeout 120000
 
-      - name: Print dev server log
-        if: always()
+      - name: Print dev server log on failure
+        if: failure()
         run: cat /tmp/dev-server.log || echo "(log file not found)"
 
       - name: Run burn-in loop (10 iterations)
