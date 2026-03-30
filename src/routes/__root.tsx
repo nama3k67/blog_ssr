@@ -60,7 +60,7 @@ export const Route = createRootRoute({
 			},
 			{ name: "twitter:image", content: "/logo.png" },
 		],
-		link: [
+		links: [
 			{ rel: "icon", type: "image/png", href: "/logo.png" },
 			{ rel: "apple-touch-icon", href: "/logo.png" },
 			{ rel: "preconnect", href: "https://fonts.googleapis.com" },

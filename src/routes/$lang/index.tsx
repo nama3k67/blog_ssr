@@ -3,21 +3,27 @@ import { Github } from "lucide-react";
 import { Container } from "~/components/shared/Container";
 import { dictionaries } from "~/locales";
 import { GITHUB_URL } from "~/shared/data/author";
+import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
 
 export const Route = createFileRoute("/$lang/")({
 	head: ({ params }) => {
+		const lang = params.lang as "en" | "vi";
 		const t =
 			dictionaries[params.lang as keyof typeof dictionaries] || dictionaries.en;
 		return {
 			meta: [
-				{
-					title: t.pages.home.title,
-				},
-				{
-					name: "description",
-					content: t.pages.home.description,
-				},
+				{ title: t.pages.home.title },
+				{ name: "description", content: t.pages.home.description },
+				{ property: "og:title", content: t.pages.home.title },
+				{ property: "og:description", content: t.pages.home.description },
+				{ property: "og:image", content: `${SITE_URL}/logo.png` },
+				{ property: "og:url", content: `${SITE_URL}/${lang}/` },
+			],
+			links: [
+				{ rel: "alternate", hreflang: "en", href: `${SITE_URL}/en/` },
+				{ rel: "alternate", hreflang: "vi", href: `${SITE_URL}/vi/` },
+				{ rel: "alternate", hreflang: "x-default", href: `${SITE_URL}/en/` },
 			],
 		};
 	},

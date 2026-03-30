@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Container } from "~/components/shared/Container";
 import { Markdown } from "~/components/shared/Markdown";
 import { Badge } from "~/components/ui/badge";
+import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
 import { fetchPost } from "~/shared/services/post";
 import { formatDate } from "~/shared/utils/date";
@@ -15,42 +16,81 @@ export const Route = createFileRoute("/$lang/posts/$slug")({
 			},
 		});
 	},
-	head: ({ loaderData }) => ({
-		meta: [
-			{
-				title: `${loaderData?.post.title || "Blog Post"} - My Blog`,
-			},
-			{
-				name: "description",
-				content:
-					loaderData?.post.description || "Read this article on my blog.",
-			},
-			{
-				property: "og:title",
-				content: loaderData?.post.title || "Blog Post",
-			},
-			{
-				property: "og:description",
-				content: loaderData?.post.description || "Read this article.",
-			},
-			{
-				property: "og:type",
-				content: "article",
-			},
-			{
-				name: "article:published_time",
-				content: loaderData?.post.publishedAt || new Date().toISOString(),
-			},
-			{
-				name: "twitter:title",
-				content: loaderData?.post.title || "Blog Post",
-			},
-			{
-				name: "twitter:description",
-				content: loaderData?.post.description || "Read this article.",
-			},
-		],
-	}),
+	head: ({ loaderData, params }) => {
+		const post = loaderData?.post;
+		const translationSlug = loaderData?.translationSlug;
+		const lang = params.lang as "en" | "vi";
+		const slug = params.slug;
+		const ogLocale = lang === "vi" ? "vi_VN" : "en_US";
+		const canonicalUrl = `${SITE_URL}/${lang}/posts/${slug}`;
+		const rawImage = post?.featuredImage || "/logo.png";
+		const absoluteImage = rawImage.startsWith("http")
+			? rawImage
+			: `${SITE_URL}${rawImage}`;
+
+		const hreflangLinks: Array<{
+			rel: string;
+			hreflang: string;
+			href: string;
+		}> = [];
+		if (translationSlug) {
+			const enSlug = lang === "en" ? slug : translationSlug;
+			const viSlug = lang === "vi" ? slug : translationSlug;
+			hreflangLinks.push(
+				{
+					rel: "alternate",
+					hreflang: "en",
+					href: `${SITE_URL}/en/posts/${enSlug}`,
+				},
+				{
+					rel: "alternate",
+					hreflang: "vi",
+					href: `${SITE_URL}/vi/posts/${viSlug}`,
+				},
+				{
+					rel: "alternate",
+					hreflang: "x-default",
+					href: `${SITE_URL}/en/posts/${enSlug}`,
+				},
+			);
+		} else {
+			hreflangLinks.push({
+				rel: "alternate",
+				hreflang: lang,
+				href: canonicalUrl,
+			});
+		}
+
+		return {
+			meta: [
+				{ title: `${post?.title || "Blog Post"} - My Blog` },
+				{
+					name: "description",
+					content: post?.description || "Read this article on my blog.",
+				},
+				{ property: "og:title", content: post?.title || "Blog Post" },
+				{
+					property: "og:description",
+					content: post?.description || "Read this article.",
+				},
+				{ property: "og:type", content: "article" },
+				{ property: "og:image", content: absoluteImage },
+				{ property: "og:url", content: canonicalUrl },
+				{ property: "og:locale", content: ogLocale },
+				{
+					name: "article:published_time",
+					content: post?.publishedAt || new Date().toISOString(),
+				},
+				{ name: "twitter:title", content: post?.title || "Blog Post" },
+				{
+					name: "twitter:description",
+					content: post?.description || "Read this article.",
+				},
+				{ name: "twitter:image", content: absoluteImage },
+			],
+			links: [{ rel: "canonical", href: canonicalUrl }, ...hreflangLinks],
+		};
+	},
 	errorComponent: PostError,
 	component: RouteComponent,
 });

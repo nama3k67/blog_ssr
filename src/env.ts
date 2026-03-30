@@ -32,6 +32,7 @@ export const env = createEnv({
 
 	client: {
 		VITE_CLERK_PUBLISHABLE_KEY: z.string().optional(),
+		VITE_SITE_URL: z.url().optional(),
 	},
 
 	// For Next.js / TanStack Start - provide runtime environment variables

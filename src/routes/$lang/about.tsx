@@ -8,20 +8,30 @@ import {
 	SKILLS,
 	SOCIAL_LINKS,
 } from "~/shared/data/author";
+import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
 
 export const Route = createFileRoute("/$lang/about")({
 	head: ({ params }) => {
+		const lang = params.lang as "en" | "vi";
 		const t =
 			dictionaries[params.lang as keyof typeof dictionaries] || dictionaries.en;
 		return {
 			meta: [
+				{ title: t.pages.about.title },
+				{ name: "description", content: t.pages.about.description },
+				{ property: "og:title", content: t.pages.about.title },
+				{ property: "og:description", content: t.pages.about.description },
+				{ property: "og:image", content: `${SITE_URL}/logo.png` },
+				{ property: "og:url", content: `${SITE_URL}/${lang}/about` },
+			],
+			links: [
+				{ rel: "alternate", hreflang: "en", href: `${SITE_URL}/en/about` },
+				{ rel: "alternate", hreflang: "vi", href: `${SITE_URL}/vi/about` },
 				{
-					title: t.pages.about.title,
-				},
-				{
-					name: "description",
-					content: t.pages.about.description,
+					rel: "alternate",
+					hreflang: "x-default",
+					href: `${SITE_URL}/en/about`,
 				},
 			],
 		};
@@ -109,7 +119,7 @@ function RouteComponent() {
 						{AVATAR_URL ? (
 							<img
 								src={AVATAR_URL}
-								alt=''
+								alt={t.pages.about.heading}
 								width={320}
 								height={320}
 								loading='eager'
