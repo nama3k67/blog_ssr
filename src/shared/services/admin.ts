@@ -69,6 +69,7 @@ export const approvePostFn = createServerFn({ method: "POST" })
 			throw new Error("NOT_FOUND");
 		}
 
+		// @ts-expect-error "pending" removed from enum in Story 4.1 — cleanup in Story 4.5
 		if (post.status !== "pending") {
 			throw new Error("INVALID_STATE");
 		}
@@ -115,12 +116,14 @@ export const rejectPostFn = createServerFn({ method: "POST" })
 			throw new Error("NOT_FOUND");
 		}
 
+		// @ts-expect-error "pending" removed from enum in Story 4.1 — cleanup in Story 4.5
 		if (post.status !== "pending") {
 			throw new Error("INVALID_STATE");
 		}
 
 		// Update to rejected with feedback
 		const updated = await updatePost(data.postId, {
+			// @ts-expect-error "rejected" removed from enum in Story 4.1 — cleanup in Story 4.5
 			status: "rejected",
 			adminFeedback: data.feedback,
 			reviewedBy: clerkId, // Store Clerk ID temporarily
@@ -159,12 +162,14 @@ export const submitForApproval = createServerFn({ method: "POST" })
 			throw new Error("NOT_FOUND");
 		}
 
+		// @ts-expect-error "rejected" removed from enum in Story 4.1 — cleanup in Story 4.5
 		if (post.status !== "draft" && post.status !== "rejected") {
 			throw new Error("INVALID_STATE");
 		}
 
 		// Update to pending
 		const updated = await updatePost(data.postId, {
+			// @ts-expect-error "pending" removed from enum in Story 4.1 — cleanup in Story 4.5
 			status: "pending",
 			adminFeedback: null, // Clear rejection feedback
 		});
