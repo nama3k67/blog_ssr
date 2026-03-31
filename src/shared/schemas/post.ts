@@ -12,6 +12,11 @@ const postBaseFields = {
 
 export const createPostSchema = z.object({
 	...postBaseFields,
+	tagIds: z
+		.array(z.uuid())
+		.max(10, "Maximum 10 tags")
+		.default([])
+		.transform((ids) => [...new Set(ids)]),
 	featuredImage: z.string().optional(),
 	published: z.boolean().default(false),
 });
