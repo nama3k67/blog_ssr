@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import {
 	countPublishedPosts,
-	createPost,
+	createPostWithTags,
 	getAllCategories,
 	getAllTags,
 	getPostBySlugAndLang,
@@ -12,6 +12,7 @@ import {
 	getPublishedPostsPaginated,
 	getUserByClerkId,
 } from "~/server/db/queries";
+import { withAdmin } from "~/server/utils/withAdmin";
 import { type CreatePostInput, createPostSchema } from "~/shared/schemas/post";
 
 // ============ READ ============
@@ -163,40 +164,35 @@ export type { CreatePostInput } from "~/shared/schemas/post";
 
 export const createPostFn = createServerFn({ method: "POST" })
 	.inputValidator((data: CreatePostInput) => createPostSchema.parse(data))
-	.handler(async ({ data }) => {
-		// Authenticate
-		const { userId: clerkId } = await auth();
-		if (!clerkId) {
-			throw new Error("Unauthorized");
-		}
+	.handler(
+		withAdmin(async ({ data }) => {
+			// withAdmin() verified admin — resolve Clerk ID → DB user UUID
+			const { userId: clerkId } = await auth();
+			if (!clerkId) throw new Error("USER_NOT_FOUND");
+			const user = await getUserByClerkId(clerkId);
+			if (!user) throw new Error("USER_NOT_FOUND");
 
-		// Resolve Clerk ID → DB user UUID
-		const user = await getUserByClerkId(clerkId);
-		if (!user) {
-			throw new Error("User not found in database");
-		}
+			// Check slug uniqueness
+			const existing = await getPostBySlugAndLang(data.slug, data.lang);
+			if (existing) throw new Error("SLUG_TAKEN");
 
-		// Check slug uniqueness
-		const existing = await getPostBySlugAndLang(data.slug, data.lang);
-		if (existing) {
-			throw new Error("SLUG_TAKEN");
-		}
+			// Create post + link tags atomically
+			const post = await createPostWithTags(
+				{
+					userId: user.id,
+					categoryId: data.categoryId || null,
+					title: data.title,
+					slug: data.slug,
+					lang: data.lang,
+					description: data.description || null,
+					content: data.content,
+					featuredImage: data.featuredImage || null,
+					status: data.published ? "published" : "draft",
+					publishedAt: data.published ? new Date() : null,
+				},
+				data.tagIds,
+			);
 
-		// Create post
-		const post = await createPost({
-			userId: user.id,
-			categoryId: data.categoryId || null,
-			title: data.title,
-			slug: data.slug,
-			lang: data.lang,
-			description: data.description || null,
-			content: data.content,
-			featuredImage: data.featuredImage || null,
-			status: data.published ? "pending" : "draft",
-			publishedAt: null, // Set by admin on approval
-		});
-
-		// TODO: Add tags via postTags junction table if data.tagIds provided
-
-		return post;
-	});
+			return post;
+		}),
+	);

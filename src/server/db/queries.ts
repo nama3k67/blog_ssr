@@ -1,7 +1,7 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "./client";
 import type { NewCategory, NewPost, NewTag, NewUser } from "./schema";
-import { categories, posts, tags, users } from "./schema";
+import { categories, posts, postTags, tags, users } from "./schema";
 
 // ============ USERS ============
 
@@ -239,10 +239,13 @@ export async function deletePost(postId: string) {
 /**
  * Get all posts with pending status for admin approval queue
  * Sorted by creation date (FIFO)
+ * TODO Story 4.5: Remove this function when approval workflow is replaced by admin dashboard
  */
 export async function getPendingPosts() {
 	const result = await db.query.posts.findMany({
-		where: eq(posts.status, "pending"),
+		// TODO Story 4.5: "pending" removed from enum — this query returns nothing until cleanup
+		// biome-ignore lint/suspicious/noExplicitAny: "pending" removed from enum, cleanup in Story 4.5
+		where: eq(posts.status as any, "pending"),
 		with: {
 			author: true,
 			category: true,
@@ -297,4 +300,23 @@ export async function getTagBySlug(slug: string) {
 export async function createTag(tag: NewTag) {
 	const result = await db.insert(tags).values(tag).returning();
 	return result[0];
+}
+
+// ============ POST TAGS ============
+
+export async function createPostTags(postId: string, tagIds: string[]) {
+	if (tagIds.length === 0) return;
+	await db.insert(postTags).values(tagIds.map((tagId) => ({ postId, tagId })));
+}
+
+export async function createPostWithTags(post: NewPost, tagIds: string[]) {
+	return db.transaction(async (tx) => {
+		const [created] = await tx.insert(posts).values(post).returning();
+		if (tagIds.length > 0) {
+			await tx
+				.insert(postTags)
+				.values(tagIds.map((tagId) => ({ postId: created.id, tagId })));
+		}
+		return created;
+	});
 }
