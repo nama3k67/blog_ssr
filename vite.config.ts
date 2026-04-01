@@ -18,8 +18,8 @@ export default defineConfig({
 		tailwindcss(),
 		cloudflare({
 			viteEnvironment: { name: "ssr" },
-			// Use local Miniflare in CI — remote proxy requires Cloudflare auth
-			remoteBindings: !process.env.CI,
+			// Set REMOTE_BINDINGS=1 to proxy to real Cloudflare (requires wrangler auth + network)
+			remoteBindings: !!process.env.REMOTE_BINDINGS,
 		}),
 	],
 	resolve: {
