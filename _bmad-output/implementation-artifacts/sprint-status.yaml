@@ -6,7 +6,7 @@
 #       Status reflects actual git history and implementation artifacts.
 
 generated: "2026-03-30T00:00:00Z"
-last_updated: "2026-03-30T14:00:00Z"
+last_updated: "2026-03-31T10:00:00Z"
 project: "blog app"
 project_key: "BLOG"
 tracking_system: "bmad-sprint-status"
@@ -39,7 +39,7 @@ development_status:
   # ─── Epic 4: Content Authoring & Management ─────────────────────────────
   epic-4: in-progress
   4-1-database-schema-create-blog-post-draft: review
-  4-2-markdown-editor-live-preview: backlog
+  4-2-markdown-editor-live-preview: review
   4-3-image-upload-to-r2: backlog
   4-4-edit-and-publish-posts: backlog
   4-5-post-management-dashboard: backlog
