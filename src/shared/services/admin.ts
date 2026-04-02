@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { isAdmin } from "~/env";
 import { getPendingPosts, getPostById, updatePost } from "~/server/db/queries";
+import { withAdmin } from "~/server/utils/withAdmin";
 
 // ============ ADMIN APPROVAL WORKFLOW ============
 
@@ -185,38 +186,34 @@ export const submitForApproval = createServerFn({ method: "POST" })
  * Admin only
  */
 const unpublishPostSchema = z.object({
-	postId: z.string().uuid(),
+	postId: z.uuid(),
 });
 
 export const unpublishPostFn = createServerFn({ method: "POST" })
 	.inputValidator((data: z.infer<typeof unpublishPostSchema>) =>
 		unpublishPostSchema.parse(data),
 	)
-	.handler(async ({ data }) => {
-		// Authenticate and check admin
-		const { userId: clerkId } = await auth();
-		if (!isAdmin(clerkId)) {
-			throw new Error("UNAUTHORIZED");
-		}
+	.handler(
+		withAdmin(async ({ data }) => {
+			// Get current post state
+			const post = await getPostById(data.postId);
+			if (!post) {
+				throw new Error("NOT_FOUND");
+			}
 
-		// Get current post state
-		const post = await getPostById(data.postId);
-		if (!post) {
-			throw new Error("NOT_FOUND");
-		}
+			if (post.status !== "published") {
+				throw new Error("INVALID_STATE");
+			}
 
-		if (post.status !== "published") {
-			throw new Error("INVALID_STATE");
-		}
+			// Update to draft
+			const updated = await updatePost(data.postId, {
+				status: "draft",
+				publishedAt: null,
+			});
 
-		// Update to draft
-		const updated = await updatePost(data.postId, {
-			status: "draft",
-			publishedAt: null,
-		});
-
-		return {
-			id: updated.id,
-			status: updated.status,
-		};
-	});
+			return {
+				id: updated.id,
+				status: updated.status,
+			};
+		}),
+	);

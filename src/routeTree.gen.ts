@@ -21,6 +21,7 @@ import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/cler
 import { Route as LangPostsSlugRouteImport } from './routes/$lang/posts/$slug'
 import { Route as LangProtectedNewRouteImport } from './routes/$lang/_protected/new'
 import { Route as LangProtectedAdminRouteRouteImport } from './routes/$lang/_protected/admin/route'
+import { Route as LangProtectedEditPostIdRouteImport } from './routes/$lang/_protected/edit/$postId'
 import { Route as LangProtectedAdminQueueRouteImport } from './routes/$lang/_protected/admin/queue'
 
 const IndexRoute = IndexRouteImport.update({
@@ -83,6 +84,11 @@ const LangProtectedAdminRouteRoute = LangProtectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => LangProtectedRouteRoute,
 } as any)
+const LangProtectedEditPostIdRoute = LangProtectedEditPostIdRouteImport.update({
+  id: '/edit/$postId',
+  path: '/edit/$postId',
+  getParentRoute: () => LangProtectedRouteRoute,
+} as any)
 const LangProtectedAdminQueueRoute = LangProtectedAdminQueueRouteImport.update({
   id: '/queue',
   path: '/queue',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/$lang/posts/': typeof LangPostsIndexRoute
   '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
+  '/$lang/edit/$postId': typeof LangProtectedEditPostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/$lang/posts': typeof LangPostsIndexRoute
   '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
+  '/$lang/edit/$postId': typeof LangProtectedEditPostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/$lang/posts/': typeof LangPostsIndexRoute
   '/$lang/_protected/admin/queue': typeof LangProtectedAdminQueueRoute
+  '/$lang/_protected/edit/$postId': typeof LangProtectedEditPostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/$lang/posts/'
     | '/$lang/admin/queue'
+    | '/$lang/edit/$postId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/$lang/posts'
     | '/$lang/admin/queue'
+    | '/$lang/edit/$postId'
   id:
     | '__root__'
     | '/'
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/$lang/posts/'
     | '/$lang/_protected/admin/queue'
+    | '/$lang/_protected/edit/$postId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,6 +292,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangProtectedAdminRouteRouteImport
       parentRoute: typeof LangProtectedRouteRoute
     }
+    '/$lang/_protected/edit/$postId': {
+      id: '/$lang/_protected/edit/$postId'
+      path: '/edit/$postId'
+      fullPath: '/$lang/edit/$postId'
+      preLoaderRoute: typeof LangProtectedEditPostIdRouteImport
+      parentRoute: typeof LangProtectedRouteRoute
+    }
     '/$lang/_protected/admin/queue': {
       id: '/$lang/_protected/admin/queue'
       path: '/queue'
@@ -307,11 +326,13 @@ const LangProtectedAdminRouteRouteWithChildren =
 interface LangProtectedRouteRouteChildren {
   LangProtectedAdminRouteRoute: typeof LangProtectedAdminRouteRouteWithChildren
   LangProtectedNewRoute: typeof LangProtectedNewRoute
+  LangProtectedEditPostIdRoute: typeof LangProtectedEditPostIdRoute
 }
 
 const LangProtectedRouteRouteChildren: LangProtectedRouteRouteChildren = {
   LangProtectedAdminRouteRoute: LangProtectedAdminRouteRouteWithChildren,
   LangProtectedNewRoute: LangProtectedNewRoute,
+  LangProtectedEditPostIdRoute: LangProtectedEditPostIdRoute,
 }
 
 const LangProtectedRouteRouteWithChildren =

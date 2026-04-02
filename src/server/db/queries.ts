@@ -1,5 +1,5 @@
-import { and, asc, desc, eq } from "drizzle-orm";
-import { db } from "./client";
+import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { db, withTransaction } from "./client";
 import type { NewCategory, NewPost, NewTag, NewUser } from "./schema";
 import { categories, posts, postTags, tags, users } from "./schema";
 
@@ -310,7 +310,7 @@ export async function createPostTags(postId: string, tagIds: string[]) {
 }
 
 export async function createPostWithTags(post: NewPost, tagIds: string[]) {
-	return db.transaction(async (tx) => {
+	return withTransaction(async (tx) => {
 		const [created] = await tx.insert(posts).values(post).returning();
 		if (tagIds.length > 0) {
 			await tx
@@ -319,4 +319,60 @@ export async function createPostWithTags(post: NewPost, tagIds: string[]) {
 		}
 		return created;
 	});
+}
+
+// ============ EDIT POST QUERIES ============
+
+/**
+ * Get a post by ID with category and tags — for admin edit form
+ */
+export async function getPostByIdForAdmin(postId: string) {
+	return db.query.posts.findFirst({
+		where: eq(posts.id, postId),
+		with: {
+			author: true,
+			category: true,
+			postTags: { with: { tag: true } },
+		},
+	});
+}
+
+/**
+ * Update a post and atomically replace all its tags in a single transaction
+ */
+export async function updatePostWithTags(
+	postId: string,
+	data: Partial<Omit<NewPost, "id" | "userId">>,
+	newTagIds: string[],
+) {
+	return withTransaction(async (tx) => {
+		const [updated] = await tx
+			.update(posts)
+			.set({ ...data, updatedAt: new Date() })
+			.where(eq(posts.id, postId))
+			.returning();
+		if (!updated) throw new Error("POST_NOT_FOUND");
+		// Replace all tags atomically — only runs if post exists
+		await tx.delete(postTags).where(eq(postTags.postId, postId));
+		if (newTagIds.length > 0) {
+			await tx
+				.insert(postTags)
+				.values(newTagIds.map((tagId) => ({ postId, tagId })));
+		}
+		return updated;
+	});
+}
+
+/**
+ * Get any post (any status) by slug and language, optionally excluding a specific post
+ * Used for slug uniqueness checks on edit
+ */
+export async function getAnyPostBySlugAndLang(
+	slug: string,
+	lang: string,
+	excludePostId?: string,
+) {
+	const conditions = [eq(posts.slug, slug), eq(posts.lang, lang)];
+	if (excludePostId) conditions.push(ne(posts.id, excludePostId));
+	return db.query.posts.findFirst({ where: and(...conditions) });
 }

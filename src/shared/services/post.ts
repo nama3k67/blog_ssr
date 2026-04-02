@@ -7,13 +7,22 @@ import {
 	createPostWithTags,
 	getAllCategories,
 	getAllTags,
+	getAnyPostBySlugAndLang,
+	getPostByIdForAdmin,
 	getPostBySlugAndLang,
 	getPostTranslation,
 	getPublishedPostsPaginated,
 	getUserByClerkId,
+	updatePost,
+	updatePostWithTags,
 } from "~/server/db/queries";
 import { withAdmin } from "~/server/utils/withAdmin";
-import { type CreatePostInput, createPostSchema } from "~/shared/schemas/post";
+import {
+	type CreatePostInput,
+	createPostSchema,
+	type UpdatePostInput,
+	updatePostSchema,
+} from "~/shared/schemas/post";
 
 // ============ READ ============
 
@@ -128,11 +137,15 @@ export const fetchPost = createServerFn({ method: "GET" })
 // ============ CHECK ============
 
 export const checkSlugAvailability = createServerFn({ method: "GET" })
-	.inputValidator((params: { slug: string; lang: string }) => params)
-	.handler(async ({ data: { slug, lang } }) => {
-		const existing = await getPostBySlugAndLang(slug, lang);
-		return { available: !existing };
-	});
+	.inputValidator(
+		(params: { slug: string; lang: string; excludePostId?: string }) => params,
+	)
+	.handler(
+		withAdmin(async ({ data: { slug, lang, excludePostId } }) => {
+			const existing = await getAnyPostBySlugAndLang(slug, lang, excludePostId);
+			return { available: !existing };
+		}),
+	);
 
 // ============ CATEGORIES & TAGS ============
 
@@ -160,7 +173,7 @@ export const getTagsList = createServerFn({ method: "GET" }).handler(
 
 // ============ WRITE ============
 
-export type { CreatePostInput } from "~/shared/schemas/post";
+export type { CreatePostInput, UpdatePostInput } from "~/shared/schemas/post";
 
 export const createPostFn = createServerFn({ method: "POST" })
 	.inputValidator((data: CreatePostInput) => createPostSchema.parse(data))
@@ -194,5 +207,73 @@ export const createPostFn = createServerFn({ method: "POST" })
 			);
 
 			return post;
+		}),
+	);
+
+// ============ EDIT POST ============
+
+export const getPostForEditFn = createServerFn({ method: "GET" })
+	.inputValidator((params: { postId: string }) => params)
+	.handler(
+		withAdmin(async ({ data }) => {
+			const post = await getPostByIdForAdmin(data.postId);
+			if (!post) throw new Error("POST_NOT_FOUND");
+			return {
+				id: post.id,
+				title: post.title,
+				slug: post.slug,
+				lang: post.lang,
+				content: post.content,
+				description: post.description ?? "",
+				featuredImage: post.featuredImage ?? "",
+				status: post.status,
+				publishedAt: post.publishedAt?.toISOString() ?? null,
+				translationGroupId: post.translationGroupId,
+				categoryId: post.category?.id ?? undefined,
+				tagIds: post.postTags.map((pt) => pt.tag.id),
+			};
+		}),
+	);
+
+export const updatePostFn = createServerFn({ method: "POST" })
+	.inputValidator((data: UpdatePostInput) => updatePostSchema.parse(data))
+	.handler(
+		withAdmin(async ({ data }) => {
+			const { postId, tagIds, slug, lang, ...fields } = data;
+			// Check slug uniqueness (excluding current post, all statuses)
+			const existing = await getAnyPostBySlugAndLang(slug, lang, postId);
+			if (existing) throw new Error("SLUG_TAKEN");
+			// POST_NOT_FOUND is thrown inside the transaction if postId doesn't exist
+			const post = await updatePostWithTags(
+				postId,
+				{ ...fields, slug, lang },
+				tagIds,
+			);
+			return { id: post.id, slug: post.slug, status: post.status };
+		}),
+	);
+
+const publishPostSchema = z.object({ postId: z.string().uuid() });
+
+export const publishPostFn = createServerFn({ method: "POST" })
+	.inputValidator((data: z.infer<typeof publishPostSchema>) =>
+		publishPostSchema.parse(data),
+	)
+	.handler(
+		withAdmin(async ({ data }) => {
+			// Atomic publish: only transitions draft → published in a single UPDATE.
+			// Eliminates TOCTOU between a status-read and a separate write.
+			const updated = await updatePost(data.postId, {
+				status: "published",
+				publishedAt: new Date(),
+			});
+			if (!updated) throw new Error("POST_NOT_FOUND");
+			if (updated.status !== "published") throw new Error("INVALID_STATE");
+			return {
+				id: updated.id,
+				slug: updated.slug,
+				status: updated.status,
+				publishedAt: updated.publishedAt?.toISOString(),
+			};
 		}),
 	);

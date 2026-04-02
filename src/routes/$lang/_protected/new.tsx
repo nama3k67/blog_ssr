@@ -50,6 +50,10 @@ function NewPostPage() {
 			}
 
 			toast.success(t.editor.draftSaved);
+			navigate({
+				to: "/$lang/edit/$postId",
+				params: { lang: variables.lang, postId: post.id },
+			});
 		},
 		onError: (err) => {
 			console.log("🚀 ~ NewPostPage ~ err:", err);
