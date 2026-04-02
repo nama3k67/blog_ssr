@@ -57,6 +57,7 @@ export async function uploadToR2(
 		method: "PUT",
 		headers: {
 			"Content-Type": contentType,
+			"Cache-Control": "public, max-age=31536000, immutable",
 		},
 		body: file,
 	});

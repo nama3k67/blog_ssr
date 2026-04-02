@@ -10,6 +10,8 @@ import {
 	useState,
 } from "react";
 
+import { toast } from "sonner";
+
 import { ClientOnly } from "~/components/shared/ClientOnly";
 import { useI18n } from "~/shared/providers/i18n";
 import { useTheme } from "~/shared/providers/theme";
@@ -21,7 +23,7 @@ import {
 
 const MDEditor = lazy(() => import("@uiw/react-md-editor"));
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 500_000; // 500 KB (500,000 bytes)
 const MOBILE_BREAKPOINT = "(max-width: 639px)";
 
 type MarkdownEditorProps = {
@@ -63,6 +65,7 @@ export function MarkdownEditor({
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const textApiRef = useRef<TextAreaTextApi | null>(null);
+	const failedFilesRef = useRef<File[]>([]);
 
 	// ── Effects ────────────────────────────────────────────────────────────────
 	// Track viewport width and reset preview state when leaving mobile
@@ -90,13 +93,14 @@ export function MarkdownEditor({
 
 			setUploading(true);
 			setUploadError(null);
+			const failed: File[] = [];
 
 			try {
 				let currentValue = valueRef.current;
 
 				for (const file of files) {
 					if (file.size > MAX_FILE_SIZE) {
-						setUploadError(t.editor.fileTooLarge);
+						toast.error(t.editor.fileTooLarge);
 						continue;
 					}
 
@@ -107,17 +111,24 @@ export function MarkdownEditor({
 						if (api) {
 							api.replaceSelection(`![${altText}](${url})`);
 						} else {
-							// Fallback: append when no cursor API is available
 							currentValue = insertImageMarkdown(currentValue, url, altText);
 							onChangeRef.current(currentValue);
 						}
 					} catch (err) {
-						const message =
-							err instanceof Error ? err.message : t.editor.uploadFailed;
+						failed.push(file);
+						const raw = err instanceof Error ? err.message : "";
+						const message = raw.includes("FILE_TOO_LARGE")
+							? t.editor.fileTooLarge
+							: raw.includes("IMAGE_TOO_WIDE")
+								? t.editor.imageTooWide
+								: raw.includes("INVALID_FILE_TYPE")
+									? t.editor.invalidFileType
+									: raw || t.editor.uploadFailed;
 						setUploadError(message);
 					}
 				}
 			} finally {
+				failedFilesRef.current = failed;
 				setUploading(false);
 			}
 		},
@@ -244,6 +255,16 @@ export function MarkdownEditor({
 				{uploadError && (
 					<div className='mb-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400'>
 						{uploadError}
+						<button
+							type='button'
+							onClick={() => {
+								setUploadError(null);
+								handleUploadFiles(failedFilesRef.current, textApiRef.current);
+							}}
+							className='ml-2 font-medium underline'
+						>
+							{t.editor.retry}
+						</button>
 						<button
 							type='button'
 							onClick={() => setUploadError(null)}
