@@ -8,6 +8,7 @@ import {
 	getAllCategories,
 	getAllTags,
 	getAnyPostBySlugAndLang,
+	getAnyPostByTranslationGroupAndLang,
 	getPostByIdForAdmin,
 	getPostBySlugAndLang,
 	getPostTranslation,
@@ -19,7 +20,9 @@ import {
 import { withAdmin } from "~/server/utils/withAdmin";
 import {
 	type CreatePostInput,
+	type CreateTranslationInput,
 	createPostSchema,
+	createTranslationSchema,
 	type UpdatePostInput,
 	updatePostSchema,
 } from "~/shared/schemas/post";
@@ -274,6 +277,80 @@ export const publishPostFn = createServerFn({ method: "POST" })
 				slug: updated.slug,
 				status: updated.status,
 				publishedAt: updated.publishedAt?.toISOString(),
+			};
+		}),
+	);
+
+// ============ TRANSLATION ============
+
+/**
+ * Check if a translation exists for a given translationGroupId + target language
+ * Checks any status (draft or published) — for admin translation management
+ */
+export const checkTranslationExistsFn = createServerFn({ method: "GET" })
+	.inputValidator(
+		(params: { translationGroupId: string; targetLang: string }) => params,
+	)
+	.handler(
+		withAdmin(async ({ data }) => {
+			const existing = await getAnyPostByTranslationGroupAndLang(
+				data.translationGroupId,
+				data.targetLang,
+			);
+			return { exists: !!existing, postId: existing?.id ?? null };
+		}),
+	);
+
+/**
+ * Create a translation of an existing post
+ * Shares the same translationGroupId and slug (unique per slug+lang)
+ * Does NOT check slug uniqueness — shared slug is intentional
+ */
+export const createTranslationFn = createServerFn({ method: "POST" })
+	.inputValidator((data: CreateTranslationInput) =>
+		createTranslationSchema.parse(data),
+	)
+	.handler(
+		withAdmin(async ({ data }) => {
+			const { userId: clerkId } = await auth();
+			if (!clerkId) throw new Error("USER_NOT_FOUND");
+			const user = await getUserByClerkId(clerkId);
+			if (!user) throw new Error("USER_NOT_FOUND");
+
+			const original = await getPostByIdForAdmin(data.originalPostId);
+			if (!original) throw new Error("POST_NOT_FOUND");
+
+			const targetLang = original.lang === "en" ? "vi" : "en";
+
+			// Guard: block if translation already exists (any status)
+			const existing = await getAnyPostByTranslationGroupAndLang(
+				original.translationGroupId,
+				targetLang,
+			);
+			if (existing) throw new Error("TRANSLATION_EXISTS");
+
+			const post = await createPostWithTags(
+				{
+					userId: user.id,
+					title: data.title,
+					slug: original.slug, // shared slug — unique per slug+lang
+					lang: targetLang,
+					content: data.content,
+					description: data.description ?? null,
+					featuredImage: data.featuredImage || null,
+					categoryId: data.categoryId ?? original.categoryId,
+					translationGroupId: original.translationGroupId, // copy from original
+					status: "draft",
+					publishedAt: null,
+				},
+				data.tagIds,
+			);
+
+			return {
+				id: post.id,
+				slug: post.slug,
+				lang: post.lang,
+				translationGroupId: post.translationGroupId,
 			};
 		}),
 	);
