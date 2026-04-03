@@ -25,7 +25,7 @@ export function getLocalizedPath(
 ): keyof FileRoutesByTo {
 	const cleanPath = path.startsWith("/") ? path.slice(1) : path;
 
-	const pathWithoutLang = cleanPath.replace(/^(en|vi)\//, "");
+	const pathWithoutLang = cleanPath.replace(/^(en|vi)(\/|$)/, "");
 	return `/${lang}/${pathWithoutLang}` as keyof FileRoutesByTo;
 }
 

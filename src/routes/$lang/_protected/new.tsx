@@ -1,10 +1,8 @@
-import { auth } from "@clerk/tanstack-react-start/server";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { NewPostForm } from "~/components/post/NewPostForm";
-import { isAdmin } from "~/env";
 import { dictionaries } from "~/locales";
 import { useI18n } from "~/shared/providers/i18n";
 import { browserQueryClient } from "~/shared/providers/tanstackQuery";
