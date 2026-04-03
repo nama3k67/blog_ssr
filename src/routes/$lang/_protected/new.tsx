@@ -1,16 +1,29 @@
+import { auth } from "@clerk/tanstack-react-start/server";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 import { NewPostForm } from "~/components/post/NewPostForm";
+import { isAdmin } from "~/env";
 import { dictionaries } from "~/locales";
 import { useI18n } from "~/shared/providers/i18n";
 import { browserQueryClient } from "~/shared/providers/tanstackQuery";
 import type { CreatePostFormInput } from "~/shared/schemas/post";
+import { checkAdmin } from "~/shared/services/admin";
 import { createPostFn } from "~/shared/services/post";
 import { categoriesOptions, tagsOptions } from "~/shared/tanstackQueries/post";
 
 export const Route = createFileRoute("/$lang/_protected/new")({
+	beforeLoad: async ({ params }) => {
+		try {
+			return await checkAdmin();
+		} catch {
+			throw redirect({
+				to: "/$lang",
+				params: { lang: params.lang },
+			});
+		}
+	},
 	loader: () => {
 		const qc = browserQueryClient;
 		if (!qc) return;
@@ -56,7 +69,6 @@ function NewPostPage() {
 			});
 		},
 		onError: (err) => {
-			console.log("🚀 ~ NewPostPage ~ err:", err);
 			const message =
 				err instanceof Error && err.message === "SLUG_TAKEN"
 					? t.editor.slugTaken

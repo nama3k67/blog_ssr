@@ -1,15 +1,14 @@
-import { auth } from "@clerk/tanstack-react-start/server";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { isAdmin } from "~/env";
+import { checkAdmin } from "~/shared/services/admin";
 
 export const Route = createFileRoute("/$lang/_protected/admin")({
-	beforeLoad: async () => {
-		const { userId: clerkId } = await auth();
-
-		if (!isAdmin(clerkId)) {
+	beforeLoad: async ({ params }) => {
+		try {
+			return await checkAdmin();
+		} catch {
 			throw redirect({
 				to: "/$lang",
-				params: { lang: "en" },
+				params: { lang: params.lang },
 			});
 		}
 	},

@@ -21,6 +21,7 @@ import { Route as ApiWebhooksClerkRouteImport } from './routes/api/webhooks/cler
 import { Route as LangPostsSlugRouteImport } from './routes/$lang/posts/$slug'
 import { Route as LangProtectedNewRouteImport } from './routes/$lang/_protected/new'
 import { Route as LangProtectedAdminRouteRouteImport } from './routes/$lang/_protected/admin/route'
+import { Route as LangProtectedTranslatePostIdRouteImport } from './routes/$lang/_protected/translate/$postId'
 import { Route as LangProtectedEditPostIdRouteImport } from './routes/$lang/_protected/edit/$postId'
 import { Route as LangProtectedAdminQueueRouteImport } from './routes/$lang/_protected/admin/queue'
 
@@ -84,6 +85,12 @@ const LangProtectedAdminRouteRoute = LangProtectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => LangProtectedRouteRoute,
 } as any)
+const LangProtectedTranslatePostIdRoute =
+  LangProtectedTranslatePostIdRouteImport.update({
+    id: '/translate/$postId',
+    path: '/translate/$postId',
+    getParentRoute: () => LangProtectedRouteRoute,
+  } as any)
 const LangProtectedEditPostIdRoute = LangProtectedEditPostIdRouteImport.update({
   id: '/edit/$postId',
   path: '/edit/$postId',
@@ -110,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/$lang/posts/': typeof LangPostsIndexRoute
   '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
   '/$lang/edit/$postId': typeof LangProtectedEditPostIdRoute
+  '/$lang/translate/$postId': typeof LangProtectedTranslatePostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -125,6 +133,7 @@ export interface FileRoutesByTo {
   '/$lang/posts': typeof LangPostsIndexRoute
   '/$lang/admin/queue': typeof LangProtectedAdminQueueRoute
   '/$lang/edit/$postId': typeof LangProtectedEditPostIdRoute
+  '/$lang/translate/$postId': typeof LangProtectedTranslatePostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -142,6 +151,7 @@ export interface FileRoutesById {
   '/$lang/posts/': typeof LangPostsIndexRoute
   '/$lang/_protected/admin/queue': typeof LangProtectedAdminQueueRoute
   '/$lang/_protected/edit/$postId': typeof LangProtectedEditPostIdRoute
+  '/$lang/_protected/translate/$postId': typeof LangProtectedTranslatePostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/$lang/posts/'
     | '/$lang/admin/queue'
     | '/$lang/edit/$postId'
+    | '/$lang/translate/$postId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/$lang/posts'
     | '/$lang/admin/queue'
     | '/$lang/edit/$postId'
+    | '/$lang/translate/$postId'
   id:
     | '__root__'
     | '/'
@@ -191,6 +203,7 @@ export interface FileRouteTypes {
     | '/$lang/posts/'
     | '/$lang/_protected/admin/queue'
     | '/$lang/_protected/edit/$postId'
+    | '/$lang/_protected/translate/$postId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangProtectedAdminRouteRouteImport
       parentRoute: typeof LangProtectedRouteRoute
     }
+    '/$lang/_protected/translate/$postId': {
+      id: '/$lang/_protected/translate/$postId'
+      path: '/translate/$postId'
+      fullPath: '/$lang/translate/$postId'
+      preLoaderRoute: typeof LangProtectedTranslatePostIdRouteImport
+      parentRoute: typeof LangProtectedRouteRoute
+    }
     '/$lang/_protected/edit/$postId': {
       id: '/$lang/_protected/edit/$postId'
       path: '/edit/$postId'
@@ -327,12 +347,14 @@ interface LangProtectedRouteRouteChildren {
   LangProtectedAdminRouteRoute: typeof LangProtectedAdminRouteRouteWithChildren
   LangProtectedNewRoute: typeof LangProtectedNewRoute
   LangProtectedEditPostIdRoute: typeof LangProtectedEditPostIdRoute
+  LangProtectedTranslatePostIdRoute: typeof LangProtectedTranslatePostIdRoute
 }
 
 const LangProtectedRouteRouteChildren: LangProtectedRouteRouteChildren = {
   LangProtectedAdminRouteRoute: LangProtectedAdminRouteRouteWithChildren,
   LangProtectedNewRoute: LangProtectedNewRoute,
   LangProtectedEditPostIdRoute: LangProtectedEditPostIdRoute,
+  LangProtectedTranslatePostIdRoute: LangProtectedTranslatePostIdRoute,
 }
 
 const LangProtectedRouteRouteWithChildren =

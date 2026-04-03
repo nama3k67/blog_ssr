@@ -237,22 +237,14 @@ export async function deletePost(postId: string) {
 // ============ ADMIN QUERIES ============
 
 /**
- * Get all posts with pending status for admin approval queue
- * Sorted by creation date (FIFO)
- * TODO Story 4.5: Remove this function when approval workflow is replaced by admin dashboard
+ * Get all posts (both languages, all statuses) for the admin dashboard
+ * Sorted by updatedAt descending
  */
-export async function getPendingPosts() {
-	const result = await db.query.posts.findMany({
-		// TODO Story 4.5: "pending" removed from enum — this query returns nothing until cleanup
-		// biome-ignore lint/suspicious/noExplicitAny: "pending" removed from enum, cleanup in Story 4.5
-		where: eq(posts.status as any, "pending"),
-		with: {
-			author: true,
-			category: true,
-		},
-		orderBy: [asc(posts.createdAt)],
+export async function getAllAdminPosts() {
+	return db.query.posts.findMany({
+		with: { author: true, category: true },
+		orderBy: [desc(posts.updatedAt)],
 	});
-	return result;
 }
 
 // ============ CATEGORIES ============
@@ -375,4 +367,21 @@ export async function getAnyPostBySlugAndLang(
 	const conditions = [eq(posts.slug, slug), eq(posts.lang, lang)];
 	if (excludePostId) conditions.push(ne(posts.id, excludePostId));
 	return db.query.posts.findFirst({ where: and(...conditions) });
+}
+
+/**
+ * Find any post (any status) by translationGroupId and language
+ * Used for admin translation check — does NOT filter by status (catches drafts)
+ */
+export async function getAnyPostByTranslationGroupAndLang(
+	translationGroupId: string,
+	lang: string,
+) {
+	return db.query.posts.findFirst({
+		where: and(
+			eq(posts.translationGroupId, translationGroupId),
+			eq(posts.lang, lang),
+		),
+		columns: { id: true, slug: true, lang: true, status: true },
+	});
 }
