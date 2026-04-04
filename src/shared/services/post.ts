@@ -11,7 +11,6 @@ import {
 	getAnyPostByTranslationGroupAndLang,
 	getPostByIdForAdmin,
 	getPostBySlugAndLang,
-	getPostTranslation,
 	getPublishedPostsPaginated,
 	getUserByClerkId,
 	updatePost,
@@ -71,32 +70,37 @@ export const fetchPostsList = createServerFn({ method: "GET" })
 export const fetchPost = createServerFn({ method: "GET" })
 	.inputValidator((params: { slug: string; lang: string }) => params)
 	.handler(async ({ data: { slug, lang } }) => {
-		// Try requested language first
-		let post = await getPostBySlugAndLang(slug, lang);
+		const fallbackLang = lang === "en" ? "vi" : "en";
+
+		// Fetch both language variants in parallel — eliminates sequential Neon round-trips.
+		// Because translations share the same slug (see createTranslationFn), the
+		// fallbackPost IS the translation candidate, so no third query is needed.
+		const [primaryPost, fallbackPost] = await Promise.all([
+			getPostBySlugAndLang(slug, lang),
+			getPostBySlugAndLang(slug, fallbackLang),
+		]);
+
 		let isFallback = false;
 		let originalLang = lang;
 
-		// If not found, try opposite language
-		if (!post) {
-			const fallbackLang = lang === "en" ? "vi" : "en";
-			post = await getPostBySlugAndLang(slug, fallbackLang);
-
-			if (post) {
-				isFallback = true;
-				originalLang = fallbackLang;
-			}
-		}
+		const post =
+			primaryPost ??
+			(() => {
+				if (fallbackPost) {
+					isFallback = true;
+					originalLang = fallbackLang;
+				}
+				return fallbackPost;
+			})();
 
 		if (!post) {
 			throw new Error("Post not found");
 		}
 
-		// Check for translation
-		const targetLang = lang === "en" ? "vi" : "en";
-		const translation = await getPostTranslation(
-			post.translationGroupId,
-			targetLang,
-		);
+		// fallbackPost is always the other-language variant (already fetched above).
+		// In normal case: it's the translation to link to from the toggle.
+		// In fallback case: it's the "original" linked from the fallback banner.
+		const translation = fallbackPost;
 
 		return {
 			post: {

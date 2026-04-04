@@ -14,6 +14,7 @@ import type * as React from "react";
 import { Footer } from "~/components/layout/Footer";
 import Header from "~/components/layout/Header";
 import { Toaster } from "~/components/ui/sonner";
+import { SITE_URL } from "~/shared/data/site";
 import { I18nProvider } from "~/shared/providers/i18n";
 import { TanstackQueryProvider } from "~/shared/providers/tanstackQuery";
 import { ThemeProvider } from "~/shared/providers/theme";
@@ -45,7 +46,7 @@ export const Route = createRootRoute({
 				content:
 					"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
 			},
-			{ property: "og:image", content: "/logo.png" },
+			{ property: "og:image", content: `${SITE_URL}/logo.png` },
 			{ property: "og:image:width", content: "1200" },
 			{ property: "og:image:height", content: "630" },
 			{ property: "og:locale", content: "en_US" },
@@ -58,7 +59,7 @@ export const Route = createRootRoute({
 				name: "twitter:description",
 				content: "Knowledge about nutrition, training, and technology.",
 			},
-			{ name: "twitter:image", content: "/logo.png" },
+			{ name: "twitter:image", content: `${SITE_URL}/logo.png` },
 		],
 		links: [
 			{ rel: "icon", type: "image/png", href: "/logo.png" },

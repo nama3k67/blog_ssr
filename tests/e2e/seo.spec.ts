@@ -76,7 +76,6 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 				page,
 				'link[rel="alternate"][hreflang="vi"]',
 			);
-			console.log("🚀 ~ href:", href)
 			expect(href).not.toBeNull();
 			expect(href).toMatch(/\/vi\//);
 		});
@@ -230,6 +229,7 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 
 			// When I navigate to a post
 			await readMoreLinks.first().click();
+			await page.waitForSelector("article header h1");
 
 			// Then og:type is "article"
 			const ogType = await getMetaContent(page, 'meta[property="og:type"]');
@@ -252,6 +252,7 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 
 			// When I navigate to a post
 			await readMoreLinks.first().click();
+			await page.waitForSelector("article header h1");
 
 			// Then og:title is present
 			const ogTitle = await getMetaContent(page, 'meta[property="og:title"]');
@@ -275,6 +276,7 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 
 			// When I navigate to an English post
 			await readMoreLinks.first().click();
+			await page.waitForSelector("article header h1");
 
 			// Then og:locale is en_US
 			const ogLocale = await getMetaContent(
@@ -300,6 +302,7 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 
 			// When I navigate to a post
 			await readMoreLinks.first().click();
+			await page.waitForSelector("article header h1");
 
 			// Then og:image is an absolute URL
 			const ogImage = await getMetaContent(page, 'meta[property="og:image"]');
@@ -323,6 +326,7 @@ test.describe("SEO meta tags (Story 3.3)", () => {
 
 			// When I navigate to a post
 			await readMoreLinks.first().click();
+			await page.waitForSelector("article header h1");
 
 			// Then at least one hreflang alternate link is in the head
 			const hreflangCount = await page.evaluate(() => {

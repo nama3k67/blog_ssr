@@ -193,6 +193,8 @@ test.describe("Post detail page (Story 3.2)", () => {
 			page,
 			localizedUrl,
 		}) => {
+			// Two full SSR page loads — needs extra headroom for Neon cold-starts in CI
+			test.setTimeout(120_000);
 			await page.goto(localizedUrl("/posts"));
 			// CardLink renders <a> around the title; CardCta is aria-hidden <div> — use "article a"
 		const readMoreLinks = page.locator("article a");
@@ -208,7 +210,7 @@ test.describe("Post detail page (Story 3.2)", () => {
 
 			// Extract the slug and try the Vietnamese version
 			const slug = href.split("/").pop();
-			await page.goto(`/vi/posts/${slug}`);
+			await page.goto(`/vi/posts/${slug}`, { waitUntil: "domcontentloaded" });
 
 			// Either the fallback banner is visible (no VI translation → serves EN content)
 			// OR the article header h1 is visible (a VI version exists)
@@ -216,9 +218,7 @@ test.describe("Post detail page (Story 3.2)", () => {
 			const fallbackBanner = page.getByText(/only available in/i);
 			const articleTitle = page.locator("article header h1");
 
-			const hasBanner = await fallbackBanner.isVisible();
-			const hasArticleTitle = await articleTitle.isVisible();
-			expect(hasBanner || hasArticleTitle).toBe(true);
+			await expect(fallbackBanner.or(articleTitle).first()).toBeVisible();
 		});
 
 		test("translation toggle is shown when post has a translation", async ({
