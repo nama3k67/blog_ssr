@@ -5,6 +5,7 @@ yarn.lock
 .cache
 .env
 .env.local
+.dev.vars
 .vercel
 .output
 .vinxi

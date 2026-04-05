@@ -1,7 +1,7 @@
-import { and, asc, desc, eq } from "drizzle-orm";
-import { db } from "./client";
+import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { db, withTransaction } from "./client";
 import type { NewCategory, NewPost, NewTag, NewUser } from "./schema";
-import { categories, posts, tags, users } from "./schema";
+import { categories, posts, postTags, tags, users } from "./schema";
 
 // ============ USERS ============
 
@@ -237,19 +237,14 @@ export async function deletePost(postId: string) {
 // ============ ADMIN QUERIES ============
 
 /**
- * Get all posts with pending status for admin approval queue
- * Sorted by creation date (FIFO)
+ * Get all posts (both languages, all statuses) for the admin dashboard
+ * Sorted by updatedAt descending
  */
-export async function getPendingPosts() {
-	const result = await db.query.posts.findMany({
-		where: eq(posts.status, "pending"),
-		with: {
-			author: true,
-			category: true,
-		},
-		orderBy: [asc(posts.createdAt)],
+export async function getAllAdminPosts() {
+	return db.query.posts.findMany({
+		with: { author: true, category: true },
+		orderBy: [desc(posts.updatedAt)],
 	});
-	return result;
 }
 
 // ============ CATEGORIES ============
@@ -297,4 +292,96 @@ export async function getTagBySlug(slug: string) {
 export async function createTag(tag: NewTag) {
 	const result = await db.insert(tags).values(tag).returning();
 	return result[0];
+}
+
+// ============ POST TAGS ============
+
+export async function createPostTags(postId: string, tagIds: string[]) {
+	if (tagIds.length === 0) return;
+	await db.insert(postTags).values(tagIds.map((tagId) => ({ postId, tagId })));
+}
+
+export async function createPostWithTags(post: NewPost, tagIds: string[]) {
+	return withTransaction(async (tx) => {
+		const [created] = await tx.insert(posts).values(post).returning();
+		if (tagIds.length > 0) {
+			await tx
+				.insert(postTags)
+				.values(tagIds.map((tagId) => ({ postId: created.id, tagId })));
+		}
+		return created;
+	});
+}
+
+// ============ EDIT POST QUERIES ============
+
+/**
+ * Get a post by ID with category and tags — for admin edit form
+ */
+export async function getPostByIdForAdmin(postId: string) {
+	return db.query.posts.findFirst({
+		where: eq(posts.id, postId),
+		with: {
+			author: true,
+			category: true,
+			postTags: { with: { tag: true } },
+		},
+	});
+}
+
+/**
+ * Update a post and atomically replace all its tags in a single transaction
+ */
+export async function updatePostWithTags(
+	postId: string,
+	data: Partial<Omit<NewPost, "id" | "userId">>,
+	newTagIds: string[],
+) {
+	return withTransaction(async (tx) => {
+		const [updated] = await tx
+			.update(posts)
+			.set({ ...data, updatedAt: new Date() })
+			.where(eq(posts.id, postId))
+			.returning();
+		if (!updated) throw new Error("POST_NOT_FOUND");
+		// Replace all tags atomically — only runs if post exists
+		await tx.delete(postTags).where(eq(postTags.postId, postId));
+		if (newTagIds.length > 0) {
+			await tx
+				.insert(postTags)
+				.values(newTagIds.map((tagId) => ({ postId, tagId })));
+		}
+		return updated;
+	});
+}
+
+/**
+ * Get any post (any status) by slug and language, optionally excluding a specific post
+ * Used for slug uniqueness checks on edit
+ */
+export async function getAnyPostBySlugAndLang(
+	slug: string,
+	lang: string,
+	excludePostId?: string,
+) {
+	const conditions = [eq(posts.slug, slug), eq(posts.lang, lang)];
+	if (excludePostId) conditions.push(ne(posts.id, excludePostId));
+	return db.query.posts.findFirst({ where: and(...conditions) });
+}
+
+/**
+ * Find any post (any status) by translationGroupId and language
+ * Used for admin translation check — does NOT filter by status (catches drafts)
+ */
+export async function getAnyPostByTranslationGroupAndLang(
+	translationGroupId: string,
+	lang: string,
+) {
+	return db.query.posts.findFirst({
+		where: and(
+			eq(posts.translationGroupId, translationGroupId),
+			eq(posts.lang, lang),
+		),
+		columns: { id: true, slug: true, lang: true, status: true },
+	});
 }

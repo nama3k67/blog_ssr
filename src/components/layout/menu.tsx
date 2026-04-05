@@ -1,4 +1,5 @@
 import { SignOutButton, useUser } from "@clerk/tanstack-react-start";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 
@@ -10,11 +11,16 @@ import {
 	DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useI18n } from "~/shared/providers/i18n";
+import { isAdminOptions } from "~/shared/tanstackQueries/admin";
 import { capitalizeFirstLetter } from "~/shared/utils/string";
 
 export default function UserMenu() {
 	const { t, localizedPath } = useI18n();
 	const { user } = useUser();
+	const { data: adminData } = useQuery({
+		...isAdminOptions(),
+		enabled: !!user, // skip query until Clerk confirms user is signed in
+	});
 
 	return (
 		<DropdownMenu modal={false}>
@@ -30,9 +36,18 @@ export default function UserMenu() {
 
 			<DropdownMenuContent className='pointer-events-auto' align='end'>
 				<DropdownMenuItem>{t.userMenu.userInfo}</DropdownMenuItem>
-				<DropdownMenuItem asChild>
-					<Link to={localizedPath("/new")}>{t.userMenu.blogCreate}</Link>
-				</DropdownMenuItem>
+				{adminData?.isAdmin === true && (
+					<>
+						<DropdownMenuItem asChild>
+							<Link to={localizedPath("/new")}>{t.userMenu.blogCreate}</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild>
+							<Link to={localizedPath("/admin/queue")}>
+								{t.userMenu.dashboard}
+							</Link>
+						</DropdownMenuItem>
+					</>
+				)}
 				<SignOutButton redirectUrl={localizedPath("/")}>
 					<DropdownMenuItem>{t.userMenu.logout}</DropdownMenuItem>
 				</SignOutButton>

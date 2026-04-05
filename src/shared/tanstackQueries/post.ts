@@ -2,9 +2,11 @@ import { queryOptions } from "@tanstack/react-query";
 
 import {
 	checkSlugAvailability,
+	checkTranslationExistsFn,
 	fetchPost,
 	fetchPostsList,
 	getCategoriesList,
+	getPostForEditFn,
 	getTagsList,
 } from "~/shared/services/post";
 
@@ -26,11 +28,42 @@ export const postDetailOptions = (slug: string, lang: string) =>
 
 // ============ Slug Availability ============
 
-export const slugCheckOptions = (slug: string, lang: string) =>
+export const slugCheckOptions = (
+	slug: string,
+	lang: string,
+	excludePostId?: string,
+) =>
 	queryOptions({
-		queryKey: ["posts", "slug-check", { slug, lang }],
-		queryFn: () => checkSlugAvailability({ data: { slug, lang } }),
-		staleTime: Number.POSITIVE_INFINITY,
+		queryKey: ["posts", "slug-check", { slug, lang, excludePostId }],
+		queryFn: () =>
+			checkSlugAvailability({ data: { slug, lang, excludePostId } }),
+		staleTime: 30_000, // 30 seconds — avoid indefinitely-cached stale results
+	});
+
+// ============ Post Edit ============
+
+export const postForEditOptions = (postId: string) =>
+	queryOptions({
+		queryKey: ["posts", "edit", postId],
+		queryFn: () => getPostForEditFn({ data: { postId } }),
+		staleTime: 0, // Always fresh for edit
+	});
+
+// ============ Translation ============
+
+export const translationCheckOptions = (
+	translationGroupId: string,
+	targetLang: string,
+) =>
+	queryOptions({
+		queryKey: [
+			"posts",
+			"translation-check",
+			{ translationGroupId, targetLang },
+		],
+		queryFn: () =>
+			checkTranslationExistsFn({ data: { translationGroupId, targetLang } }),
+		staleTime: 0, // always fresh — translation status changes with admin actions
 	});
 
 // ============ Categories & Tags ============

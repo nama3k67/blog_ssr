@@ -1,5 +1,5 @@
 import type { ICommand, TextAreaTextApi } from "@uiw/react-md-editor";
-import { ImageIcon } from "lucide-react";
+import { EyeIcon, ImageIcon, PencilIcon } from "lucide-react";
 import {
 	lazy,
 	Suspense,
@@ -9,6 +9,8 @@ import {
 	useRef,
 	useState,
 } from "react";
+
+import { toast } from "sonner";
 
 import { ClientOnly } from "~/components/shared/ClientOnly";
 import { useI18n } from "~/shared/providers/i18n";
@@ -21,7 +23,8 @@ import {
 
 const MDEditor = lazy(() => import("@uiw/react-md-editor"));
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 500_000; // 500 KB (500,000 bytes)
+const MOBILE_BREAKPOINT = "(max-width: 639px)";
 
 type MarkdownEditorProps = {
 	value: string;
@@ -36,39 +39,68 @@ export function MarkdownEditor({
 	placeholder,
 	height = 500,
 }: MarkdownEditorProps) {
+	// ── Context ────────────────────────────────────────────────────────────────
 	const { resolvedTheme } = useTheme();
 	const { t } = useI18n();
+
+	// ── State ──────────────────────────────────────────────────────────────────
 	const [uploading, setUploading] = useState(false);
 	const [uploadError, setUploadError] = useState<string | null>(null);
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const textApiRef = useRef<TextAreaTextApi | null>(null);
 
-	// Refs to avoid recreating callbacks on every keystroke
+	// Lazy-initialize so the first render already knows the correct breakpoint.
+	// Falls back to false (desktop mode) in non-browser environments (SSR/tests).
+	const [isMobile, setIsMobile] = useState(
+		() =>
+			typeof window !== "undefined" &&
+			window.matchMedia(MOBILE_BREAKPOINT).matches,
+	);
+	const [showPreview, setShowPreview] = useState(false);
+
+	// ── Refs ───────────────────────────────────────────────────────────────────
+	// Stable refs so upload callbacks don't re-create on every keystroke
 	const valueRef = useRef(value);
 	valueRef.current = value;
 	const onChangeRef = useRef(onChange);
 	onChangeRef.current = onChange;
 
-	// Auto-dismiss upload error after 5s
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	const textApiRef = useRef<TextAreaTextApi | null>(null);
+	const failedFilesRef = useRef<File[]>([]);
+
+	// ── Effects ────────────────────────────────────────────────────────────────
+	// Track viewport width and reset preview state when leaving mobile
+	useEffect(() => {
+		const mq = window.matchMedia(MOBILE_BREAKPOINT);
+		const handler = (e: MediaQueryListEvent) => {
+			setIsMobile(e.matches);
+			if (!e.matches) setShowPreview(false);
+		};
+		mq.addEventListener("change", handler);
+		return () => mq.removeEventListener("change", handler);
+	}, []);
+
+	// Auto-dismiss upload errors after 5 s
 	useEffect(() => {
 		if (!uploadError) return;
 		const timer = setTimeout(() => setUploadError(null), 5000);
 		return () => clearTimeout(timer);
 	}, [uploadError]);
 
+	// ── Upload handlers ────────────────────────────────────────────────────────
 	const handleUploadFiles = useCallback(
 		async (files: File[], api?: TextAreaTextApi | null) => {
 			if (files.length === 0) return;
 
 			setUploading(true);
 			setUploadError(null);
+			const failed: File[] = [];
 
 			try {
 				let currentValue = valueRef.current;
 
 				for (const file of files) {
 					if (file.size > MAX_FILE_SIZE) {
-						setUploadError(t.editor.fileTooLarge);
+						toast.error(t.editor.fileTooLarge);
 						continue;
 					}
 
@@ -77,20 +109,26 @@ export function MarkdownEditor({
 						const altText = file.name.replace(/\.[^/.]+$/, "");
 
 						if (api) {
-							// Insert at cursor position via the editor API
 							api.replaceSelection(`![${altText}](${url})`);
 						} else {
-							// Fallback: append to content using accumulator
 							currentValue = insertImageMarkdown(currentValue, url, altText);
 							onChangeRef.current(currentValue);
 						}
 					} catch (err) {
-						const message =
-							err instanceof Error ? err.message : t.editor.uploadFailed;
+						failed.push(file);
+						const raw = err instanceof Error ? err.message : "";
+						const message = raw.includes("FILE_TOO_LARGE")
+							? t.editor.fileTooLarge
+							: raw.includes("IMAGE_TOO_WIDE")
+								? t.editor.imageTooWide
+								: raw.includes("INVALID_FILE_TYPE")
+									? t.editor.invalidFileType
+									: raw || t.editor.uploadFailed;
 						setUploadError(message);
 					}
 				}
 			} finally {
+				failedFilesRef.current = failed;
 				setUploading(false);
 			}
 		},
@@ -125,26 +163,60 @@ export function MarkdownEditor({
 			if (files.length > 0) {
 				handleUploadFiles(files, textApiRef.current);
 			}
-			// Reset input so the same file can be selected again
+			// Reset so the same file can be re-selected
 			e.target.value = "";
 		},
 		[handleUploadFiles],
 	);
 
+	// ── Toolbar commands ───────────────────────────────────────────────────────
 	const uploadImageCommand: ICommand = useMemo(
 		() => ({
 			name: "upload-image",
 			keyCommand: "upload-image",
 			shortcuts: "ctrlcmd+shift+i",
+			buttonProps: {
+				"aria-label": "Upload image (Ctrl+Shift+I)",
+				title: "Upload image",
+			},
 			icon: <ImageIcon className='size-3.5' />,
 			execute: (_state, api) => {
-				// Store the api ref for later use by file input handler
 				textApiRef.current = api;
 				fileInputRef.current?.click();
 			},
 		}),
 		[],
 	);
+
+	// Mobile only: toggles between write-only and preview-only panes
+	const togglePreviewCommand: ICommand = useMemo(
+		() => ({
+			name: "toggle-preview",
+			keyCommand: "toggle-preview",
+			buttonProps: {
+				"aria-label": showPreview ? "Switch to editor" : "Switch to preview",
+				title: showPreview ? "Switch to editor" : "Switch to preview",
+			},
+			icon: showPreview ? (
+				<PencilIcon className='size-3.5' />
+			) : (
+				<EyeIcon className='size-3.5' />
+			),
+			execute: () => setShowPreview((prev) => !prev),
+		}),
+		[showPreview],
+	);
+
+	const extraCommands = useMemo(
+		() =>
+			isMobile
+				? [uploadImageCommand, togglePreviewCommand]
+				: [uploadImageCommand],
+		[isMobile, uploadImageCommand, togglePreviewCommand],
+	);
+
+	// ── Derived / memos ────────────────────────────────────────────────────────
+	const previewMode = isMobile ? (showPreview ? "preview" : "edit") : "live";
 
 	const skeletonFallback = useMemo(
 		() => (
@@ -156,10 +228,11 @@ export function MarkdownEditor({
 		[height],
 	);
 
+	// ── Render ─────────────────────────────────────────────────────────────────
 	return (
 		<ClientOnly fallback={skeletonFallback}>
 			<div data-color-mode={resolvedTheme} className='relative'>
-				{/* Hidden file input */}
+				{/* Hidden file input for toolbar upload button */}
 				<input
 					ref={fileInputRef}
 					type='file'
@@ -169,7 +242,7 @@ export function MarkdownEditor({
 					multiple
 				/>
 
-				{/* Upload status overlay */}
+				{/* Upload in-progress overlay */}
 				{uploading && (
 					<div className='absolute inset-0 z-10 flex items-center justify-center rounded-md bg-black/20 backdrop-blur-[1px]'>
 						<div className='rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-lg dark:bg-zinc-800'>
@@ -178,10 +251,20 @@ export function MarkdownEditor({
 					</div>
 				)}
 
-				{/* Upload error */}
+				{/* Upload error banner */}
 				{uploadError && (
 					<div className='mb-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400'>
 						{uploadError}
+						<button
+							type='button'
+							onClick={() => {
+								setUploadError(null);
+								handleUploadFiles(failedFilesRef.current, textApiRef.current);
+							}}
+							className='ml-2 font-medium underline'
+						>
+							{t.editor.retry}
+						</button>
 						<button
 							type='button'
 							onClick={() => setUploadError(null)}
@@ -197,8 +280,8 @@ export function MarkdownEditor({
 						value={value}
 						onChange={(val) => onChange(val || "")}
 						height={height}
-						preview='live'
-						extraCommands={[uploadImageCommand]}
+						preview={previewMode}
+						extraCommands={extraCommands}
 						textareaProps={{
 							placeholder,
 							onDrop: handleDrop,

@@ -1,12 +1,13 @@
-const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"];
+const CLIENT_ALLOWED_TYPES = new Set([
+	"image/jpeg",
+	"image/png",
+	"image/gif",
+	"image/webp",
+	"image/avif",
+]);
 
 export function isImageFile(file: File): boolean {
-	return (
-		file.type.startsWith("image/") ||
-		ALLOWED_EXTENSIONS.some((ext) =>
-			file.name.toLowerCase().endsWith(`.${ext}`),
-		)
-	);
+	return CLIENT_ALLOWED_TYPES.has(file.type);
 }
 
 export type UploadProgress = {
@@ -38,7 +39,11 @@ export async function uploadImage(file: File): Promise<string> {
 		throw new Error(message);
 	}
 
-	const data = (await response.json()) as { url: string; key: string };
+	const data = (await response.json()) as {
+		url: string;
+		key: string;
+		size: number;
+	};
 	return data.url;
 }
 

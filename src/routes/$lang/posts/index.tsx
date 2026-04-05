@@ -5,6 +5,7 @@ import { MainLayout } from "~/components/layout";
 import { PostItem } from "~/components/post/item";
 import { Button } from "~/components/ui/button";
 import { dictionaries } from "~/locales";
+import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
 
 import { fetchPostsList } from "~/shared/services/post";
@@ -39,28 +40,20 @@ export const Route = createFileRoute("/$lang/posts/")({
 		const t = dictionaries[params.lang as keyof typeof dictionaries];
 		return {
 			meta: [
+				{ title: t.pages.posts.title },
+				{ name: "description", content: t.pages.posts.description },
+				{ property: "og:title", content: t.pages.posts.title },
+				{ property: "og:description", content: t.pages.posts.description },
+				{ name: "twitter:title", content: t.pages.posts.title },
+				{ name: "twitter:description", content: t.pages.posts.description },
+			],
+			links: [
+				{ rel: "alternate", hreflang: "en", href: `${SITE_URL}/en/posts` },
+				{ rel: "alternate", hreflang: "vi", href: `${SITE_URL}/vi/posts` },
 				{
-					title: t.pages.posts.title,
-				},
-				{
-					name: "description",
-					content: t.pages.posts.description,
-				},
-				{
-					property: "og:title",
-					content: t.pages.posts.title,
-				},
-				{
-					property: "og:description",
-					content: t.pages.posts.description,
-				},
-				{
-					name: "twitter:title",
-					content: t.pages.posts.title,
-				},
-				{
-					name: "twitter:description",
-					content: t.pages.posts.description,
+					rel: "alternate",
+					hreflang: "x-default",
+					href: `${SITE_URL}/en/posts`,
 				},
 			],
 		};
@@ -108,7 +101,8 @@ function RouteComponent() {
 									← {t.common.previous}
 								</Button>
 								<span className='text-sm text-muted-foreground'>
-									Page {currentPage} of {totalPages}
+									{t.pages.posts.pageNum} {currentPage} {t.pages.posts.pageOf}{" "}
+									{totalPages}
 								</span>
 								<Button
 									variant='ghost'

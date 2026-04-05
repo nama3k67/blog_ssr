@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
+import { lazy, Suspense } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
-import { CodeBlock } from "./CodeBlock";
+const CodeBlock = lazy(() =>
+	import("~/components/shared/CodeBlock").then((m) => ({
+		default: m.CodeBlock,
+	})),
+);
 
 type MarkdownProps = {
 	content: string;
@@ -16,7 +22,7 @@ export function Markdown({ content, className }: MarkdownProps) {
 		<div className={clsx("prose dark:prose-invert", className)}>
 			<ReactMarkdown
 				remarkPlugins={[remarkGfm]}
-				rehypePlugins={[rehypeRaw]}
+				rehypePlugins={[rehypeRaw, rehypeSanitize]}
 				components={{
 					code({ className: codeClassName, children, ...props }) {
 						const isInline = !String(children).includes("\n");
@@ -28,7 +34,17 @@ export function Markdown({ content, className }: MarkdownProps) {
 						const lang = match ? match[1] : "text";
 						const code = String(children).replace(/\n$/, "");
 
-						return <CodeBlock code={code} language={lang} />;
+						return (
+							<Suspense
+								fallback={
+									<pre className='my-4 overflow-x-auto rounded-3xl bg-zinc-900 p-4 text-sm'>
+										<code className={codeClassName}>{children}</code>
+									</pre>
+								}
+							>
+								<CodeBlock code={code} language={lang} />
+							</Suspense>
+						);
 					},
 
 					a({ href, children, ...props }) {

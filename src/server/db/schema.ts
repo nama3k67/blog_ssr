@@ -12,14 +12,9 @@ import {
 } from "drizzle-orm/pg-core";
 
 /**
- * Post status enum for approval workflow
+ * Post status enum — MVP lifecycle: draft → published
  */
-export const postStatusEnum = pgEnum("post_status", [
-	"draft",
-	"pending",
-	"published",
-	"rejected",
-]);
+export const postStatusEnum = pgEnum("post_status", ["draft", "published"]);
 
 /**
  * Users table - synced from Clerk

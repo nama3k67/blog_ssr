@@ -14,6 +14,7 @@ import type * as React from "react";
 import { Footer } from "~/components/layout/Footer";
 import Header from "~/components/layout/Header";
 import { Toaster } from "~/components/ui/sonner";
+import { SITE_URL } from "~/shared/data/site";
 import { I18nProvider } from "~/shared/providers/i18n";
 import { TanstackQueryProvider } from "~/shared/providers/tanstackQuery";
 import { ThemeProvider } from "~/shared/providers/theme";
@@ -45,7 +46,7 @@ export const Route = createRootRoute({
 				content:
 					"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
 			},
-			{ property: "og:image", content: "/logo.png" },
+			{ property: "og:image", content: `${SITE_URL}/logo.png` },
 			{ property: "og:image:width", content: "1200" },
 			{ property: "og:image:height", content: "630" },
 			{ property: "og:locale", content: "en_US" },
@@ -58,9 +59,9 @@ export const Route = createRootRoute({
 				name: "twitter:description",
 				content: "Knowledge about nutrition, training, and technology.",
 			},
-			{ name: "twitter:image", content: "/logo.png" },
+			{ name: "twitter:image", content: `${SITE_URL}/logo.png` },
 		],
-		link: [
+		links: [
 			{ rel: "icon", type: "image/png", href: "/logo.png" },
 			{ rel: "apple-touch-icon", href: "/logo.png" },
 			{ rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -97,7 +98,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 								<div className='flex min-h-screen w-full'>
 									<div className='relative flex min-h-screen w-full flex-col'>
 										{/* Spotlight background column */}
-										<div className='fixed inset-0 flex justify-center sm:px-8'>
+										<div className='fixed inset-0 flex justify-center sm:px-4'>
 											<div className='flex w-full max-w-7xl lg:px-8'>
 												<div className='w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20' />
 											</div>

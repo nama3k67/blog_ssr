@@ -3,177 +3,202 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { FilterBar } from "~/components/admin/FilterBar";
+import { computeTranslationStatus, PostRow } from "~/components/admin/PostRow";
+import type { LangFilter, StatusFilter } from "~/components/admin/types";
 import { Container } from "~/components/shared/Container";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "~/components/ui/dialog";
-import { Textarea } from "~/components/ui/textarea";
 import { useI18n } from "~/shared/providers/i18n";
-import { approvePostFn, rejectPostFn } from "~/shared/services/admin";
-import { pendingPostsOptions } from "~/shared/tanstackQueries/admin";
+import { browserQueryClient } from "~/shared/providers/tanstackQuery";
+import { deletePostFn, unpublishPostFn } from "~/shared/services/admin";
+import { publishPostFn } from "~/shared/services/post";
+import { adminPostsOptions } from "~/shared/tanstackQueries/admin";
 
 export const Route = createFileRoute("/$lang/_protected/admin/queue")({
+	loader: async () => {
+		const qc = browserQueryClient;
+		if (!qc) return;
+		await qc.fetchQuery(adminPostsOptions()); // always fetches, bypasses cache
+	},
 	head: () => ({
 		meta: [
-			{ title: "Admin - Approval Queue" },
-			{ name: "description", content: "Review and approve pending posts" },
+			{ title: "Admin - Post Dashboard" },
+			{ name: "description", content: "Manage all posts" },
 		],
 	}),
-	component: QueuePage,
+	component: PostDashboardPage,
 });
 
-function QueuePage() {
-	const { data: posts = [] } = useQuery(pendingPostsOptions());
-	const queryClient = useQueryClient();
+function PostDashboardPage() {
 	const { t } = useI18n();
-	const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-	const [rejectPostId, setRejectPostId] = useState<string | null>(null);
-	const [rejectFeedback, setRejectFeedback] = useState("");
+	const { lang } = Route.useParams();
+	const queryClient = useQueryClient();
 
-	const approveMutation = useMutation({
-		mutationFn: (postId: string) => approvePostFn({ data: { postId } }),
-		onSuccess: () => {
-			toast.success("Post approved and published.");
-			queryClient.invalidateQueries({ queryKey: ["admin", "pending-posts"] });
-		},
-		onError: () => toast.error("Failed to approve post."),
-	});
+	const { data: posts = [], isLoading } = useQuery(adminPostsOptions());
 
-	const rejectMutation = useMutation({
-		mutationFn: ({ postId, feedback }: { postId: string; feedback: string }) =>
-			rejectPostFn({ data: { postId, feedback } }),
-		onSuccess: () => {
-			toast.success("Post rejected. Feedback sent to author.");
-			setRejectDialogOpen(false);
-			queryClient.invalidateQueries({ queryKey: ["admin", "pending-posts"] });
-		},
-		onError: () => toast.error("Failed to reject post."),
-	});
+	const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+	const [langFilter, setLangFilter] = useState<LangFilter>("all");
 
-	const handleRejectClick = (postId: string) => {
-		setRejectPostId(postId);
-		setRejectFeedback("");
-		setRejectDialogOpen(true);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [pendingDelete, setPendingDelete] = useState<{
+		id: string;
+		title: string;
+	} | null>(null);
+
+	const invalidateAll = () => {
+		queryClient.invalidateQueries({ queryKey: ["admin", "posts"] });
+		queryClient.invalidateQueries({ queryKey: ["posts"] });
 	};
 
-	const handleRejectSubmit = () => {
-		if (!rejectPostId || !rejectFeedback.trim()) return;
-		rejectMutation.mutate({
-			postId: rejectPostId,
-			feedback: rejectFeedback.trim(),
+	const publishMutation = useMutation({
+		mutationFn: (postId: string) => publishPostFn({ data: { postId } }),
+		onSuccess: () => {
+			toast.success(t.admin.publishSuccess);
+			invalidateAll();
+		},
+		onError: () => toast.error(t.admin.publishError),
+	});
+
+	const unpublishMutation = useMutation({
+		mutationFn: (postId: string) => unpublishPostFn({ data: { postId } }),
+		onSuccess: () => {
+			toast.success(t.admin.unpublishSuccess);
+			invalidateAll();
+		},
+		onError: () => toast.error(t.admin.unpublishError),
+	});
+
+	const deleteMutation = useMutation({
+		mutationFn: (postId: string) => deletePostFn({ data: { postId } }),
+		onSuccess: () => {
+			toast.success(t.admin.deleteSuccess);
+			setDeleteDialogOpen(false);
+			setPendingDelete(null);
+			invalidateAll();
+		},
+		onError: () => toast.error(t.admin.deleteError),
+	});
+
+	const filtered = posts
+		.filter((p) => statusFilter === "all" || p.status === statusFilter)
+		.filter((p) => langFilter === "all" || p.lang === langFilter);
+
+	const isProcessing =
+		publishMutation.isPending ||
+		unpublishMutation.isPending ||
+		deleteMutation.isPending;
+
+	const handleDeleteClick = (id: string, title: string) => {
+		setPendingDelete({ id, title });
+		setDeleteDialogOpen(true);
+	};
+
+	const handleDeleteConfirm = () => {
+		if (!pendingDelete) return;
+		deleteMutation.mutate(pendingDelete.id);
+	};
+
+	const formatDate = (iso: string) =>
+		new Date(iso).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
 		});
-	};
-
-	const isProcessing = approveMutation.isPending || rejectMutation.isPending;
 
 	return (
 		<Container className='mt-16 sm:mt-32'>
 			<header className='max-w-2xl'>
-				<h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
-					Approval Queue
+				<h1 className='text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl'>
+					{t.admin.dashboard}
 				</h1>
-				<p className='mt-6 text-base text-muted-foreground'>
-					Review and approve posts submitted by authors
+				<p className='mt-6 text-base text-zinc-600 dark:text-zinc-400'>
+					{t.admin.dashboardDescription}
 				</p>
 			</header>
 
-			<div className='mt-16 sm:mt-20'>
-				{posts.length === 0 ? (
-					<div className='rounded-2xl border border-border bg-muted/50 p-8 text-center'>
-						<p className='text-muted-foreground'>No pending posts to review</p>
+			<FilterBar
+				statusFilter={statusFilter}
+				setStatusFilter={setStatusFilter}
+				langFilter={langFilter}
+				setLangFilter={setLangFilter}
+				t={t}
+			/>
+
+			<div className='mt-8 sm:mt-10'>
+				{isLoading ? (
+					<p className='text-zinc-500 dark:text-zinc-400'>{t.common.loading}</p>
+				) : filtered.length === 0 ? (
+					<div className='rounded-2xl border border-zinc-100 bg-zinc-50/50 p-8 text-center dark:border-zinc-700/40 dark:bg-zinc-800/50'>
+						<p className='text-zinc-500 dark:text-zinc-400'>
+							{t.admin.noPosts}
+						</p>
 					</div>
 				) : (
-					<div className='flex flex-col gap-6'>
-						{posts.map((post) => (
-							<div
-								key={post.id}
-								className='rounded-2xl border border-border p-6'
-							>
-								<div className='flex items-start justify-between gap-4'>
-									<div className='flex-1'>
-										<h3 className='text-xl font-semibold text-foreground'>
-											{post.title}
-										</h3>
-										<p className='mt-2 text-sm text-muted-foreground'>
-											{post.description}
-										</p>
-										<div className='mt-4 flex flex-wrap items-center gap-2 text-sm text-muted-foreground'>
-											<span>
-												{post.author?.firstName} {post.author?.lastName}
-											</span>
-											<Badge variant='outline'>{post.lang.toUpperCase()}</Badge>
-											<span className='font-mono text-xs'>/{post.slug}</span>
-											{post.category && (
-												<Badge variant='secondary'>{post.category.name}</Badge>
-											)}
-										</div>
-										<div className='mt-2 text-xs text-muted-foreground'>
-											Submitted: {new Date(post.createdAt).toLocaleString()}
-										</div>
-									</div>
-									<div className='flex gap-2'>
-										<Button
-											size='sm'
-											variant='outline'
-											onClick={() => handleRejectClick(post.id)}
-											disabled={isProcessing}
-										>
-											{t.common.reject}
-										</Button>
-										<Button
-											size='sm'
-											onClick={() => approveMutation.mutate(post.id)}
-											disabled={isProcessing}
-										>
-											{t.common.approve}
-										</Button>
-									</div>
-								</div>
-							</div>
-						))}
+					<div className='flex flex-col gap-4'>
+						{filtered.map((post) => {
+							const { label, partnerId } = computeTranslationStatus(
+								posts,
+								post.translationGroupId,
+								post.lang,
+								t,
+							);
+							return (
+								<PostRow
+									key={post.id}
+									post={post}
+									lang={lang}
+									isProcessing={isProcessing}
+									translationLabel={label}
+									translationPartnerId={partnerId}
+									formatDate={formatDate}
+									onPublish={publishMutation.mutate}
+									onUnpublish={unpublishMutation.mutate}
+									onDeleteClick={handleDeleteClick}
+									t={t}
+								/>
+							);
+						})}
 					</div>
 				)}
 			</div>
 
-			{/* Reject Feedback Dialog */}
-			<Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Reject Post</DialogTitle>
+						<DialogTitle>{t.admin.deleteConfirmTitle}</DialogTitle>
 						<DialogDescription>
-							Provide feedback to the author explaining why this post was
-							rejected.
+							{t.admin.deleteConfirmBody.replace(
+								"{title}",
+								pendingDelete?.title ?? "",
+							)}
 						</DialogDescription>
 					</DialogHeader>
-					<div className='mt-4 flex flex-col gap-4'>
-						<Textarea
-							value={rejectFeedback}
-							onChange={(e) => setRejectFeedback(e.target.value)}
-							placeholder='Enter feedback for the author...'
-							rows={4}
-						/>
-						<div className='flex justify-end gap-2'>
-							<Button
-								variant='outline'
-								onClick={() => setRejectDialogOpen(false)}
-							>
-								{t.common.cancel}
-							</Button>
-							<Button
-								variant='destructive'
-								onClick={handleRejectSubmit}
-								disabled={!rejectFeedback.trim() || rejectMutation.isPending}
-							>
-								{t.common.reject}
-							</Button>
-						</div>
-					</div>
+					<DialogFooter>
+						<Button
+							variant='outline'
+							onClick={() => {
+								setDeleteDialogOpen(false);
+								setPendingDelete(null);
+							}}
+						>
+							{t.common.cancel}
+						</Button>
+						<Button
+							variant='destructive'
+							onClick={handleDeleteConfirm}
+							disabled={deleteMutation.isPending}
+						>
+							{t.common.delete}
+						</Button>
+					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 		</Container>

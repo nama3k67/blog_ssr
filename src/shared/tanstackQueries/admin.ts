@@ -1,9 +1,16 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { getPendingPostsFn } from "~/shared/services/admin";
+import { getAdminPostsFn, getIsAdminFn } from "~/shared/services/admin";
 
-export const pendingPostsOptions = () =>
+export const adminPostsOptions = () =>
 	queryOptions({
-		queryKey: ["admin", "pending-posts"],
-		queryFn: () => getPendingPostsFn(),
+		queryKey: ["admin", "posts"],
+		queryFn: () => getAdminPostsFn(),
+	});
+
+export const isAdminOptions = () =>
+	queryOptions({
+		queryKey: ["admin", "is-admin"],
+		queryFn: () => getIsAdminFn(),
+		staleTime: Number.POSITIVE_INFINITY, // admin status doesn't change during session
 	});
