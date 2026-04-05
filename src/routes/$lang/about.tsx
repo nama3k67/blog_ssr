@@ -3,6 +3,8 @@ import { Github } from "lucide-react";
 import { Container } from "~/components/shared/Container";
 import { dictionaries } from "~/locales";
 import {
+	AUTHOR_JOB_TITLE,
+	AUTHOR_NAME,
 	AVATAR_URL,
 	CONTACT_EMAIL,
 	SKILLS,
@@ -41,8 +43,22 @@ export const Route = createFileRoute("/$lang/about")({
 
 function RouteComponent() {
 	const { t, language } = useI18n();
+
+	const personJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "Person",
+		name: AUTHOR_NAME,
+		jobTitle: AUTHOR_JOB_TITLE,
+		url: `${SITE_URL}/en/about`,
+		sameAs: SOCIAL_LINKS.map((link) => link.href),
+	};
+
 	return (
 		<Container className='mt-16 sm:mt-32'>
+			<script
+				type='application/ld+json'
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+			/>
 			<div className='grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12'>
 				{/* Left column — bio, skills, CTA */}
 				<div className='lg:order-first lg:row-span-2'>

@@ -33,5 +33,20 @@
 			"quoteStyle": "double",
 			"jsxQuoteStyle": "single"
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": [
+				"src/routes/$lang/posts/$slug.tsx",
+				"src/routes/$lang/about.tsx"
+			],
+			"linter": {
+				"rules": {
+					"security": {
+						"noDangerouslySetInnerHtml": "off"
+					}
+				}
+			}
+		}
+	]
 }
