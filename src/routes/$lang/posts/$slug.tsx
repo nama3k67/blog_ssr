@@ -130,11 +130,11 @@ function RouteComponent() {
 	const articleJsonLd = post
 		? {
 				"@context": "https://schema.org",
-				"@type": "Article",
+				"@type": "BlogPosting",
 				headline: post.title,
 				description: post.description || undefined,
-				datePublished: post.publishedAt,
-				dateModified: post.publishedAt,
+				datePublished: post.publishedAt ?? post.updatedAt,
+				dateModified: post.updatedAt ?? post.publishedAt,
 				image: post.featuredImage
 					? post.featuredImage.startsWith("http")
 						? post.featuredImage
@@ -144,12 +144,12 @@ function RouteComponent() {
 				author: {
 					"@type": "Person",
 					name: AUTHOR_NAME,
-					url: `${SITE_URL}/en/about`,
+					url: `${SITE_URL}/${lang}/about`,
 				},
 				publisher: {
-					"@type": "Person",
+					"@type": "Organization",
 					name: AUTHOR_NAME,
-					url: `${SITE_URL}/en/about`,
+					url: SITE_URL,
 				},
 			}
 		: null;
@@ -159,7 +159,12 @@ function RouteComponent() {
 			{articleJsonLd && (
 				<script
 					type='application/ld+json'
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(articleJsonLd)
+							.replace(/</g, "\\u003c")
+							.replace(/>/g, "\\u003e")
+							.replace(/&/g, "\\u0026"),
+					}}
 				/>
 			)}
 			<div className='xl:relative'>

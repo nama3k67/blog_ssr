@@ -50,7 +50,7 @@ function RouteComponent() {
 		"@type": "Person",
 		name: AUTHOR_NAME,
 		jobTitle: AUTHOR_JOB_TITLE,
-		url: `${SITE_URL}/en/about`,
+		url: `${SITE_URL}/${language}/about`,
 		sameAs: SOCIAL_LINKS.map((link) => link.href),
 	};
 
@@ -58,7 +58,12 @@ function RouteComponent() {
 		<Container className='mt-16 sm:mt-32'>
 			<script
 				type='application/ld+json'
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(personJsonLd)
+						.replace(/</g, "\\u003c")
+						.replace(/>/g, "\\u003e")
+						.replace(/&/g, "\\u0026"),
+				}}
 			/>
 			<div className='grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12'>
 				{/* Left column — bio, skills, CTA */}

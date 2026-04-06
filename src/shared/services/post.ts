@@ -112,6 +112,7 @@ export const fetchPost = createServerFn({ method: "GET" })
 				description: post.description,
 				publishedAt:
 					post.publishedAt?.toISOString() || post.createdAt.toISOString(),
+				updatedAt: post.updatedAt.toISOString(),
 				featuredImage: post.featuredImage,
 				translationGroupId: post.translationGroupId,
 				author: post.author
