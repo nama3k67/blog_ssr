@@ -12,6 +12,7 @@ import {
 } from "~/shared/data/author";
 import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
+import { trackCtaClickFn } from "~/shared/services/analytics";
 
 export const Route = createFileRoute("/$lang/about")({
 	head: ({ params }) => {
@@ -101,6 +102,10 @@ function RouteComponent() {
 							<a
 								href={`mailto:${CONTACT_EMAIL}`}
 								aria-label={t.pages.about.ctaAriaLabel}
+								onClick={() => {
+									// Fire-and-forget — don't await, don't block navigation
+									trackCtaClickFn({ data: undefined }).catch(() => {});
+								}}
 								className='inline-flex items-center justify-center rounded-md bg-zinc-800 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400'
 							>
 								{t.pages.about.cta}
