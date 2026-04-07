@@ -3,6 +3,8 @@ import { Github } from "lucide-react";
 import { Container } from "~/components/shared/Container";
 import { dictionaries } from "~/locales";
 import {
+	AUTHOR_JOB_TITLE,
+	AUTHOR_NAME,
 	AVATAR_URL,
 	CONTACT_EMAIL,
 	SKILLS,
@@ -10,6 +12,7 @@ import {
 } from "~/shared/data/author";
 import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
+import { trackCtaClickFn } from "~/shared/services/analytics";
 
 export const Route = createFileRoute("/$lang/about")({
 	head: ({ params }) => {
@@ -41,8 +44,27 @@ export const Route = createFileRoute("/$lang/about")({
 
 function RouteComponent() {
 	const { t, language } = useI18n();
+
+	const personJsonLd = {
+		"@context": "https://schema.org",
+		"@type": "Person",
+		name: AUTHOR_NAME,
+		jobTitle: AUTHOR_JOB_TITLE,
+		url: `${SITE_URL}/${language}/about`,
+		sameAs: SOCIAL_LINKS.map((link) => link.href),
+	};
+
 	return (
 		<Container className='mt-16 sm:mt-32'>
+			<script
+				type='application/ld+json'
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(personJsonLd)
+						.replace(/</g, "\\u003c")
+						.replace(/>/g, "\\u003e")
+						.replace(/&/g, "\\u0026"),
+				}}
+			/>
 			<div className='grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12'>
 				{/* Left column — bio, skills, CTA */}
 				<div className='lg:order-first lg:row-span-2'>
@@ -85,6 +107,10 @@ function RouteComponent() {
 							<a
 								href={`mailto:${CONTACT_EMAIL}`}
 								aria-label={t.pages.about.ctaAriaLabel}
+								onClick={() => {
+									// Fire-and-forget — don't await, don't block navigation
+									trackCtaClickFn({ data: undefined }).catch(() => {});
+								}}
 								className='inline-flex items-center justify-center rounded-md bg-zinc-800 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-500 dark:focus-visible:outline-teal-400'
 							>
 								{t.pages.about.cta}

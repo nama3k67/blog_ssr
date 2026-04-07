@@ -1,5 +1,8 @@
 export const GITHUB_URL = "https://github.com/nama3k67";
 
+export const AUTHOR_NAME = "Nam Tran";
+export const AUTHOR_JOB_TITLE = "Software Developer";
+
 export const AVATAR_URL: string | undefined = "/avatar.jpg";
 
 export const CONTACT_EMAIL = "nama3k67@gmail.com";

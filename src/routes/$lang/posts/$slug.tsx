@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Container } from "~/components/shared/Container";
 import { Markdown } from "~/components/shared/Markdown";
 import { Badge } from "~/components/ui/badge";
+import { AUTHOR_NAME } from "~/shared/data/author";
 import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
 import { fetchPost } from "~/shared/services/post";
@@ -126,8 +127,46 @@ function RouteComponent() {
 	const { lang } = Route.useParams();
 	const { t } = useI18n();
 
+	const articleJsonLd = post
+		? {
+				"@context": "https://schema.org",
+				"@type": "BlogPosting",
+				headline: post.title,
+				description: post.description || undefined,
+				datePublished: post.publishedAt ?? post.updatedAt,
+				dateModified: post.updatedAt ?? post.publishedAt,
+				image: post.featuredImage
+					? post.featuredImage.startsWith("http")
+						? post.featuredImage
+						: `${SITE_URL}${post.featuredImage}`
+					: `${SITE_URL}/logo.png`,
+				inLanguage: lang,
+				author: {
+					"@type": "Person",
+					name: AUTHOR_NAME,
+					url: `${SITE_URL}/${lang}/about`,
+				},
+				publisher: {
+					"@type": "Organization",
+					name: AUTHOR_NAME,
+					url: SITE_URL,
+				},
+			}
+		: null;
+
 	return (
 		<Container className='mt-16 sm:mt-32'>
+			{articleJsonLd && (
+				<script
+					type='application/ld+json'
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(articleJsonLd)
+							.replace(/</g, "\\u003c")
+							.replace(/>/g, "\\u003e")
+							.replace(/&/g, "\\u0026"),
+					}}
+				/>
+			)}
 			<div className='xl:relative'>
 				<div className='mx-auto max-w-2xl'>
 					{/* Fallback language banner */}

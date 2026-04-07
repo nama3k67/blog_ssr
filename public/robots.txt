@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://tanstack-start-app.noah-tran-app.workers.dev/sitemap.xml

@@ -58,4 +58,31 @@ test.describe("About page", () => {
 			page.getByRole("link", { name: /gửi email/i }),
 		).toBeVisible();
 	});
+
+	test("CTA click triggers analytics tracking (Story 5.3)", async ({ page, localizedUrl }) => {
+		// Given I visit the about page
+		await page.goto(localizedUrl("/about"));
+
+		// When the CTA is clicked, a POST request should be made to the tracking function
+		const requestPromise = page.waitForResponse(
+			(response) =>
+				response.url().includes("trackCtaClickFn") &&
+				response.request().method() === "POST",
+		);
+
+		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
+
+		// Intercept the mailto navigation to prevent browser opening
+		await page.evaluate(() => {
+			document.querySelectorAll("a[href^='mailto:']").forEach((link) => {
+				link.removeAttribute("href");
+			});
+		});
+
+		await cta.click();
+
+		// Then a POST request was made
+		const response = await requestPromise;
+		expect(response.status()).toBe(200);
+	});
 });

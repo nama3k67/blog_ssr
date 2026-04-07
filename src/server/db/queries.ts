@@ -80,6 +80,20 @@ export async function getAllPosts() {
 	return result;
 }
 
+export async function getPublishedPostsForSitemap() {
+	return db.query.posts.findMany({
+		where: eq(posts.status, "published"),
+		columns: {
+			slug: true,
+			lang: true,
+			translationGroupId: true,
+			publishedAt: true,
+			updatedAt: true,
+		},
+		orderBy: [desc(posts.publishedAt)],
+	});
+}
+
 export async function getPublishedPosts() {
 	const result = await db.query.posts.findMany({
 		where: eq(posts.status, "published"),

@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LangIndexRouteImport } from './routes/$lang/index'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
@@ -25,6 +27,16 @@ import { Route as LangProtectedTranslatePostIdRouteImport } from './routes/$lang
 import { Route as LangProtectedEditPostIdRouteImport } from './routes/$lang/_protected/edit/$postId'
 import { Route as LangProtectedAdminQueueRouteImport } from './routes/$lang/_protected/admin/queue'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -104,6 +116,8 @@ const LangProtectedAdminQueueRoute = LangProtectedAdminQueueRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$lang': typeof LangProtectedRouteRouteWithChildren
   '/$lang/about': typeof LangAboutRoute
   '/$lang/login': typeof LangLoginRoute
@@ -121,6 +135,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$lang': typeof LangIndexRoute
   '/$lang/about': typeof LangAboutRoute
   '/$lang/login': typeof LangLoginRoute
@@ -138,6 +154,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/$lang/_protected': typeof LangProtectedRouteRouteWithChildren
   '/$lang/about': typeof LangAboutRoute
   '/$lang/login': typeof LangLoginRoute
@@ -157,6 +175,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/$lang'
     | '/$lang/about'
     | '/$lang/login'
@@ -174,6 +194,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/$lang'
     | '/$lang/about'
     | '/$lang/login'
@@ -190,6 +212,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/$lang/_protected'
     | '/$lang/about'
     | '/$lang/login'
@@ -208,6 +232,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   LangProtectedRouteRoute: typeof LangProtectedRouteRouteWithChildren
   LangAboutRoute: typeof LangAboutRoute
   LangLoginRoute: typeof LangLoginRoute
@@ -221,6 +247,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -362,6 +402,8 @@ const LangProtectedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   LangProtectedRouteRoute: LangProtectedRouteRouteWithChildren,
   LangAboutRoute: LangAboutRoute,
   LangLoginRoute: LangLoginRoute,
