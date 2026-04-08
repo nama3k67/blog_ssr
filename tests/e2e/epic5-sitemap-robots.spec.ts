@@ -8,7 +8,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 
 			// Then the response is XML
 			expect(response.status).toBe(200);
-			expect(response.headers.get("Content-Type")).toContain("application/xml");
+			expect(response.headers()["content-type"]).toContain("application/xml");
 		});
 
 		test("sitemap XML is well-formed", async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/sitemap.xml");
 
 			// Then Cache-Control is set to 1 hour
-			expect(response.headers.get("Cache-Control")).toContain("max-age=3600");
+			expect(response.headers()["cache-control"]).toContain("max-age=3600");
 		});
 
 		test("sitemap entries have loc and lastmod elements", async ({ page }) => {
@@ -119,7 +119,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 
 			// Then the response is plain text
 			expect(response.status).toBe(200);
-			expect(response.headers.get("Content-Type")).toContain("text/plain");
+			expect(response.headers()["content-type"]).toContain("text/plain");
 		});
 
 		test("robots.txt allows public access", async ({ page }) => {
@@ -196,7 +196,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/robots.txt");
 
 			// Then Cache-Control is set to 1 day
-			expect(response.headers.get("Cache-Control")).toContain("max-age=86400");
+			expect(response.headers()["cache-control"]).toContain("max-age=86400");
 		});
 
 		test("robots.txt Sitemap URL is absolute", async ({ page }) => {
