@@ -62,22 +62,26 @@ test.describe("About page", () => {
 	test("CTA click triggers analytics tracking (Story 5.3)", async ({ page, localizedUrl }) => {
 		// Given I visit the about page
 		await page.goto(localizedUrl("/about"));
-
-		// When the CTA is clicked, a POST request should be made to the tracking function
-		const requestPromise = page.waitForResponse(
-			(response) =>
-				response.url().includes("trackCtaClickFn") &&
-				response.request().method() === "POST",
-		);
+		await page.waitForLoadState("networkidle");
 
 		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
 
-		// Intercept the mailto navigation to prevent browser opening
-		await page.evaluate(() => {
-			document.querySelectorAll("a[href^='mailto:']").forEach((link) => {
-				link.removeAttribute("href");
-			});
-		});
+		// Ensure CTA is visible before trying to interact with it
+		await expect(cta).toBeVisible({ timeout: 10000 });
+
+		// When the CTA is clicked, a POST request should be made to the tracking function.
+		// TanStack Start server functions are routed to /_serverFn/{sha256-hash} — the
+		// function name does NOT appear in the URL, so we match the base path + POST method.
+		// NOTE: Do NOT remove the mailto href before clicking. Removing it strips the <a>
+		// element's implicit "link" ARIA role, causing getByRole('link') to fail to find
+		// the element. In headless Playwright, mailto: clicks do not navigate the page
+		// (no HTTP request, no page unload), so the onClick handler fires normally.
+		const requestPromise = page.waitForResponse(
+			(response) =>
+				response.url().includes("/_serverFn/") &&
+				response.request().method() === "POST",
+			{ timeout: 15000 },
+		);
 
 		await cta.click();
 
