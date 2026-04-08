@@ -3,7 +3,8 @@ import { test as baseTest } from "@playwright/test";
 // Define custom fixtures and chain them properly
 export const test = baseTest
 	.extend<{ asGuest: void }>({
-		asGuest: async (_fixtures, use) => {
+		// eslint-disable-next-line no-empty-pattern
+		asGuest: async ({}, use) => {
 			// Guest: no auth setup needed
 			await use();
 		},
