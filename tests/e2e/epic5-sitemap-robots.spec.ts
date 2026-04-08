@@ -223,7 +223,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/sitemap.xml");
 
 			// Either 200 (success) or 503 (failure with fallback)
-			expect([200, 503]).toContain(response.status);
+			expect([200, 503]).toContain(response.status());
 
 			// Response should always be valid XML
 			const xml = await response.text();
