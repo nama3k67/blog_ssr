@@ -1,4 +1,4 @@
-import { test as baseTest } from "@playwright/test";
+import { test as baseTest, type Page } from "@playwright/test";
 
 // Define custom fixtures and chain them properly
 export const test = baseTest
@@ -17,3 +17,4 @@ export const test = baseTest
 	});
 
 export { expect } from "@playwright/test";
+export type { Page };

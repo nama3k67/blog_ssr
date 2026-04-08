@@ -7,7 +7,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/sitemap.xml");
 
 			// Then the response is XML
-			expect(response.status).toBe(200);
+			expect(response.status()).toBe(200);
 			expect(response.headers()["content-type"]).toContain("application/xml");
 		});
 
@@ -118,7 +118,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/robots.txt");
 
 			// Then the response is plain text
-			expect(response.status).toBe(200);
+			expect(response.status()).toBe(200);
 			expect(response.headers()["content-type"]).toContain("text/plain");
 		});
 
@@ -238,7 +238,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/robots.txt");
 
 			// Then it's publicly accessible
-			expect(response.status).toBe(200);
+			expect(response.status()).toBe(200);
 		});
 
 		test("sitemap.xml can be fetched without authentication", async ({
@@ -248,7 +248,7 @@ test.describe("Epic 5.1 - Sitemap & Robots (Story 5.1)", () => {
 			const response = await page.request.get("/sitemap.xml");
 
 			// Then it's publicly accessible
-			expect(response.status).toBe(200);
+			expect(response.status()).toBe(200);
 		});
 	});
 });
