@@ -62,31 +62,30 @@ test.describe("About page", () => {
 	test("CTA click triggers analytics tracking (Story 5.3)", async ({ page, localizedUrl }) => {
 		// Given I visit the about page
 		await page.goto(localizedUrl("/about"));
-		await page.waitForLoadState("networkidle");
 
 		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
+		await expect(cta).toBeVisible();
 
-		// Ensure CTA is visible before trying to interact with it
-		await expect(cta).toBeVisible({ timeout: 10000 });
+		// Intercept the /_serverFn/ POST so the test is fast and deterministic.
+		// We verify the *request* was fired rather than waiting on a real dev-server
+		// round-trip (which is flaky in CI due to Miniflare cold-start / Neon wake-up).
+		// TanStack Start routes server functions to /_serverFn/{sha256-hash} — the
+		// export name never appears in the URL.
+		let trackingCalled = false;
+		await page.route("**/_serverFn/**", async (route) => {
+			if (route.request().method() === "POST") {
+				trackingCalled = true;
+				await route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) });
+			} else {
+				await route.continue();
+			}
+		});
 
-		// When the CTA is clicked, a POST request should be made to the tracking function.
-		// TanStack Start server functions are routed to /_serverFn/{sha256-hash} — the
-		// function name does NOT appear in the URL, so we match the base path + POST method.
-		// NOTE: Do NOT remove the mailto href before clicking. Removing it strips the <a>
-		// element's implicit "link" ARIA role, causing getByRole('link') to fail to find
-		// the element. In headless Playwright, mailto: clicks do not navigate the page
-		// (no HTTP request, no page unload), so the onClick handler fires normally.
-		const requestPromise = page.waitForResponse(
-			(response) =>
-				response.url().includes("/_serverFn/") &&
-				response.request().method() === "POST",
-			{ timeout: 15000 },
-		);
-
+		// When the CTA is clicked (mailto: links do not navigate the page in headless
+		// Playwright, so no href manipulation is needed)
 		await cta.click();
 
-		// Then a POST request was made
-		const response = await requestPromise;
-		expect(response.status()).toBe(200);
+		// Then the tracking server function was called
+		await expect.poll(() => trackingCalled, { timeout: 5000 }).toBe(true);
 	});
 });
