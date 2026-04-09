@@ -17,6 +17,17 @@ export default defineConfig({
 		screenshot: "only-on-failure",
 		video: "retain-on-failure",
 	},
+	// Playwright manages the dev server: waits for a real HTTP 200 (not just port-open)
+	// before running any test, and shuts it down cleanly after. Set reuseExistingServer
+	// so local dev doesn't restart a running instance.
+	webServer: {
+		command: "npm run dev",
+		url: BASE_URL,
+		reuseExistingServer: !process.env.CI,
+		timeout: 120_000,
+		stdout: "pipe",
+		stderr: "pipe",
+	},
 	reporter: [
 		["html", { outputFolder: "playwright-report", open: "never" }],
 		["junit", { outputFile: "test-results/junit.xml" }],

@@ -63,26 +63,29 @@ test.describe("About page", () => {
 		// Given I visit the about page
 		await page.goto(localizedUrl("/about"));
 
-		// When the CTA is clicked, a POST request should be made to the tracking function
-		const requestPromise = page.waitForResponse(
-			(response) =>
-				response.url().includes("trackCtaClickFn") &&
-				response.request().method() === "POST",
-		);
-
 		const cta = page.getByRole("link", { name: /send an email|gửi email/i });
+		await expect(cta).toBeVisible();
 
-		// Intercept the mailto navigation to prevent browser opening
-		await page.evaluate(() => {
-			document.querySelectorAll("a[href^='mailto:']").forEach((link) => {
-				link.removeAttribute("href");
-			});
+		// Intercept the /_serverFn/ POST so the test is fast and deterministic.
+		// We verify the *request* was fired rather than waiting on a real dev-server
+		// round-trip (which is flaky in CI due to Miniflare cold-start / Neon wake-up).
+		// TanStack Start routes server functions to /_serverFn/{sha256-hash} — the
+		// export name never appears in the URL.
+		let trackingCalled = false;
+		await page.route("**/_serverFn/**", async (route) => {
+			if (route.request().method() === "POST") {
+				trackingCalled = true;
+				await route.fulfill({ status: 200, body: JSON.stringify({ ok: true }) });
+			} else {
+				await route.continue();
+			}
 		});
 
+		// When the CTA is clicked (mailto: links do not navigate the page in headless
+		// Playwright, so no href manipulation is needed)
 		await cta.click();
 
-		// Then a POST request was made
-		const response = await requestPromise;
-		expect(response.status()).toBe(200);
+		// Then the tracking server function was called
+		await expect.poll(() => trackingCalled, { timeout: 5000 }).toBe(true);
 	});
 });

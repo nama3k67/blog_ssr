@@ -81,7 +81,6 @@ test.describe("Admin route auth guards (Epic 4)", () => {
 		}) => {
 			// Verify the redirect target is a real page (not a blank/error page)
 			await page.goto("/en/new");
-			await page.waitForLoadState("networkidle");
 			await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
 		});
 	});
