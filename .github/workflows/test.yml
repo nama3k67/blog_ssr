@@ -131,20 +131,19 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
-      - name: Start dev server
-        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
-
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000 --timeout 120000
-
-      - name: Print dev server log on failure
-        if: failure()
-        run: cat /tmp/dev-server.log || echo "(log file not found)"
+      - name: Warm up Neon DB (prevent cold-start timeouts in first test)
+        run: npx tsx -e "import{neon}from'@neondatabase/serverless';const sql=neon(process.env.DATABASE_URL);await sql\`SELECT 1\`;console.log('DB ready')"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Run E2E tests (${{ matrix.project }})
+        # Playwright starts/stops the dev server via webServer config in playwright.config.ts
         run: npx playwright test --project=${{ matrix.project }}
         env:
           CI: true
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
       - name: Upload E2E failure artifacts
         if: failure()
@@ -201,15 +200,10 @@ jobs:
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
-      - name: Start dev server
-        run: node_modules/.bin/vite dev > /tmp/dev-server.log 2>&1 &
-
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000 --timeout 120000
-
-      - name: Print dev server log on failure
-        if: failure()
-        run: cat /tmp/dev-server.log || echo "(log file not found)"
+      - name: Warm up Neon DB
+        run: npx tsx -e "import{neon}from'@neondatabase/serverless';const sql=neon(process.env.DATABASE_URL);await sql\`SELECT 1\`;console.log('DB ready')"
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Run burn-in loop (10 iterations)
         run: |
@@ -221,6 +215,9 @@ jobs:
           echo "Burn-in complete - no flaky tests detected"
         env:
           CI: true
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
 
       - name: Upload burn-in failure artifacts
         if: failure()
