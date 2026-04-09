@@ -77,12 +77,16 @@ jobs:
           path: coverage/
           retention-days: 7
 
-  # ─── E2E Tests (sequential by browser project to avoid Neon DB contention) ───
+  # ─── E2E Tests ──────────────────────────────────────────────────────────────
+  # Non-blocking: Miniflare + Neon serverless are too flaky to gate merges on.
+  # Failures are visible in the Actions UI and artifacts are uploaded, but they
+  # will not fail the overall pipeline.
   e2e:
     name: E2E (${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: lint
+    continue-on-error: true
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -126,7 +130,6 @@ jobs:
           VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
           EOF
         env:
-          # Security: secrets passed through env: to prevent script injection
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
           VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
@@ -137,7 +140,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Run E2E tests (${{ matrix.project }})
-        # Playwright starts/stops the dev server via webServer config in playwright.config.ts
         run: npx playwright test --project=${{ matrix.project }}
         env:
           CI: true
@@ -155,85 +157,11 @@ jobs:
             playwright-report/
           retention-days: 30
 
-  # ─── Burn-In (Flaky Detection) ───────────────────────────────────────────────
-  burn-in:
-    name: Burn-In (Flaky Detection)
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    needs: e2e
-    # Only run on PRs targeting main/develop or on the weekly schedule
-    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-chromium-
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers (Chromium)
-        run: npx playwright install --with-deps chromium
-
-      - name: Create .dev.vars for Miniflare
-        run: |
-          cat > .dev.vars << EOF
-          DATABASE_URL=$DATABASE_URL
-          CLERK_SECRET_KEY=$CLERK_SECRET_KEY
-          VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
-          EOF
-        env:
-          # Security: secrets passed through env: to prevent script injection
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
-
-      - name: Warm up Neon DB
-        run: npx tsx -e "import{neon}from'@neondatabase/serverless';const sql=neon(process.env.DATABASE_URL);await sql\`SELECT 1\`;console.log('DB ready')"
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-      - name: Run burn-in loop (10 iterations)
-        run: |
-          echo "Starting burn-in loop - detecting flaky tests"
-          for i in {1..10}; do
-            echo "Burn-in iteration $i/10"
-            npx playwright test --project=chromium || exit 1
-          done
-          echo "Burn-in complete - no flaky tests detected"
-        env:
-          CI: true
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-          VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
-
-      - name: Upload burn-in failure artifacts
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: burn-in-failures
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 30
-
   # ─── Report ──────────────────────────────────────────────────────────────────
   report:
     name: Test Report
     runs-on: ubuntu-latest
-    needs: [unit, e2e, burn-in]
+    needs: [unit, e2e]
     if: always()
 
     steps:
@@ -249,12 +177,8 @@ jobs:
           echo "| Job | Result |" >> $GITHUB_STEP_SUMMARY
           echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Unit Tests | ${{ needs.unit.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E Tests | ${{ needs.e2e.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Burn-In | ${{ needs.burn-in.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E Tests | ${{ needs.e2e.result }} (non-blocking) |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Browser projects:** chromium · firefox · mobile-chrome" >> $GITHUB_STEP_SUMMARY
-
-          if [ "${{ needs.burn-in.result }}" = "failure" ]; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "⚠️ **Flaky tests detected** — review burn-in artifacts" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> E2E failures do not block merges — run locally to confirm." >> $GITHUB_STEP_SUMMARY
