@@ -1,76 +1,177 @@
-<p align="center">
-  <a href="https://clerk.com?utm_source=DevRel&utm_medium=docs&utm_campaign=templates&utm_content=08-05-2023&utm_term=clerk-tanstack-start-quickstart" target="_blank" rel="noopener noreferrer">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./public/light-logo.png">
-      <img alt="Clerk Logo for light background" src="./public/dark-logo.png" height="64">
-    </picture>
-  </a>
-  <br />
-</p>
-<div align="center">
-  <h1>
-    Clerk and TanStack Start Quickstart
-  </h1>
-  <a href="https://www.npmjs.com/package/@clerk/clerk-react">
-    <img alt="Downloads" src="https://img.shields.io/npm/dm/@clerk/clerk-react" />
-  </a>
-  <a href="https://discord.com/invite/b5rXHjAg7A">
-    <img alt="Discord" src="https://img.shields.io/discord/856971667393609759?color=7389D8&label&logo=discord&logoColor=ffffff" />
-  </a>
-  <a href="https://twitter.com/clerkdev">
-    <img alt="Twitter" src="https://img.shields.io/twitter/url.svg?label=%40clerkdev&style=social&url=https%3A%2F%2Ftwitter.com%2Fclerkdev" />
-  </a>
-  <br />
-  <br />
-  <img alt="Clerk Hero Image" src="./public/hero.png">
-</div>
+# Portfolio Blog Platform
 
-## Introduction
+A full-stack, bilingual (EN/VI) portfolio and blog platform built with TanStack Start, deployed on Cloudflare Workers, and developed end-to-end with AI assistance.
 
-Clerk is a developer-first authentication and user management solution. It provides pre-built components and hooks for sign-in, sign-up, user profile, and organization management. Clerk is designed to be easy to use and customize, and can be integrated into any TanStack Start application.
+## Features
 
-After following the [Clerk TanStack Start quickstart](https://clerk.com/docs/quickstarts/tanstack-start?utm_source=DevRel&utm_medium=docs&utm_campaign=templates&utm_content=08-05-2023&utm_term=clerk-tanstack-start-quickstart), you will have learned how to:
+- **Bilingual content** — EN/VI routes with i18n via `$lang` prefix; posts linked by translation group
+- **Blog posts** — Markdown editor with Shiki syntax highlighting, image uploads to Cloudflare R2
+- **Projects showcase** — Curated project listing
+- **Admin dashboard** — Role-based access (env-var driven) with full CRUD, moderation queue, and translation workflow
+- **Auth** — Clerk-powered sign-in/sign-up with protected routes
+- **SEO** — Dynamic sitemap, robots.txt, and structured metadata per post
+- **Analytics** — Server-side request tracking via Cloudflare Workers logs
+- **Edge-first** — SSR on Cloudflare Workers free tier (3 MB gzip budget enforced at build time)
 
-- Create a new TanStack Start application
-- Install `@clerk/tanstack-react-start`
-- Set up your environment keys
-- Add `clerkMiddleware()` to your app
-- Wrap your Root Component with `<ClerkProvider />`
-- Use Clerk components to protect your content
-- Embed the `<SignInButton />` and `<SignOutButton />`
-- Deploy your application
+## Tech Stack
 
-## Running the template
+| Layer | Technology |
+|---|---|
+| Framework | TanStack Start v1.159 + React 19 (SSR) |
+| Runtime | Cloudflare Workers (`@cloudflare/vite-plugin`) |
+| Database | Drizzle ORM + Neon PostgreSQL (serverless) |
+| Auth | Clerk (`@clerk/tanstack-react-start`) |
+| Storage | Cloudflare R2 via `aws4fetch` |
+| Styling | Tailwind CSS 4 + shadcn/ui + Radix UI |
+| Code highlighting | Shiki 3 (fine-grained bundle, JS regex engine) |
+| Validation | Zod 4 |
+| Build | Vite 7 + Wrangler |
+| Testing | Vitest (unit) + Playwright (E2E) |
 
-```bash
-git clone https://github.com/clerk/clerk-tanstack-start-quickstart
+## AI-Assisted Development
+
+This project was built with an AI-native workflow using two tools in tandem:
+
+### Claude Code
+All implementation — components, server functions, database schema, tests, and CI config — was written with [Claude Code](https://claude.ai/code) as the primary coding assistant. Claude Code handles file editing, shell commands, and multi-step tasks directly inside the terminal.
+
+### BMAD Method v6.2.0
+Product planning and sprint execution follow the [BMAD Method](https://github.com/bmad-code-org/bmad-method), an AI-native Agile methodology. The workflow goes:
+
+```
+/bmad-create-prd  →  /bmad-create-architecture  →  /bmad-create-epics-and-stories
+  →  /bmad-dev-story (per story)  →  /bmad-sprint-planning
 ```
 
-To run the example locally, you need to:
+All planning artifacts (PRD, architecture, epics, stories) live in `specs/` and `_bmad-output/`. The **TEA module** (Test Architecture Enterprise) drives E2E test design and Playwright test generation alongside feature development.
 
-1. Sign up for a Clerk account at [https://clerk.com](https://www.clerk.com?utm_source=DevRel&utm_medium=docs&utm_campaign=templates&utm_content=08-05-2023&utm_term=clerk-tanstack-start-quickstart).
+## Getting Started
 
-2. Go to the [Clerk dashboard](https://dashboard.clerk.com) and create an application.
+### Prerequisites
 
-3. Set the required Clerk environment variables as shown in [the example `env` file](./.env.example).
+- Node.js 20+
+- A [Clerk](https://clerk.com) account
+- A [Neon](https://neon.tech) PostgreSQL database
+- A Cloudflare account (Workers + R2)
 
-4. `npm install` the required dependencies.
+### Setup
 
-5. `npm run dev` to launch the development server.
+1. Clone and install:
 
-## Learn more
+```bash
+git clone <repo-url>
+cd blog-app
+npm install
+```
 
-To learn more about Clerk and TanStack Start, check out the following resources:
+2. Copy the env file and fill in your keys:
 
-- [Quickstart: Get started with TanStack Start and Clerk](https://clerk.com/docs/quickstarts/tanstack-start?utm_source=DevRel&utm_medium=docs&utm_campaign=templates&utm_content=08-05-2023&utm_term=clerk-tanstack-start-quickstart)
-- [Clerk Documentation](https://clerk.com/docs?utm_source=DevRel&utm_medium=docs&utm_campaign=templates&utm_content=08-05-2023&utm_term=clerk-tanstack-start-quickstart)
+```bash
+cp .env.example .env
+```
 
-## Found an issue or want to leave feedback
+Required variables:
 
-Feel free to create a support thread on our [Discord](https://clerk.com/discord). Our support team will be happy to assist you in the `#support` channel.
+```env
+# Clerk
+VITE_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
 
-## Connect with us
+# Neon
+DATABASE_URL=
 
-You can discuss ideas, ask questions, and meet others from the community in our [Discord](https://discord.com/invite/b5rXHjAg7A).
+# Cloudflare R2
+R2_BUCKET_NAME=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_PUBLIC_URL=
 
-If you prefer, you can also find support through our [Twitter](https://twitter.com/ClerkDev), or you can [email](mailto:support@clerk.dev) us!
+# Admin (Clerk user ID granted admin access)
+ADMIN_USER_ID=
+```
+
+3. Apply the database schema:
+
+```bash
+npm run db:push
+```
+
+4. (Optional) Seed test data:
+
+```bash
+npm run db:seed
+```
+
+5. Start the dev server:
+
+```bash
+npm run dev      # http://localhost:3000
+```
+
+## Scripts
+
+```bash
+npm run dev             # Dev server
+npm run build           # Production build + TypeScript check
+npm run deploy          # Build + deploy to Cloudflare Workers
+
+npm run db:generate     # Generate Drizzle migrations
+npm run db:push         # Apply migrations to Neon
+npm run db:studio       # Visual DB browser
+
+npm run test            # Unit tests (Vitest)
+npm run test:e2e        # E2E tests (Playwright)
+npm run lint            # Biome lint + ESLint
+npm run format          # Biome format
+```
+
+## Project Structure
+
+```
+_bmad/                          # BMAD Method v6 agents and config
+_bmad-output/                   # Sprint plans, workflow status, artifacts
+specs/                          # Feature specs (PRD, architecture, stories, tasks)
+src/
+├── routes/
+│   ├── $lang/                  # Public routes (en / vi)
+│   │   ├── index.tsx           # Home
+│   │   ├── about.tsx           # About
+│   │   ├── projects.tsx        # Projects showcase
+│   │   ├── posts/              # Blog listing + post detail
+│   │   └── _protected/         # Auth-required (new post, edit, translate, admin)
+│   ├── api/                    # Upload + Clerk webhook endpoints
+│   ├── sitemap[.]xml.ts
+│   └── robots[.]txt.ts
+├── components/
+│   ├── layout/                 # Header, footer, nav
+│   ├── post/                   # Post card, content renderer, editor, forms
+│   ├── admin/                  # Admin dashboard and moderation queue
+│   └── ui/                     # shadcn/ui component library
+├── server/
+│   ├── db/                     # Drizzle schema, queries, migrations, seed
+│   └── r2/                     # R2 upload client
+├── shared/
+│   ├── services/               # Server functions (post, admin, translation)
+│   ├── providers/              # React context (i18n, theme, TanStack Query)
+│   ├── utils/                  # Slug, date, markdown, i18n helpers
+│   └── schemas/                # Zod validation schemas
+└── locales/                    # Translation strings (en.ts, vi.ts)
+```
+
+## Deployment
+
+```bash
+npm run deploy
+```
+
+Deploys to Cloudflare Workers. Monitor the bundle size before deploying:
+
+```bash
+wrangler deploy --outdir bundled/ --dry-run
+```
+
+The gzip output must stay under **3 MB** (Cloudflare Workers free tier limit).
+
+## License
+
+MIT
