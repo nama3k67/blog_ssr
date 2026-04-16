@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import type { FormFieldMeta } from "~/components/form/form-field-meta";
+import {
+	type FormFieldMeta,
+	fieldErrorMessage,
+} from "~/components/form/form-field-meta";
 import {
 	Field,
 	FieldDescription,
@@ -37,7 +40,9 @@ export function FormField({
 			)}
 			{hasError && (
 				<FieldError>
-					{field.state.meta.errors.map(String).join(", ")}
+					{[...new Set(field.state.meta.errors.map(fieldErrorMessage))].join(
+						", ",
+					)}
 				</FieldError>
 			)}
 		</Field>

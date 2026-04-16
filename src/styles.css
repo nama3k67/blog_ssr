@@ -205,15 +205,45 @@
   body {
     @apply bg-background text-foreground;
   }
+  html body[data-scroll-locked] {
+    overflow: auto !important;
+    overscroll-behavior: auto !important;
+    margin-right: 0 !important;
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
   }
+}
+
+/* ─── Markdown Editor fixes ─── */
+/* 1. Restore list styles zeroed by Tailwind preflight (@layer base sets list-style:none).
+      The editor's own CSS only targets `.wmde-markdown div > ol` (requires an intermediate
+      <div>), which misses ol/ul that are direct children of the .wmde-markdown wrapper. */
+.wmde-markdown ol:not(.no-list) {
+  list-style-type: decimal;
+}
+.wmde-markdown ul:not(.no-list) {
+  list-style-type: disc;
+}
+
+/* 2. Text-selection visibility in dark mode.
+      The editor uses -webkit-text-fill-color:transparent on the underlying <textarea>
+      (.w-md-editor-text-input) so only the syntax-highlight overlay is visible.
+      In dark mode the browser's default ::selection color is near-invisible against
+      the dark background — override it with a teal tint to match the design system. */
+[data-color-mode="dark"] .w-md-editor-text-input::selection {
+  background-color: color-mix(in oklch, var(--color-teal-400) 40%, transparent);
+}
+[data-color-mode="dark"] .w-md-editor-text-input::-moz-selection {
+  background-color: color-mix(in oklch, var(--color-teal-400) 40%, transparent);
 }
 
 /* ─── Syntax Highlighting (Spotlight Prism theme) ─── */
