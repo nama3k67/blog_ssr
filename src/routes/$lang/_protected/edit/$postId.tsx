@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-import { EditPostForm } from "~/components/post/EditPostForm";
+import { PostForm } from "~/components/post/PostForm";
 import { useI18n } from "~/shared/providers/i18n";
 import { browserQueryClient } from "~/shared/providers/tanstackQuery";
 import type { UpdatePostFormInput } from "~/shared/schemas/post";
@@ -151,7 +151,8 @@ function EditPostPage() {
 				{t.editor.editPost}
 			</h1>
 
-			<EditPostForm
+			<PostForm
+				mode='edit'
 				initialValues={{
 					postId: post.id,
 					title: post.title,
@@ -163,7 +164,6 @@ function EditPostPage() {
 					tagIds: post.tagIds,
 					featuredImage: post.featuredImage,
 					status: post.status,
-					publishedAt: post.publishedAt,
 				}}
 				onSubmit={(value) => updateMutation.mutate(value)}
 				onSaveAndPublish={async (value) => {

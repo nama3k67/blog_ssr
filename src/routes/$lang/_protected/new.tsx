@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { MainLayout } from "~/components/layout";
 
-import { NewPostForm } from "~/components/post/NewPostForm";
+import { PostForm } from "~/components/post/PostForm";
 import { dictionaries } from "~/locales";
 import { useI18n } from "~/shared/providers/i18n";
 import { browserQueryClient } from "~/shared/providers/tanstackQuery";
@@ -76,16 +77,13 @@ function NewPostPage() {
 	});
 
 	return (
-		<div className='mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8'>
-			<h1 className='mb-8 text-3xl font-bold tracking-tight text-foreground'>
-				{t.common.newPost}
-			</h1>
-
-			<NewPostForm
+		<MainLayout title={t.common.newPost} intro=''>
+			<PostForm
+				mode='create'
 				lang={lang}
 				onSubmit={(value) => createMutation.mutate(value)}
 				isSubmitting={createMutation.isPending}
 			/>
-		</div>
+		</MainLayout>
 	);
 }
