@@ -930,6 +930,42 @@ So that I can understand visitor behavior and measure conversion.
 
 ---
 
+## Epic 6: Post Engagement
+
+Readers and the site owner can see how many times each post has been viewed. Provides real engagement data without third-party analytics overhead. Implemented as a lightweight best-effort counter stored directly on the posts table.
+
+### Story 6.1: Post Views Counter
+
+As the site owner,
+I want each published blog post to track and display a view count,
+So that I can gauge reader engagement and see which content resonates most.
+
+**Acceptance Criteria:**
+
+**Given** a visitor navigates to any published post detail page (/$lang/posts/$slug)
+**When** the page renders client-side
+**Then** a fire-and-forget POST request increments the post's viewCount in the database
+**And** the increment does not block SSR or slow initial page load
+
+**Given** a post has been viewed multiple times
+**When** a visitor opens the post detail page
+**Then** the current view count is displayed in the post header (e.g., "42 views" / "42 lượt xem")
+**And** the label is translated correctly for both en and vi languages
+
+**Given** an EN post and its VI translation (separate postIds, same translationGroupId)
+**When** each language version is viewed independently
+**Then** view counts are tracked separately per postId (EN views ≠ VI views)
+
+**Given** an admin opens the post management dashboard
+**When** the post list renders
+**Then** each post row shows its view count
+
+**Given** the feature is deployed
+**When** "npm run build" completes
+**Then** the gzip bundle stays under 3 MB (Cloudflare Workers free tier limit)
+
+---
+
 ## Summary
 
 | Epic | Stories | FRs Covered | Description |
@@ -939,7 +975,8 @@ So that I can understand visitor behavior and measure conversion.
 | Epic 3: Blog Reading Experience | 3.1 – 3.3 (3) | FR10-FR12, FR24-FR25, FR30 (6) | Post listing, detail, bilingual, SEO meta |
 | Epic 4: Content Authoring & Management | 4.1 – 4.6 (6) | FR1-FR9, FR29, FR31 (11) | DB schema, post CRUD, editor, upload, translations |
 | Epic 5: SEO & Discoverability | 5.1 – 5.3 (3) | FR26-FR28, FR32-FR33 (5) | Sitemap, JSON-LD, robots.txt, analytics |
-| **Total** | **20 stories** | **33 FRs** | **100% coverage** |
+| Epic 6: Post Engagement | 6.1 (1) | — | Post views counter |
+| **Total** | **21 stories** | **33 FRs** | — |
 
 ### Dependency Graph
 
