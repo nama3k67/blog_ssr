@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, ne } from "drizzle-orm";
+import { and, asc, desc, eq, ne, sql } from "drizzle-orm";
 import { db, withTransaction } from "./client";
 import type { NewCategory, NewPost, NewTag, NewUser } from "./schema";
 import { categories, posts, postTags, tags, users } from "./schema";
@@ -246,6 +246,13 @@ export async function updatePost(
 
 export async function deletePost(postId: string) {
 	await db.delete(posts).where(eq(posts.id, postId));
+}
+
+export async function incrementPostViewCount(postId: string) {
+	await db
+		.update(posts)
+		.set({ viewCount: sql`${posts.viewCount} + 1` })
+		.where(eq(posts.id, postId));
 }
 
 // ============ ADMIN QUERIES ============

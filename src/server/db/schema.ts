@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
 	index,
+	integer,
 	pgEnum,
 	pgTable,
 	primaryKey,
@@ -87,6 +88,8 @@ export const posts = pgTable(
 			onDelete: "set null",
 		}),
 		reviewedAt: timestamp("reviewed_at"),
+
+		viewCount: integer("view_count").notNull().default(0),
 
 		// Timestamps
 		publishedAt: timestamp("published_at"),

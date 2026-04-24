@@ -13,6 +13,7 @@ import {
 	getPostBySlugAndLang,
 	getPublishedPostsPaginated,
 	getUserByClerkId,
+	incrementPostViewCount,
 	updatePost,
 	updatePostWithTags,
 } from "~/server/db/queries";
@@ -108,12 +109,14 @@ export const fetchPost = createServerFn({ method: "GET" })
 				slug: post.slug,
 				title: post.title,
 				lang: post.lang,
+				status: post.status,
 				content: post.content,
 				description: post.description,
 				publishedAt:
 					post.publishedAt?.toISOString() || post.createdAt.toISOString(),
 				updatedAt: post.updatedAt.toISOString(),
 				featuredImage: post.featuredImage,
+				viewCount: post.viewCount,
 				translationGroupId: post.translationGroupId,
 				author: post.author
 					? {
@@ -285,6 +288,19 @@ export const publishPostFn = createServerFn({ method: "POST" })
 			};
 		}),
 	);
+
+// ============ VIEWS ============
+
+const incrementViewSchema = z.object({ postId: z.uuid() });
+
+export const incrementViewFn = createServerFn({ method: "POST" })
+	.inputValidator((data: z.infer<typeof incrementViewSchema>) =>
+		incrementViewSchema.parse(data),
+	)
+	.handler(async ({ data }) => {
+		await incrementPostViewCount(data.postId);
+		return { ok: true };
+	});
 
 // ============ TRANSLATION ============
 

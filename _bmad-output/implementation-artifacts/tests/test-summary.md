@@ -1,3 +1,43 @@
+# Test Automation Summary — Story 6.1: Post Views Counter
+
+**Date:** 2026-04-23  
+**Framework:** Playwright (E2E)  
+**Branch:** feat/post-views-counter  
+**Result:** 5 passed, 1 skipped (no VI seed data)
+
+---
+
+## E2E Tests
+
+- [x] `tests/e2e/epic6-post-views.spec.ts` — Post views counter (6 tests)
+
+| # | Test | AC | Status |
+|---|------|----|--------|
+| 1 | Shows "views" label on English post detail | AC2 | ✅ pass |
+| 2 | Shows "lượt xem" label on /vi/ post detail | AC2 | ⏭ skip (no VI seed) |
+| 3 | View count is a non-negative integer | AC2 | ✅ pass |
+| 4 | Navigating to a post fires a POST to `_serverFn` | AC1 | ✅ pass |
+| 5 | Article h1 renders without waiting for increment POST | AC1 | ✅ pass |
+| 6 | Second visit same session does not fire second POST | AC3 | ✅ pass |
+
+### Coverage
+
+| AC | Description | Status |
+|----|-------------|--------|
+| AC1 | Fire-and-forget increment on load | ✅ |
+| AC2 | View count displayed (EN + VI) | ✅ (VI: needs seed) |
+| AC3 | Session-storage deduplication | ✅ |
+| AC4 | Admin dashboard shows view count | ⚠️ requires Clerk auth setup |
+| AC5 | Bundle < 3 MB gzip | ✅ verified in impl (1613 KiB) |
+
+### Implementation Notes
+
+- DOM: `viewCount` and label are **separate `<span>` siblings** → use `.locator("article header div").filter({ hasText: /views/ })`
+- `_serverFn` intercept: `page.route("**/_serverFn/**", ...)` (matches TanStack Start hash routing)
+- Timing: use `expect.poll({ timeout: 8000 })` — `useEffect` fires post-hydration in SSR mode
+
+---
+
 # Test Automation Summary — Epic 4
 
 Generated: 2026-04-03
