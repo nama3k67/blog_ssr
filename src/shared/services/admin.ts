@@ -31,11 +31,12 @@ export const getAdminPostsFn = createServerFn({ method: "GET" }).handler(
 			category: post.category
 				? { id: post.category.id, name: post.category.name }
 				: null,
+			viewCount: post.viewCount,
 		}));
 	}),
 );
 
-const deletePostSchema = z.object({ postId: z.string().uuid() });
+const deletePostSchema = z.object({ postId: z.uuid() });
 
 /**
  * Delete a post by ID (postTags cascade via DB FK onDelete: "cascade")

@@ -74,6 +74,7 @@ export const vi = {
 			langVi: "Tiếng Việt",
 			langEn: "Tiếng Anh",
 			by: "Bởi",
+			views: "lượt xem",
 		},
 	},
 	common: {

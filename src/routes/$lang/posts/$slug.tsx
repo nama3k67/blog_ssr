@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { Container } from "~/components/shared/Container";
 import { Markdown } from "~/components/shared/Markdown";
 import { Badge } from "~/components/ui/badge";
 import { AUTHOR_NAME } from "~/shared/data/author";
 import { SITE_URL } from "~/shared/data/site";
 import { useI18n } from "~/shared/providers/i18n";
-import { fetchPost } from "~/shared/services/post";
+import { fetchPost, incrementViewFn } from "~/shared/services/post";
 import { formatDate } from "~/shared/utils/date";
 
 export const Route = createFileRoute("/$lang/posts/$slug")({
@@ -127,6 +128,16 @@ function RouteComponent() {
 	const { lang } = Route.useParams();
 	const { t } = useI18n();
 
+	const hasIncremented = useRef(false);
+
+	useEffect(() => {
+		if (post.status !== "published" || hasIncremented.current) return;
+		if (sessionStorage.getItem(`viewed-${post.id}`)) return;
+		hasIncremented.current = true;
+		sessionStorage.setItem(`viewed-${post.id}`, "1");
+		incrementViewFn({ data: { postId: post.id } }).catch(() => {});
+	}, [post.id, post.status]);
+
 	const articleJsonLd = post
 		? {
 				"@context": "https://schema.org",
@@ -216,6 +227,12 @@ function RouteComponent() {
 								<span className='h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500' />
 								<span className='ml-3'>{formatDate(post.publishedAt)}</span>
 							</time>
+
+							{/* View count */}
+							<div className='mt-1 flex items-center gap-1.5 text-sm text-zinc-400 dark:text-zinc-500'>
+								<span>{post.viewCount}</span>
+								<span>{t.pages.posts.views}</span>
+							</div>
 
 							{/* Author info */}
 							{post.author && (

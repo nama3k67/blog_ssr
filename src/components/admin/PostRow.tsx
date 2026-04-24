@@ -89,6 +89,9 @@ export function PostRow({
 						<span>
 							{t.admin.createdOn} {formatDate(post.createdAt)}
 						</span>
+						<span>
+							{post.viewCount} {t.pages.posts.views}
+						</span>
 						{translationPartnerId ? (
 							<Link
 								to='/$lang/edit/$postId'
