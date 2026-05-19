@@ -37,7 +37,7 @@ function RouteComponent() {
 					{t.common.login || "Login"}
 				</h1>
 				<div className='mt-10'>
-					<SignIn fallbackRedirectUrl={redirect} />
+					<SignIn routing='hash' fallbackRedirectUrl={redirect} />
 				</div>
 			</div>
 		</Container>
