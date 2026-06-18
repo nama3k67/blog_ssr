@@ -10,7 +10,7 @@
     "format": "biome format --write .",
     "lint": "biome lint --write . && eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "bun run build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -88,7 +88,7 @@
     "vitest": "^4.1.2",
     "wrangler": "^4.67.0"
   },
-  "packageManager": "npm@10.9.4",
+  "packageManager": "bun@1.2.12",
   "lint-staged": {
     "*.{ts,tsx}": "biome check --write --no-errors-on-unmatched"
   }
