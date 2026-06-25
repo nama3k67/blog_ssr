@@ -8,6 +8,7 @@ import {
 	getPostTranslation,
 	getUserByClerkId,
 } from "~/server/db/queries";
+import { withAdmin } from "~/server/utils/withAdmin";
 
 // ============ TRANSLATION MANAGEMENT ============
 
@@ -29,63 +30,65 @@ export const createTranslationFn = createServerFn({ method: "POST" })
 	.inputValidator((data: z.infer<typeof createTranslationSchema>) =>
 		createTranslationSchema.parse(data),
 	)
-	.handler(async ({ data }) => {
-		// Authenticate
-		const { userId: clerkId } = await auth();
-		if (!clerkId) {
-			throw new Error("UNAUTHORIZED");
-		}
+	.handler(
+		withAdmin(async ({ data }) => {
+			// withAdmin() verified admin — resolve Clerk ID → DB user UUID below
+			const { userId: clerkId } = await auth();
+			if (!clerkId) {
+				throw new Error("UNAUTHORIZED");
+			}
 
-		// Get original post
-		const originalPost = await getPostById(data.originalPostId);
-		if (!originalPost) {
-			throw new Error("NOT_FOUND");
-		}
+			// Get original post
+			const originalPost = await getPostById(data.originalPostId);
+			if (!originalPost) {
+				throw new Error("NOT_FOUND");
+			}
 
-		// Validate target language is opposite of original
-		if (originalPost.lang === data.targetLang) {
-			throw new Error("VALIDATION_ERROR: Cannot translate to same language");
-		}
+			// Validate target language is opposite of original
+			if (originalPost.lang === data.targetLang) {
+				throw new Error("VALIDATION_ERROR: Cannot translate to same language");
+			}
 
-		// Check if translation already exists
-		const existingTranslation = await getPostBySlugAndLang(
-			originalPost.slug,
-			data.targetLang,
-		);
-		if (existingTranslation) {
-			throw new Error("SLUG_TAKEN: Translation already exists");
-		}
+			// Check if translation already exists
+			const existingTranslation = await getPostBySlugAndLang(
+				originalPost.slug,
+				data.targetLang,
+			);
+			if (existingTranslation) {
+				throw new Error("SLUG_TAKEN: Translation already exists");
+			}
 
-		// Resolve Clerk ID → DB user UUID
-		const user = await getUserByClerkId(clerkId);
-		if (!user) {
-			throw new Error("User not found in database");
-		}
+			// Resolve Clerk ID → DB user UUID
+			const user = await getUserByClerkId(clerkId);
+			if (!user) {
+				throw new Error("User not found in database");
+			}
 
-		// Create translation post
-		const translation = await createPost({
-			userId: user.id,
-			categoryId: data.categoryId || originalPost.categoryId,
-			title: data.title,
-			slug: originalPost.slug, // Same slug as original
-			lang: data.targetLang,
-			content: data.content,
-			description: data.description || null,
-			featuredImage: originalPost.featuredImage, // Inherit featured image
-			translationGroupId: originalPost.translationGroupId, // Link to original
-			status: "draft", // Start as draft, needs approval
-		});
+			// Create translation post
+			const translation = await createPost({
+				userId: user.id,
+				categoryId: data.categoryId || originalPost.categoryId,
+				title: data.title,
+				slug: originalPost.slug, // Same slug as original
+				lang: data.targetLang,
+				content: data.content,
+				description: data.description || null,
+				featuredImage: originalPost.featuredImage, // Inherit featured image
+				translationGroupId: originalPost.translationGroupId, // Link to original
+				status: "draft", // Start as draft, needs approval
+			});
 
-		// TODO: Copy tags from original if not provided, or use data.tagIds
+			// TODO: Copy tags from original if not provided, or use data.tagIds
 
-		return {
-			id: translation.id,
-			slug: translation.slug,
-			lang: translation.lang,
-			translationGroupId: translation.translationGroupId,
-			status: translation.status,
-		};
-	});
+			return {
+				id: translation.id,
+				slug: translation.slug,
+				lang: translation.lang,
+				translationGroupId: translation.translationGroupId,
+				status: translation.status,
+			};
+		}),
+	);
 
 /**
  * Get translation of a post if it exists
