@@ -88,24 +88,26 @@ The route, server function, and markdown pipeline all exist. This story fills **
   - [x] 2.1: Run `npm install rehype-sanitize`.
   - [x] 2.2: Run bundle size check: `npx wrangler deploy --outdir bundled/ --dry-run`. Verify total gzip stays under 2.5MB.
   - [x] 2.3: Update `src/components/shared/Markdown.tsx` to add `rehype-sanitize` to the rehype plugins array. Order matters — `rehype-raw` must come BEFORE `rehype-sanitize`:
+
     ```tsx
     import rehypeSanitize from "rehype-sanitize";
 
     // In ReactMarkdown:
     rehypePlugins={[rehypeRaw, rehypeSanitize]}
     ```
+
     This allows raw HTML but sanitizes it to remove `<script>`, `onclick`, etc.
 
 - [x] **Task 3: Fix SSR — split lazy loading** (AC: #2, #3, #4)
 
   **Current broken pattern (route lazy-loads entire Markdown → no SSR content):**
+
   ```tsx
   // ❌ Current: route has lazy Markdown → server sends empty skeleton
   const Markdown = lazy(() => import("~/components/shared/Markdown")...);
   ```
 
   **Correct pattern (Markdown renders on server; CodeBlock lazy-loads Shiki on client):**
-
   - [x] 3.1: In `src/routes/$lang/posts/$slug.tsx`, change the Markdown import from `lazy()` to a **direct import**:
     ```tsx
     // ✅ Replace lazy import with direct import
@@ -116,6 +118,7 @@ The route, server function, and markdown pipeline all exist. This story fills **
     import { Suspense } from "react";
     ```
   - [x] 3.2: In `src/components/shared/Markdown.tsx`, lazy-load `CodeBlock` **inside** Markdown (not at route level):
+
     ```tsx
     import { Suspense, lazy } from "react";
 
@@ -125,7 +128,9 @@ The route, server function, and markdown pipeline all exist. This story fills **
       })),
     );
     ```
+
   - [x] 3.3: In the `code` renderer inside `Markdown.tsx`, wrap `<CodeBlock>` in `<Suspense>` with a plain `<pre><code>` fallback (this is what SSR sends and what shows before Shiki loads):
+
     ```tsx
     code({ className: codeClassName, children }) {
       const isInline = !String(children).includes("\n");
@@ -148,15 +153,17 @@ The route, server function, and markdown pipeline all exist. This story fills **
       );
     },
     ```
+
   - [x] 3.4: In `src/routes/$lang/posts/$slug.tsx`, remove the outer `<Suspense>` wrapper around `<Markdown>` (it's no longer lazy at route level). Replace with direct render:
     ```tsx
-    <div className='mt-8'>
+    <div className="mt-8">
       <Markdown content={post.content} />
     </div>
     ```
 
 - [x] **Task 4: Fix CodeBlock design system compliance** (AC: #7, #10)
   - [x] 4.1: In `src/components/shared/CodeBlock.tsx`, fix `bg-slate-950` → `bg-zinc-900` and `rounded-lg` → `rounded-3xl`:
+
     ```tsx
     // ❌ Current
     <div className="relative w-full my-4 rounded-lg overflow-hidden bg-slate-950">
@@ -166,6 +173,7 @@ The route, server function, and markdown pipeline all exist. This story fills **
     <div className='relative my-4 w-full overflow-hidden rounded-3xl bg-zinc-900'>
       <div className='overflow-x-auto p-4 text-sm' ...>
     ```
+
   - [x] 4.2: `dangerouslySetInnerHTML={{ __html: highlighted }}` is safe for Shiki output (Shiki generates controlled HTML). Keep as-is.
 
 - [x] **Task 5: Add errorComponent for 404** (AC: #8, #9)
@@ -175,18 +183,18 @@ The route, server function, and markdown pipeline all exist. This story fills **
       const { lang } = Route.useParams();
       const { t } = useI18n();
       return (
-        <Container className='mt-16 sm:mt-32'>
-          <div className='mx-auto max-w-2xl text-center'>
-            <h1 className='text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100'>
+        <Container className="mt-16 sm:mt-32">
+          <div className="mx-auto max-w-2xl text-center">
+            <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">
               {t.pages.posts.notFound}
             </h1>
-            <p className='mt-4 text-base text-zinc-600 dark:text-zinc-400'>
+            <p className="mt-4 text-base text-zinc-600 dark:text-zinc-400">
               {t.pages.posts.notFoundMessage}
             </p>
             <Link
-              to='/$lang/posts/'
+              to="/$lang/posts/"
               params={{ lang }}
-              className='mt-8 inline-flex items-center text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300'
+              className="mt-8 inline-flex items-center text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
             >
               ← {t.pages.posts.heading}
             </Link>
@@ -209,96 +217,128 @@ The route, server function, and markdown pipeline all exist. This story fills **
 - [x] **Task 6: Add featured image and author info** (AC: #1, #6)
   - [x] 6.1: In `src/routes/$lang/posts/$slug.tsx`, add featured image rendering **inside `<article>`**, below the `<header>` block:
     ```tsx
-    {post.featuredImage && (
-      <img
-        src={post.featuredImage}
-        alt={post.title}
-        loading='lazy'
-        className='mt-8 w-full rounded-2xl object-cover'
-      />
-    )}
+    {
+      post.featuredImage && (
+        <img
+          src={post.featuredImage}
+          alt={post.title}
+          loading="lazy"
+          className="mt-8 w-full rounded-2xl object-cover"
+        />
+      );
+    }
     ```
   - [x] 6.2: Add author info rendering inside `<header>`, after the date `<time>` block:
     ```tsx
-    {post.author && (
-      <div className='mt-4 flex items-center gap-3'>
-        {post.author.imageUrl && (
-          <img
-            src={post.author.imageUrl}
-            alt={`${post.author.firstName} ${post.author.lastName}`}
-            loading='lazy'
-            className='h-8 w-8 rounded-full object-cover'
-          />
-        )}
-        <span className='text-sm text-zinc-600 dark:text-zinc-400'>
-          {t.pages.posts.by} {post.author.firstName} {post.author.lastName}
-        </span>
-      </div>
-    )}
+    {
+      post.author && (
+        <div className="mt-4 flex items-center gap-3">
+          {post.author.imageUrl && (
+            <img
+              src={post.author.imageUrl}
+              alt={`${post.author.firstName} ${post.author.lastName}`}
+              loading="lazy"
+              className="h-8 w-8 rounded-full object-cover"
+            />
+          )}
+          <span className="text-sm text-zinc-600 dark:text-zinc-400">
+            {t.pages.posts.by} {post.author.firstName} {post.author.lastName}
+          </span>
+        </div>
+      );
+    }
     ```
 
 - [x] **Task 7: Replace hardcoded strings with t()** (AC: #9)
   - [x] 7.1: In `src/routes/$lang/posts/$slug.tsx`, replace the fallback language banner content with locale keys. Current hardcoded:
     ```tsx
     // ❌ Current — hardcoded strings
-    {lang === 'en'
-      ? `This article is not available in English. Showing Vietnamese version.`
-      : `Bài viết này không có bản tiếng Việt. Đang hiển thị bản tiếng Anh.`}
+    {
+      lang === "en"
+        ? `This article is not available in English. Showing Vietnamese version.`
+        : `Bài viết này không có bản tiếng Việt. Đang hiển thị bản tiếng Anh.`;
+    }
     ```
     Replace with:
     ```tsx
     // ✅ Locale-based
-    `${t.pages.posts.fallbackOnly} ${lang === 'en' ? t.pages.posts.langVi : t.pages.posts.langEn}.`
+    `${t.pages.posts.fallbackOnly} ${lang === "en" ? t.pages.posts.langVi : t.pages.posts.langEn}.`;
     ```
   - [x] 7.2: Replace the `translationSlug` link text:
+
     ```tsx
     // ❌ Current
-    {lang === 'en' ? 'View original' : 'Xem bản gốc'}
+    {
+      lang === "en" ? "View original" : "Xem bản gốc";
+    }
 
     // ✅
-    {t.pages.posts.viewOriginal}
+    {
+      t.pages.posts.viewOriginal;
+    }
     ```
+
   - [x] 7.3: Replace the translation toggle label:
+
     ```tsx
     // ❌ Current
-    {lang === 'en' ? 'Also available in:' : 'Cũng có sẵn bằng:'}
+    {
+      lang === "en" ? "Also available in:" : "Cũng có sẵn bằng:";
+    }
 
     // ✅
-    {t.pages.posts.translationAvailable}
+    {
+      t.pages.posts.translationAvailable;
+    }
     ```
+
   - [x] 7.4: Replace the translation language link text:
+
     ```tsx
     // ❌ Current (emoji flags — avoid; screen reader unfriendly)
-    {lang === 'en' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English'}
+    {
+      lang === "en" ? "🇻🇳 Tiếng Việt" : "🇬🇧 English";
+    }
 
     // ✅
-    {lang === 'en' ? t.pages.posts.langVi : t.pages.posts.langEn}
+    {
+      lang === "en" ? t.pages.posts.langVi : t.pages.posts.langEn;
+    }
     ```
+
   - [x] 7.5: Fix translation toggle design: replace shadcn tokens (`bg-muted/50`, `border-border`, `text-primary`) with design system zinc/teal values:
+
     ```tsx
     // ❌ Current — uses CSS variable tokens (not design system compliant)
-    className="rounded-2xl border border-border bg-muted/50 p-4"
+    className = "rounded-2xl border border-border bg-muted/50 p-4";
 
     // ✅
-    className='rounded-2xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-700/40 dark:bg-zinc-800/50'
+    className =
+      "rounded-2xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-700/40 dark:bg-zinc-800/50";
     ```
+
     And the link:
+
     ```tsx
     // ❌ Current
-    className="text-sm font-medium text-primary hover:text-primary/80"
+    className = "text-sm font-medium text-primary hover:text-primary/80";
 
     // ✅
-    className='text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300'
+    className =
+      "text-sm font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300";
     ```
 
 - [x] **Task 8: Fix h1 design system compliance** (AC: #10)
   - [x] 8.1: In the article `<h1>`, replace `text-foreground` with explicit zinc values:
+
     ```tsx
     // ❌ Current
-    className="mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
+    className =
+      "mt-6 text-4xl font-bold tracking-tight text-foreground sm:text-5xl";
 
     // ✅
-    className='mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100'
+    className =
+      "mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100";
     ```
 
 - [x] **Task 9: Verify build and bundle size** (AC: all)
@@ -320,17 +360,18 @@ The route, server function, and markdown pipeline all exist. This story fills **
 
 ### Key File Locations
 
-| File | Action |
-|------|--------|
-| `src/routes/$lang/posts/$slug.tsx` | MODIFY — direct Markdown import, errorComponent, author, featuredImage, locale strings, design fixes |
-| `src/components/shared/Markdown.tsx` | MODIFY — lazy CodeBlock inside, add rehype-sanitize, Suspense per code block |
-| `src/components/shared/CodeBlock.tsx` | MODIFY — zinc-900, rounded-3xl |
-| `src/locales/en.ts` | MODIFY — add posts.notFound, posts.fallbackOnly, etc. |
-| `src/locales/vi.ts` | MODIFY — matching keys |
+| File                                  | Action                                                                                               |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `src/routes/$lang/posts/$slug.tsx`    | MODIFY — direct Markdown import, errorComponent, author, featuredImage, locale strings, design fixes |
+| `src/components/shared/Markdown.tsx`  | MODIFY — lazy CodeBlock inside, add rehype-sanitize, Suspense per code block                         |
+| `src/components/shared/CodeBlock.tsx` | MODIFY — zinc-900, rounded-3xl                                                                       |
+| `src/locales/en.ts`                   | MODIFY — add posts.notFound, posts.fallbackOnly, etc.                                                |
+| `src/locales/vi.ts`                   | MODIFY — matching keys                                                                               |
 
 ### SSR Split Pattern — Why This Change
 
 The route currently does:
+
 ```tsx
 // Route: lazy-load entire Markdown ← no SSR content at all
 const Markdown = lazy(() => import("~/components/shared/Markdown")...);
@@ -340,6 +381,7 @@ const Markdown = lazy(() => import("~/components/shared/Markdown")...);
 This sends a loading skeleton to the browser, not the actual content. Googlebot and users with slow JS see nothing.
 
 The correct pattern:
+
 ```
 Route → imports Markdown directly (SSR renders it)
   Markdown → lazy-loads CodeBlock (Shiki stays client-only)
@@ -354,9 +396,11 @@ The default `rehypeSanitize` schema strips `<script>`, `onclick`, `javascript:` 
 ### Bundle Size Check — Before/After
 
 After adding `rehype-sanitize`, run:
+
 ```bash
 npx wrangler deploy --outdir bundled/ --dry-run
 ```
+
 Abort if total gzip exceeds 2.5MB. `rehype-sanitize` is small (~10KB gzip) — this should be fine.
 
 ### fetchPost Error Handling
@@ -379,15 +423,16 @@ Story 3.1 changes `PostItem` to use `t.common.readMore`. If Story 3.1 is not yet
 ### Imports Needed in `$slug.tsx`
 
 After changes, the route needs these imports:
+
 ```tsx
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense } from "react";           // ← keep for potential use
+import { Suspense } from "react"; // ← keep for potential use
 import { Badge } from "~/components/ui/badge";
 import { Container } from "~/components/shared/Container";
-import { Markdown } from "~/components/shared/Markdown";  // ← direct import
+import { Markdown } from "~/components/shared/Markdown"; // ← direct import
 import { fetchPost } from "~/shared/services/post";
 import { formatDate } from "~/shared/utils/date";
-import { useI18n } from "~/shared/providers/i18n";       // ← add
+import { useI18n } from "~/shared/providers/i18n"; // ← add
 ```
 
 ### References
@@ -395,28 +440,32 @@ import { useI18n } from "~/shared/providers/i18n";       // ← add
 - [Source: epics.md#Epic3-Story3.2] — AC definitions
 - [Source: architecture.md#ShikiClientOnlyPattern] — SSR/client split pattern
 - [Source: architecture.md#NFR5] — 500KB gzip per chunk limit
-- [Source: .claude/rules/design-system.md#UX-DR13] — `prose dark:prose-invert`
-- [Source: .claude/rules/design-system.md#UX-DR15] — `rounded-3xl` for code blocks, `rounded-2xl` for images
+- [Source: DESIGN.md#UX-DR13] — `prose dark:prose-invert`
+- [Source: DESIGN.md#UX-DR15] — `rounded-3xl` for code blocks, `rounded-2xl` for images
 - [Source: src/components/shared/ClientOnly.tsx] — exists but use Suspense+lazy for code blocks instead
 - [Source: src/shared/utils/markdown.ts] — fine-grained Shiki (already correct, don't touch)
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 claude-sonnet-4-6
 
 ### Debug Log References
+
 - TypeScript error: `Link to='/$lang/posts/'` → changed to `'/$lang/posts'` (trailing slash not in route tree)
 - TypeScript error: `/$lang/posts` `Link` requires `search` prop → added `search={{ page: 1 }}`
 - Biome import-order: `{ Suspense, lazy }` → `{ lazy, Suspense }` in Markdown.tsx
 - Biome line-length: `notFoundMessage` string wrapped to new line in en.ts
 
 ### Code Review Fixes (post-review pass)
+
 - **F1**: Replaced `border-destructive/30 bg-destructive/5 text-destructive` on fallback banner with explicit `border-red-200 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-950/20 dark:text-red-400` (AC10 design system compliance).
 - **F2**: Fixed null author name rendering — replaced direct `{firstName} {lastName}` with `[firstName, lastName].filter(Boolean).join(" ")` in both `<span>` text and avatar `alt` attribute.
 - **F3** (deferred): `PostError` catches all error types as "not found" — solution documented, to be addressed in a future story.
 
 ### Completion Notes List
+
 - Added 8 locale keys to `en.ts` and `vi.ts` (`notFound`, `notFoundMessage`, `fallbackOnly`, `viewOriginal`, `translationAvailable`, `langVi`, `langEn`, `by`).
 - Installed `rehype-sanitize`; added to Markdown.tsx after `rehype-raw` (correct XSS-safe order).
 - Bundle gzip: 1597 KB — well under 2.5MB constraint.
@@ -431,6 +480,7 @@ claude-sonnet-4-6
 - Build: 0 TypeScript errors. Biome: clean.
 
 ### File List
+
 - src/routes/$lang/posts/$slug.tsx (modified)
 - src/components/shared/Markdown.tsx (modified)
 - src/components/shared/CodeBlock.tsx (modified)

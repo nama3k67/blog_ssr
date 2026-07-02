@@ -1,13 +1,29 @@
 ---
-stepsCompleted: ["step-01-init", "step-02-discovery", "step-02b-vision", "step-02c-executive-summary", "step-03-success", "step-04-journeys", "step-05-domain-skipped", "step-06-innovation-skipped", "step-07-project-type", "step-08-scoping", "step-09-functional", "step-10-nonfunctional", "step-11-polish", "step-12-complete"]
+stepsCompleted:
+  [
+    "step-01-init",
+    "step-02-discovery",
+    "step-02b-vision",
+    "step-02c-executive-summary",
+    "step-03-success",
+    "step-04-journeys",
+    "step-05-domain-skipped",
+    "step-06-innovation-skipped",
+    "step-07-project-type",
+    "step-08-scoping",
+    "step-09-functional",
+    "step-10-nonfunctional",
+    "step-11-polish",
+    "step-12-complete",
+  ]
 inputDocuments:
   - "specs/001-portfolio-blog/research.md"
   - "specs/001-portfolio-blog/data-model.md"
   - "specs/001-portfolio-blog/contracts/api.md"
   - "specs/001-portfolio-blog/tasks.md"
   - "_bmad-output/planning-artifacts/sprint-plan-blog-app-2026-03-24.md"
-  - ".claude/rules/design-system.md"
-workflowType: 'prd'
+  - "DESIGN.md"
+workflowType: "prd"
 documentCounts:
   briefs: 0
   research: 1
@@ -32,13 +48,14 @@ A bilingual (English/Vietnamese) developer portfolio and content platform deploy
 ### What Makes This Special
 
 The differentiator is depth of craft across the entire stack, not a single hero feature:
+
 - **Unconventional edge deployment** — SSR on Cloudflare Workers (3MB gzip budget) instead of the typical Vercel/Next.js path, demonstrating constraint-driven architecture
 - **Production bilingual content** — Real i18n with `$lang`-scoped routing and translation management, not a tutorial demo
 - **AI-assisted development process** — Full BMAD Method v6 lifecycle (PRD → Architecture → Epics → Sprint Planning → Stories) visible in the repository, showcasing structured AI-human collaboration
 - **UI/UX polish in the details** — Spotlight-inspired design system, Shiki code highlighting with fine-grained bundling, thoughtful micro-interactions, dark mode, and accessibility considerations
 - **Content governance** — Post state machine (draft → pending → published → rejected) with env-var-based admin role, image uploads to R2
 
-The blog *is* the portfolio. Reviewers should be impressed by the engineering before they read a single post.
+The blog _is_ the portfolio. Reviewers should be impressed by the engineering before they read a single post.
 
 ## Project Classification
 
@@ -64,6 +81,7 @@ The blog *is* the portfolio. Reviewers should be impressed by the engineering be
 ### Technical Success
 
 Key targets (detailed in Web App Specific Requirements and Non-Functional Requirements):
+
 - Lighthouse 90+ all categories | TTFB < 200ms | P95 < 500ms | Bundle < 3MB gzip
 - Core Web Vitals pass (LCP < 2.5s, FID < 100ms, CLS < 0.1)
 - SSR all public pages | Bilingual en/vi with zero-shift toggle
@@ -71,20 +89,20 @@ Key targets (detailed in Web App Specific Requirements and Non-Functional Requir
 
 ### Measurable Outcomes
 
-| Metric | Target | How to measure |
-|--------|--------|----------------|
-| Lighthouse all categories | 90+ | Lighthouse CI or manual audit |
-| TTFB | < 200ms | WebPageTest / Cloudflare Analytics |
-| P95 response time | < 500ms | Cloudflare Analytics |
-| Bundle gzip (total) | < 3MB | `wrangler deploy --dry-run --outdir bundled/` |
-| Route chunk gzip (max) | < 500KB | Build output analysis |
-| Core Web Vitals | Pass all 3 | Chrome UX Report / Web Vitals JS |
-| Time-to-engagement | < 15s to first navigation | Cloudflare Analytics (page view paths) |
-| Contact CTA conversions | Tracked | Cloudflare Analytics event tracking |
-| Cross-browser | Chrome, Firefox, Safari pass | Manual + automated testing |
-| Responsive breakpoints | 375/768/1024/1440px | Visual regression or manual QA |
-| Language switch CLS | < 0.1 | CLS metric + manual toggle test |
-| Blog post quality | Proofread, code-highlighted, bilingual | Editorial review per post |
+| Metric                    | Target                                 | How to measure                                |
+| ------------------------- | -------------------------------------- | --------------------------------------------- |
+| Lighthouse all categories | 90+                                    | Lighthouse CI or manual audit                 |
+| TTFB                      | < 200ms                                | WebPageTest / Cloudflare Analytics            |
+| P95 response time         | < 500ms                                | Cloudflare Analytics                          |
+| Bundle gzip (total)       | < 3MB                                  | `wrangler deploy --dry-run --outdir bundled/` |
+| Route chunk gzip (max)    | < 500KB                                | Build output analysis                         |
+| Core Web Vitals           | Pass all 3                             | Chrome UX Report / Web Vitals JS              |
+| Time-to-engagement        | < 15s to first navigation              | Cloudflare Analytics (page view paths)        |
+| Contact CTA conversions   | Tracked                                | Cloudflare Analytics event tracking           |
+| Cross-browser             | Chrome, Firefox, Safari pass           | Manual + automated testing                    |
+| Responsive breakpoints    | 375/768/1024/1440px                    | Visual regression or manual QA                |
+| Language switch CLS       | < 0.1                                  | CLS metric + manual toggle test               |
+| Blog post quality         | Proofread, code-highlighted, bilingual | Editorial review per post                     |
 
 ## User Journeys
 
@@ -148,24 +166,24 @@ Key targets (detailed in Web App Specific Requirements and Non-Functional Requir
 
 ### Journey Requirements Summary
 
-| Capability | Revealed by Journey |
-|-----------|-------------------|
-| SSR with instant load | Minh, David, Googlebot |
-| Home page with GitHub integration | Minh |
-| Project cards (thumbnail, description, tags, GitHub link) | Minh, David |
-| About page with skills viz + contact CTA | Minh |
-| Blog post with Shiki code highlighting | David, Nam |
-| Bilingual content with zero-shift toggle | David, Nam |
-| SEO meta tags, hreflang, structured data | David, Googlebot |
-| Sitemap.xml generation | Googlebot |
-| Clerk auth on protected routes | Nam |
-| Markdown editor with preview | Nam |
-| R2 image upload with error handling | Nam |
-| Translation management UI | Nam |
-| Post state machine + approval workflow | Nam |
-| Draft auto-save / preservation | Nam |
-| Responsive design (mobile recruiters) | Minh |
-| Dark mode (Spotlight design system) | Minh, David |
+| Capability                                                | Revealed by Journey    |
+| --------------------------------------------------------- | ---------------------- |
+| SSR with instant load                                     | Minh, David, Googlebot |
+| Home page with GitHub integration                         | Minh                   |
+| Project cards (thumbnail, description, tags, GitHub link) | Minh, David            |
+| About page with skills viz + contact CTA                  | Minh                   |
+| Blog post with Shiki code highlighting                    | David, Nam             |
+| Bilingual content with zero-shift toggle                  | David, Nam             |
+| SEO meta tags, hreflang, structured data                  | David, Googlebot       |
+| Sitemap.xml generation                                    | Googlebot              |
+| Clerk auth on protected routes                            | Nam                    |
+| Markdown editor with preview                              | Nam                    |
+| R2 image upload with error handling                       | Nam                    |
+| Translation management UI                                 | Nam                    |
+| Post state machine + approval workflow                    | Nam                    |
+| Draft auto-save / preservation                            | Nam                    |
+| Responsive design (mobile recruiters)                     | Minh                   |
+| Dark mode (Spotlight design system)                       | Minh, David            |
 
 ## Web App Specific Requirements
 
@@ -175,24 +193,24 @@ SSR-first web application with client-side hydration (TanStack Start + React 19)
 
 ### Browser Matrix
 
-| Browser | Support Level | Notes |
-|---------|--------------|-------|
-| Chrome (latest 2) | Full | Primary development target |
-| Firefox (latest 2) | Full | Second priority |
-| Safari (latest 2) | Full | Critical — recruiters on Mac/iOS |
-| Edge (Chromium) | Inherited | Chromium-based, no extra effort needed |
-| IE / Legacy | None | Not supported |
+| Browser            | Support Level | Notes                                  |
+| ------------------ | ------------- | -------------------------------------- |
+| Chrome (latest 2)  | Full          | Primary development target             |
+| Firefox (latest 2) | Full          | Second priority                        |
+| Safari (latest 2)  | Full          | Critical — recruiters on Mac/iOS       |
+| Edge (Chromium)    | Inherited     | Chromium-based, no extra effort needed |
+| IE / Legacy        | None          | Not supported                          |
 
 Mobile browsers: Safari iOS and Chrome Android — both covered by responsive design and the desktop browser targets above.
 
 ### Responsive Design
 
-| Breakpoint | Target | Priority |
-|-----------|--------|----------|
-| 375px | Mobile (iPhone SE/Mini) | High — recruiters browse on phones |
-| 768px | Tablet / small laptop | Medium |
-| 1024px | Laptop | High — primary viewing context |
-| 1440px | Desktop / wide monitor | Medium |
+| Breakpoint | Target                  | Priority                           |
+| ---------- | ----------------------- | ---------------------------------- |
+| 375px      | Mobile (iPhone SE/Mini) | High — recruiters browse on phones |
+| 768px      | Tablet / small laptop   | Medium                             |
+| 1024px     | Laptop                  | High — primary viewing context     |
+| 1440px     | Desktop / wide monitor  | Medium                             |
 
 Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Projects, Blogs, About) must be fully functional and visually polished at every breakpoint. No horizontal scroll, no truncated content, no broken layouts.
 
@@ -246,12 +264,14 @@ Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Proje
 ### MVP Feature Set (Phase 1)
 
 **Core User Journeys Supported:**
+
 - Minh (Recruiter) — full happy path: Home → Projects → Blog → About → Contact CTA
 - David (Blog Reader) — full happy path: Google → Post → Explore → Bookmark
 - Nam (Admin) — full happy path: Auth → Create post → Upload image → Translate → Publish
 - Googlebot — full path: Sitemap → Crawl → Index → Rich snippets
 
 **Must-Have Capabilities:**
+
 - Home page with GitHub integration and personal intro
 - Blog engine: post listing, individual posts, Shiki code highlighting, pagination
 - Project cards with thumbnail, description, tech stack tags, GitHub links
@@ -265,6 +285,7 @@ Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Proje
 - WCAG 2.1 AA accessibility
 
 **Explicitly deferred from MVP:**
+
 - Rich project detail pages (Growth)
 - Full-text search (Growth)
 - Categories & tags taxonomy (Growth)
@@ -275,6 +296,7 @@ Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Proje
 ### Post-MVP Features
 
 **Phase 2 (Growth):**
+
 - Rich project detail pages — architecture breakdowns, "how it was built," AI dev process showcase
 - Dedicated portfolio page showing development methodology
 - PostgreSQL full-text search across posts
@@ -282,6 +304,7 @@ Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Proje
 - RSS feed for subscribers
 
 **Phase 3 (Vision):**
+
 - AI-assisted translations and content suggestions
 - Analytics dashboard with visitor insights
 - Comment system for reader engagement
@@ -291,25 +314,25 @@ Approach: Mobile-first CSS with Tailwind 4 breakpoints. All 4 pages (Home, Proje
 
 **Technical Risks:**
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| Cloudflare Workers 3MB gzip limit breached | Deployment blocked | Monitor per-commit with `wrangler --dry-run`; Shiki fine-grained imports; React.lazy() for heavy components |
-| Neon cold start latency spikes | P95 > 500ms | Connection pooling; cache frequently-read queries at edge; monitor via Cloudflare Analytics |
-| Shiki bundle bloat from language imports | Chunk size exceeds budget | Only import languages actually used in blog posts; tree-shake via `shiki/core` + `shiki/engine/javascript` |
+| Risk                                       | Impact                    | Mitigation                                                                                                  |
+| ------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Cloudflare Workers 3MB gzip limit breached | Deployment blocked        | Monitor per-commit with `wrangler --dry-run`; Shiki fine-grained imports; React.lazy() for heavy components |
+| Neon cold start latency spikes             | P95 > 500ms               | Connection pooling; cache frequently-read queries at edge; monitor via Cloudflare Analytics                 |
+| Shiki bundle bloat from language imports   | Chunk size exceeds budget | Only import languages actually used in blog posts; tree-shake via `shiki/core` + `shiki/engine/javascript`  |
 
 **Market Risks:**
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| Portfolio doesn't convert to interviews | Business goal unmet | Track contact CTA conversions; iterate on About page and project presentation based on feedback |
-| Blog content not discoverable via search | No organic traffic | SEO strategy from day one (SSR, meta, hreflang, sitemap); write content targeting specific technical keywords |
+| Risk                                     | Impact              | Mitigation                                                                                                    |
+| ---------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Portfolio doesn't convert to interviews  | Business goal unmet | Track contact CTA conversions; iterate on About page and project presentation based on feedback               |
+| Blog content not discoverable via search | No organic traffic  | SEO strategy from day one (SSR, meta, hreflang, sitemap); write content targeting specific technical keywords |
 
 **Resource Risks:**
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| Solo developer bandwidth | Slow progress | BMAD sprint planning keeps scope focused; AI-assisted development accelerates implementation; strict MVP boundary — no scope creep |
-| Context switching between planning and coding | Loss of momentum | Complete full BMAD planning cycle before writing code; stories are self-contained with full context |
+| Risk                                          | Impact           | Mitigation                                                                                                                         |
+| --------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Solo developer bandwidth                      | Slow progress    | BMAD sprint planning keeps scope focused; AI-assisted development accelerates implementation; strict MVP boundary — no scope creep |
+| Context switching between planning and coding | Loss of momentum | Complete full BMAD planning cycle before writing code; stories are self-contained with full context                                |
 
 ## Functional Requirements
 

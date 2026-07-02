@@ -295,7 +295,7 @@ useQuery({ queryKey: ["posts", "list", { lang, page }] });
 - [Source: epics.md#Epic3-Story3.1] — AC definitions
 - [Source: architecture.md#QueryKeyFactory] — `queryKeys.ts` pattern
 - [Source: architecture.md#FormatPatterns] — `ListResponse<T>` shape (not used for loader but for useQuery contexts)
-- [Source: .claude/rules/design-system.md#Cards] — hover ghost, category badge, image border radius
+- [Source: DESIGN.md#Cards] — hover ghost, category badge, image border radius
 - [Source: src/components/shared/card/link.tsx] — hover ghost implementation (z-0 ghost, z-20 link overlay, z-10 content)
 - [Source: src/shared/services/post.ts] — existing `fetchPostsList` pattern (inputValidator, not .validator)
 

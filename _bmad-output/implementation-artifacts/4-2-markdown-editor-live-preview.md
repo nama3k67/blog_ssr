@@ -24,15 +24,15 @@ The `MarkdownEditor.tsx` component is fully built, integrated into `NewPostForm.
 
 ### What Already Exists (DO NOT RECREATE):
 
-| File | Status | Notes |
-|------|--------|-------|
+| File                                     | Status    | Notes                                                                                            |
+| ---------------------------------------- | --------- | ------------------------------------------------------------------------------------------------ |
 | `src/components/post/MarkdownEditor.tsx` | ✅ Exists | `@uiw/react-md-editor` ^4.0.11 via `React.lazy()`, `ClientOnly`, skeleton, theme, upload toolbar |
-| `src/components/shared/ClientOnly.tsx` | ✅ Exists | SSR guard — renders children only after mount |
-| `src/components/post/NewPostForm.tsx` | ✅ Exists | Integrates `MarkdownEditor` for the `content` field |
-| `src/routes/$lang/_protected/new.tsx` | ✅ Exists | Uses `NewPostForm` with `createPostFn` |
-| `src/shared/utils/upload.ts` | ✅ Exists | `uploadImage()`, `insertImageMarkdown()`, `extractImageFiles()` |
-| `src/routes/api/upload.ts` | ✅ Exists | Auth + MIME + size validation + R2 upload (5MB limit) |
-| `src/locales/en.ts` + `vi.ts` | ✅ Exists | All `editor.*` keys including upload strings are present in both locales |
+| `src/components/shared/ClientOnly.tsx`   | ✅ Exists | SSR guard — renders children only after mount                                                    |
+| `src/components/post/NewPostForm.tsx`    | ✅ Exists | Integrates `MarkdownEditor` for the `content` field                                              |
+| `src/routes/$lang/_protected/new.tsx`    | ✅ Exists | Uses `NewPostForm` with `createPostFn`                                                           |
+| `src/shared/utils/upload.ts`             | ✅ Exists | `uploadImage()`, `insertImageMarkdown()`, `extractImageFiles()`                                  |
+| `src/routes/api/upload.ts`               | ✅ Exists | Auth + MIME + size validation + R2 upload (5MB limit)                                            |
+| `src/locales/en.ts` + `vi.ts`            | ✅ Exists | All `editor.*` keys including upload strings are present in both locales                         |
 
 ### What Needs Work:
 
@@ -111,6 +111,7 @@ Do NOT remove `ClientOnly` — SSR will break without it.
 ### Bundle Boundary — How It Works
 
 The bundle isolation depends on TWO layers:
+
 1. **Route-level split**: TanStack Start automatically splits `_protected/` routes into separate chunks because they are lazy-loaded behind the auth boundary (`route.tsx`).
 2. **Component-level split**: `MarkdownEditor.tsx` uses `React.lazy(() => import("@uiw/react-md-editor"))` so the editor itself is a separate chunk within the admin bundle.
 
@@ -119,6 +120,7 @@ The combination means `@uiw/react-md-editor` should only appear in the admin chu
 ### Image Upload — Already Implemented (Story 4.3 overlap)
 
 `MarkdownEditor.tsx` already includes image upload via:
+
 - Toolbar button (`Ctrl+Shift+I`) → opens file picker → calls `uploadImage()` → inserts `![alt](url)` at cursor
 - Drag & drop on the editor → `handleDrop` → `extractImageFiles()` → `uploadImage()`
 - Paste (clipboard images) → `handlePaste` → `extractImageFiles()` → `uploadImage()`
@@ -159,26 +161,29 @@ const previewMode = isMobile ? (showPreview ? "preview" : "edit") : "live";
 ### i18n — All Keys Present
 
 All `t.editor.*` keys used in `MarkdownEditor.tsx` are already defined in both `en.ts` and `vi.ts`:
+
 - `t.editor.uploading`, `t.editor.uploadFailed`, `t.editor.fileTooLarge` ✅
 
 No new i18n keys needed for this story.
 
 ### Key File Locations
 
-| File | Action |
-|------|--------|
-| `src/components/post/MarkdownEditor.tsx` | MODIFY — add mobile responsive CSS |
-| `src/styles.css` | OPTIONALLY MODIFY — global CSS override for preview pane (if needed) |
+| File                                     | Action                                                               |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `src/components/post/MarkdownEditor.tsx` | MODIFY — add mobile responsive CSS                                   |
+| `src/styles.css`                         | OPTIONALLY MODIFY — global CSS override for preview pane (if needed) |
 
 ### Git Context (Previous Story 4.1)
 
 Story 4.1 completed:
+
 - Fixed `postStatusEnum` → `["draft", "published"]`
 - Fixed `createPostFn` with `withAdmin()` + publish status bug
 - Added `createPostTags()` for tag linking
 - `MarkdownEditor.tsx` was already integrated and functional in `NewPostForm.tsx` before Story 4.1
 
 Recent commits:
+
 - `fix: P-1+P-2 code review patches - transaction + dedup tagIds`
 - `feat: Story 4.1 - implement createPostFn with admin auth and tag linking`
 - `feat: Story 4.1 - database schema simplification (draft → published)`
@@ -188,7 +193,7 @@ Recent commits:
 - [Source: epics.md#Story4.2] — AC definitions
 - [Source: architecture.md#BundleArchitecture] — `@uiw/react-md-editor` admin-only constraint (ADR-5)
 - [Source: architecture.md#BundleBoundary] — `_protected/*` admin chunks, lazy chunks
-- [Source: .claude/rules/design-system.md#UX-DR13] — prose dark:prose-invert requirement
+- [Source: DESIGN.md#UX-DR13] — prose dark:prose-invert requirement
 - [Source: src/components/post/MarkdownEditor.tsx] — existing implementation (reference before modifying)
 - [Source: src/components/shared/ClientOnly.tsx] — SSR guard pattern
 

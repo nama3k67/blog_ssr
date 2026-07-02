@@ -1,14 +1,19 @@
----
-description: Spotlight-inspired design system — colors, typography, layout, and component patterns for all UI work
-paths:
-  - "src/components/**"
-  - "src/routes/**"
-  - "src/shared/providers/**"
----
+# DESIGN.md — Portfolio Blog Design System
 
-# Design System — Spotlight-Inspired Blog
+The single source of truth for this project's **visual language**: colors, typography, layout,
+component patterns, and the UI coding conventions that keep them consistent. All UI code (anything
+under `src/components/`, `src/routes/`, `src/shared/providers/`) must follow these rules.
 
-Defines the visual language, component patterns, and UI coding conventions. All UI code must follow these rules to maintain visual consistency.
+**Aesthetic:** Spotlight-inspired · **zinc** neutrals · **teal** accent · glass morphism · full dark mode.
+
+**Token source:** color/radius/type tokens live in [`src/styles.css`](src/styles.css); prose styling in
+[`src/typography.ts`](src/typography.ts). This doc explains *how to apply* them.
+
+### Contents
+1. [Color Palette](#1-color-palette) · 2. [Typography](#2-typography) · 3. [Layout System](#3-layout-system) ·
+4. [Component Patterns](#4-component-patterns) · 5. [Dark Mode](#5-dark-mode-rules) ·
+6. [Spacing & Rhythm](#6-spacing--rhythm) · 7. [Transitions](#7-transition--animation) ·
+8. [Accessibility](#8-accessibility) · 9. [Code Rules](#9-code-rules) · [Pre-commit Checklist](#pre-commit-checklist)
 
 ---
 
@@ -267,7 +272,9 @@ rounded-2xl border border-zinc-100 dark:border-zinc-700/40 p-6
 
 ---
 
-## Checklist — Review Before Committing UI Code
+## Pre-commit Checklist
+
+Review before committing any UI code:
 
 - [ ] Only `zinc` and `teal` color families (no gray/slate/blue/green)
 - [ ] Dark mode variants on all visual classes

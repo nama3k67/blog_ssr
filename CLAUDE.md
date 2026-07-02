@@ -27,7 +27,7 @@
 - **Database queries**: Drizzle ORM with typed relations
 - **Validation**: Zod schemas at system boundaries
 - **Commits**: Group by purpose (feat/fix/chore), separate commits per concern
-- **UI/Styling**: Spotlight-inspired design system — see `.claude/rules/design-system.md` (zinc/teal palette, auto-loaded when editing components/routes)
+- **UI/Styling**: Spotlight-inspired design system — see `DESIGN.md` at the repo root (zinc/teal palette). Follow it for all UI work under `src/components/`, `src/routes/`, `src/shared/providers/`.
 
 ## Development Workflow
 
