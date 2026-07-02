@@ -4,6 +4,7 @@ import type { CSSProperties, FC } from "react";
 
 import useHeader from "~/shared/hooks/useHeader";
 import { useI18n } from "~/shared/providers/i18n";
+
 import { Container } from "../shared/Container";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -69,14 +70,14 @@ const Header: FC = () => {
 								{user ? (
 									<UserMenu />
 								) : (
-									<Button variant='outline' className='rounded-full'>
-										<Link
-											className='pointer-events-auto text-zinc-800 dark:text-zinc-100 font-medium'
-											to={localizedPath("/login")}
-										>
+									<Link
+										className='pointer-events-auto text-zinc-800 dark:text-zinc-100 font-medium'
+										to={localizedPath("/login")}
+									>
+										<Button variant='outline' className='rounded-full'>
 											{t.userMenu.login}
-										</Link>
-									</Button>
+										</Button>
+									</Link>
 								)}
 							</div>
 						</div>

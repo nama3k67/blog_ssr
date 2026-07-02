@@ -1,9 +1,12 @@
 import { SignIn } from "@clerk/tanstack-react-start";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { z } from "zod";
+
 import { Container } from "~/components/shared/Container";
 import { dictionaries } from "~/locales";
 import { useI18n } from "~/shared/providers/i18n";
+import { useTheme } from "~/shared/providers/theme";
+import { getSignInAppearance } from "~/shared/utils/signIn";
 
 const searchSchema = z.object({
 	redirect: z.string().optional().default("/new"),
@@ -29,6 +32,7 @@ export const Route = createFileRoute("/$lang/login")({
 function RouteComponent() {
 	const { redirect } = useSearch({ from: Route.fullPath });
 	const { t } = useI18n();
+	const { resolvedTheme } = useTheme();
 
 	return (
 		<Container className='mt-16 sm:mt-32'>
@@ -37,7 +41,12 @@ function RouteComponent() {
 					{t.common.login || "Login"}
 				</h1>
 				<div className='mt-10'>
-					<SignIn routing='hash' fallbackRedirectUrl={redirect} />
+					<SignIn
+						withSignUp={false}
+						routing='hash'
+						fallbackRedirectUrl={redirect}
+						appearance={getSignInAppearance(resolvedTheme === "dark")}
+					/>
 				</div>
 			</div>
 		</Container>
