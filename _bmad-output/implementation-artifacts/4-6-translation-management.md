@@ -29,32 +29,32 @@ The `translationGroupId` field, DB index, and `getPostTranslation()` already exi
 
 ### What Already Exists (DO NOT RECREATE):
 
-| Item | Location | Notes |
-|------|----------|-------|
-| `translationGroupId` | `src/server/db/schema.ts:81` | UUID field on `posts`, `defaultRandom()`, not null |
-| `translation_group_idx` | `src/server/db/schema.ts:106` | Index on `translationGroupId` |
-| `getPostTranslation(groupId, targetLang)` | `src/server/db/queries.ts:185` | Filters by `status: "published"` only — NOT usable for admin check |
-| `createPostWithTags(post, tagIds)` | `src/server/db/queries.ts:312` | Transaction for post creation — adapt for translation |
-| `getPostForEditFn` | `src/shared/services/post.ts:215` | Already returns `translationGroupId` — use as source for Create Translation |
-| `postForEditOptions(postId)` | `src/shared/tanstackQueries/post.ts:44` | Already in use in edit route |
-| `createPostSchema` / `createPostFn` | `src/shared/schemas/post.ts`, `src/shared/services/post.ts` | Reference pattern |
-| `getAllAdminPosts()` (built in 4.5) | `src/server/db/queries.ts` | Returns `translationGroupId` — used for dashboard grouping |
-| `withAdmin()` | `src/server/utils/withAdmin.ts` | Auth guard |
-| `NewPostForm.tsx` | `src/components/post/NewPostForm.tsx` | Reference for translation form component |
-| `editPostSchema` / `EditPostForm.tsx` | `src/shared/schemas/post.ts`, `src/components/post/EditPostForm.tsx` | Reference for translation form |
+| Item                                      | Location                                                             | Notes                                                                       |
+| ----------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `translationGroupId`                      | `src/server/db/schema.ts:81`                                         | UUID field on `posts`, `defaultRandom()`, not null                          |
+| `translation_group_idx`                   | `src/server/db/schema.ts:106`                                        | Index on `translationGroupId`                                               |
+| `getPostTranslation(groupId, targetLang)` | `src/server/db/queries.ts:185`                                       | Filters by `status: "published"` only — NOT usable for admin check          |
+| `createPostWithTags(post, tagIds)`        | `src/server/db/queries.ts:312`                                       | Transaction for post creation — adapt for translation                       |
+| `getPostForEditFn`                        | `src/shared/services/post.ts:215`                                    | Already returns `translationGroupId` — use as source for Create Translation |
+| `postForEditOptions(postId)`              | `src/shared/tanstackQueries/post.ts:44`                              | Already in use in edit route                                                |
+| `createPostSchema` / `createPostFn`       | `src/shared/schemas/post.ts`, `src/shared/services/post.ts`          | Reference pattern                                                           |
+| `getAllAdminPosts()` (built in 4.5)       | `src/server/db/queries.ts`                                           | Returns `translationGroupId` — used for dashboard grouping                  |
+| `withAdmin()`                             | `src/server/utils/withAdmin.ts`                                      | Auth guard                                                                  |
+| `NewPostForm.tsx`                         | `src/components/post/NewPostForm.tsx`                                | Reference for translation form component                                    |
+| `editPostSchema` / `EditPostForm.tsx`     | `src/shared/schemas/post.ts`, `src/components/post/EditPostForm.tsx` | Reference for translation form                                              |
 
 ### What Needs Building:
 
-| Item | Location | Action |
-|------|----------|--------|
-| `getAnyPostByTranslationGroupAndLang()` | `src/server/db/queries.ts` | NEW — find translation by groupId+lang regardless of status |
-| `createTranslationSchema` / `CreateTranslationInput` | `src/shared/schemas/post.ts` | NEW Zod schema |
-| `createTranslationFn` | `src/shared/services/post.ts` | NEW server fn — creates translation post |
-| `translationCheckOptions()` | `src/shared/tanstackQueries/post.ts` | NEW query options — check if translation exists |
-| Translation UI on edit route | `src/routes/$lang/_protected/edit/$postId.tsx` | ADD translation status section |
-| Translation creation route | `src/routes/$lang/_protected/translate/$postId.tsx` | NEW route |
-| Dashboard translation column (4.5 integration) | `src/routes/$lang/_protected/admin/queue.tsx` | UPDATE to add translation status |
-| i18n keys | `src/locales/en.ts` + `vi.ts` | ADD translation management keys |
+| Item                                                 | Location                                            | Action                                                      |
+| ---------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------- |
+| `getAnyPostByTranslationGroupAndLang()`              | `src/server/db/queries.ts`                          | NEW — find translation by groupId+lang regardless of status |
+| `createTranslationSchema` / `CreateTranslationInput` | `src/shared/schemas/post.ts`                        | NEW Zod schema                                              |
+| `createTranslationFn`                                | `src/shared/services/post.ts`                       | NEW server fn — creates translation post                    |
+| `translationCheckOptions()`                          | `src/shared/tanstackQueries/post.ts`                | NEW query options — check if translation exists             |
+| Translation UI on edit route                         | `src/routes/$lang/_protected/edit/$postId.tsx`      | ADD translation status section                              |
+| Translation creation route                           | `src/routes/$lang/_protected/translate/$postId.tsx` | NEW route                                                   |
+| Dashboard translation column (4.5 integration)       | `src/routes/$lang/_protected/admin/queue.tsx`       | UPDATE to add translation status                            |
+| i18n keys                                            | `src/locales/en.ts` + `vi.ts`                       | ADD translation management keys                             |
 
 ## Tasks / Subtasks
 
@@ -124,7 +124,9 @@ The `translationGroupId` field, DB index, and `getPostTranslation()` already exi
 ```ts
 // src/shared/services/post.ts
 export const createTranslationFn = createServerFn({ method: "POST" })
-  .inputValidator((data: CreateTranslationInput) => createTranslationSchema.parse(data))
+  .inputValidator((data: CreateTranslationInput) =>
+    createTranslationSchema.parse(data),
+  )
   .handler(
     withAdmin(async ({ data }) => {
       const { userId: clerkId } = await auth();
@@ -241,6 +243,7 @@ AC #8 ("language switcher active when translation is published") is already impl
 **Recommended: Option A** — cleaner, avoids complex URL state. The component is small and the translation route already loads the original post data in its loader. Pass initial values as props.
 
 Key differences from `NewPostForm`:
+
 - `lang` field is locked (read-only, pre-set to `targetLang`)
 - `slug` field is pre-filled from original and read-only (slug is shared)
 - Title and content are empty
@@ -252,10 +255,18 @@ Key differences from `NewPostForm`:
 ```ts
 // Story 4.4 built getPostForEditFn which returns:
 {
-  id, title, slug, lang, content, description, featuredImage,
-  status, publishedAt,
-  translationGroupId, // ← already present!
-  categoryId, tagIds
+  (id,
+    title,
+    slug,
+    lang,
+    content,
+    description,
+    featuredImage,
+    status,
+    publishedAt,
+    translationGroupId, // ← already present!
+    categoryId,
+    tagIds);
 }
 ```
 
@@ -271,17 +282,17 @@ In the edit route, `translationGroupId` is already available from the post data.
 
 ### Project Structure Notes
 
-| File | Action |
-|------|--------|
-| `src/server/db/queries.ts` | ADD `getAnyPostByTranslationGroupAndLang` |
-| `src/shared/schemas/post.ts` | ADD `createTranslationSchema`, `createTranslationFormSchema`, types |
-| `src/shared/services/post.ts` | ADD `createTranslationFn`, `checkTranslationExistsFn` |
-| `src/shared/tanstackQueries/post.ts` | ADD `translationCheckOptions` |
-| `src/routes/$lang/_protected/translate/$postId.tsx` | CREATE — new translation creation route |
-| `src/components/post/NewTranslationForm.tsx` | CREATE — mirrors NewPostForm with pre-filled values |
-| `src/routes/$lang/_protected/edit/$postId.tsx` | UPDATE — add translation management section |
-| `src/routes/$lang/_protected/admin/queue.tsx` | UPDATE — add translation status column |
-| `src/locales/en.ts` + `vi.ts` | ADD translation keys |
+| File                                                | Action                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------- |
+| `src/server/db/queries.ts`                          | ADD `getAnyPostByTranslationGroupAndLang`                           |
+| `src/shared/schemas/post.ts`                        | ADD `createTranslationSchema`, `createTranslationFormSchema`, types |
+| `src/shared/services/post.ts`                       | ADD `createTranslationFn`, `checkTranslationExistsFn`               |
+| `src/shared/tanstackQueries/post.ts`                | ADD `translationCheckOptions`                                       |
+| `src/routes/$lang/_protected/translate/$postId.tsx` | CREATE — new translation creation route                             |
+| `src/components/post/NewTranslationForm.tsx`        | CREATE — mirrors NewPostForm with pre-filled values                 |
+| `src/routes/$lang/_protected/edit/$postId.tsx`      | UPDATE — add translation management section                         |
+| `src/routes/$lang/_protected/admin/queue.tsx`       | UPDATE — add translation status column                              |
+| `src/locales/en.ts` + `vi.ts`                       | ADD translation keys                                                |
 
 ### References
 
@@ -293,7 +304,7 @@ In the edit route, `translationGroupId` is already available from the post data.
 - [Source: src/components/post/NewPostForm.tsx] — Reference for NewTranslationForm
 - [Source: src/components/post/EditPostForm.tsx] — Reference for how initialValues are passed
 - [Source: src/shared/services/post.ts#createPostFn] — User resolution pattern to follow
-- [Source: .claude/rules/design-system.md] — zinc/teal palette, dark mode, Button patterns
+- [Source: DESIGN.md] — zinc/teal palette, dark mode, Button patterns
 
 ## Dev Agent Record
 

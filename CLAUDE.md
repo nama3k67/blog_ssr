@@ -27,7 +27,7 @@
 - **Database queries**: Drizzle ORM with typed relations
 - **Validation**: Zod schemas at system boundaries
 - **Commits**: Group by purpose (feat/fix/chore), separate commits per concern
-- **UI/Styling**: Spotlight-inspired design system — see `.claude/rules/design-system.md` (zinc/teal palette, auto-loaded when editing components/routes)
+- **UI/Styling**: Spotlight-inspired design system — see `DESIGN.md` at the repo root (zinc/teal palette). Follow it for all UI work under `src/components/`, `src/routes/`, `src/shared/providers/`.
 
 ## Development Workflow
 
@@ -61,11 +61,12 @@ src/
 ## Scripts
 
 ```bash
-npm run dev           # Dev server (port 3000)
-npm run build         # Production build + TS check
-npm run deploy        # Build + deploy to Cloudflare Workers
-npm run db:generate   # Generate Drizzle migrations
-npm run db:push       # Apply migrations
-npm run db:studio     # Visual DB browser
-npm run db:seed       # Populate test data
+bun install           # Install dependencies (package manager: Bun)
+bun run dev           # Dev server (port 3000)
+bun run build         # Production build + TS check
+bun run deploy        # Build + deploy to Cloudflare Workers
+bun run db:generate   # Generate Drizzle migrations
+bun run db:push       # Apply migrations
+bun run db:studio     # Visual DB browser
+bun run db:seed       # Populate test data
 ```

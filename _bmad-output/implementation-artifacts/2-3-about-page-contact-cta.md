@@ -31,12 +31,14 @@ So that I can evaluate their fit and reach out directly.
 Route shell with two-column grid skeleton exists. Skills and CTA are entirely missing. Bio is a single placeholder paragraph.
 
 ### What Already Exists (DO NOT recreate):
+
 - `src/routes/$lang/about.tsx` — route with `head()` meta, `Container`, two-column grid div, heading + single description paragraph wired to locale
 - `src/locales/en.ts` + `vi.ts` — `pages.about.title`, `pages.about.description`, `pages.about.heading` keys already present
 - `src/shared/providers/i18n.tsx` — `useI18n()` for `{ t, language, localizedPath }`
 - `src/components/shared/Container.tsx` — existing Container
 
 ### What Is Missing:
+
 - Skills visualization (no component, no data, no locale keys)
 - Contact CTA (no button, no locale key for CTA text)
 - Avatar image (right column is empty)
@@ -45,6 +47,7 @@ Route shell with two-column grid skeleton exists. Skills and CTA are entirely mi
 - Social links (GitHub, LinkedIn etc.) — should live here per Spotlight pattern
 
 ### Static Data Approach:
+
 Skills, social links, and contact email are personal/static data. Store in `src/shared/data/author.ts` (same file as Story 2.1's GITHUB_URL). Export `SKILLS`, `SOCIAL_LINKS`, `CONTACT_EMAIL` constants. Locale strings hold the category labels and CTA text — skill names (React, TypeScript, etc.) are language-neutral constants.
 
 ## Tasks / Subtasks
@@ -59,14 +62,28 @@ Skills, social links, and contact email are personal/static data. Store in `src/
       skills: string[]; // language-neutral tech names
     }
     export const SKILLS: SkillGroup[] = [
-      { category: { en: "Frontend", vi: "Giao diện" }, skills: ["React", "TanStack Start", "Tailwind CSS", "TypeScript"] },
-      { category: { en: "Backend", vi: "Phía máy chủ" }, skills: ["Node.js", "Drizzle ORM", "PostgreSQL", "Cloudflare Workers"] },
+      {
+        category: { en: "Frontend", vi: "Giao diện" },
+        skills: ["React", "TanStack Start", "Tailwind CSS", "TypeScript"],
+      },
+      {
+        category: { en: "Backend", vi: "Phía máy chủ" },
+        skills: ["Node.js", "Drizzle ORM", "PostgreSQL", "Cloudflare Workers"],
+      },
       // ... add relevant skill groups
     ];
-    export interface SocialLink { label: string; href: string; icon: string }
+    export interface SocialLink {
+      label: string;
+      href: string;
+      icon: string;
+    }
     export const SOCIAL_LINKS: SocialLink[] = [
       { label: "GitHub", href: GITHUB_URL, icon: "github" },
-      { label: "LinkedIn", href: "https://linkedin.com/in/...", icon: "linkedin" },
+      {
+        label: "LinkedIn",
+        href: "https://linkedin.com/in/...",
+        icon: "linkedin",
+      },
     ];
     ```
   - [x] 1.2: If Story 2.1 has not been implemented yet, create the full `author.ts` file including `GITHUB_URL`
@@ -98,17 +115,20 @@ Skills, social links, and contact email are personal/static data. Store in `src/
 ## Dev Notes
 
 ### Architecture Compliance
+
 - **No server functions, no DB queries** — entirely static/SSR content. No `createServerFn`.
 - **SSR-safe** — no `useEffect` needed; all data is synchronous from constants + locale.
 - **Avatar image:** If using a local asset, place in `public/` directory (served as static by Vite/Cloudflare). Do not import as JS module (that bloats the bundle). Use `src="/avatar.jpg"` string.
 - **`mailto:` CTA:** Use `<a href="mailto:...">` — not a `<Link>` (not an internal route). Do not use a `<Button>` component (that's for `<button>` elements). Render as `<a>` with button styling classes applied directly.
 
 ### Key File Locations
+
 - `src/routes/$lang/about.tsx` — MODIFY: replace placeholder with full content
 - `src/shared/data/author.ts` — MODIFY or CREATE: add SKILLS, SOCIAL_LINKS, CONTACT_EMAIL, AVATAR_URL
 - `src/locales/en.ts` + `vi.ts` — MODIFY: add bio1, bio2, skills, cta, ctaAriaLabel keys
 
 ### Design System Patterns to Apply
+
 ```tsx
 // Contact CTA — use <a> with button classes, NOT <Button> component
 <a
@@ -158,32 +178,37 @@ Skills, social links, and contact email are personal/static data. Store in `src/
 ```
 
 ### Previous Story Intelligence
+
 - `language` from `useI18n()` is `'en' | 'vi'` — safe to use as index: `group.category[language]`
 - `localizedPath()` from `useI18n()` for internal `<Link>` hrefs — but CTA is `mailto:`, not a router Link
 - For social icon links: use lucide-react `Github`, `Linkedin` icons. Check `import { Github, Linkedin } from 'lucide-react'` — these exist in the existing codebase (lucide-react is already installed)
 - Biome: aria-label strings can use double quotes in JSX (Biome enforces single quotes for className/src but double for string props — check biome.json: `"jsxQuoteStyle": "single"` means single quotes for JSX props; aria-label should be `aria-label='...'`)
 
 ### References
+
 - [Source: epics.md#Epic2-Story2.3] — AC definitions
-- [Source: .claude/rules/design-system.md#UX-DR10] — Button patterns
-- [Source: .claude/rules/design-system.md#UX-DR16] — ARIA requirements
+- [Source: DESIGN.md#UX-DR10] — Button patterns
+- [Source: DESIGN.md#UX-DR16] — ARIA requirements
 - [Source: src/routes/$lang/about.tsx] — existing shell (two-column grid to preserve)
 - [Source: src/shared/data/author.ts] — created in Story 2.1 (extends same file)
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 claude-sonnet-4-6
 
 ### Debug Log References
 
 ### Completion Notes List
+
 - Extended `author.ts` with AVATAR_URL, CONTACT_EMAIL, SKILLS (3 groups), SOCIAL_LINKS (GitHub).
 - Added bio1, bio2, skills, cta, ctaAriaLabel keys to en.ts and vi.ts.
 - Rewrote `about.tsx`: `<article>` left column with h1/h2/h3 heading hierarchy, two bio paragraphs, skills section with badge tags, primary mailto CTA, GitHub social link. Right column has avatar `<img loading="eager">`.
 - Build passed (4.03s). Biome clean.
 
 ### File List
+
 - src/routes/$lang/about.tsx
 - src/shared/data/author.ts
 - src/locales/en.ts

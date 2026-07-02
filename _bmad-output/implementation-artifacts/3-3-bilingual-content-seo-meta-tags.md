@@ -89,6 +89,7 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
 
 - [x] **Task 2: Add hreflang + OG image to post detail** (AC: #3, #5, #6, #7)
   - [x] 2.1: In `src/routes/$lang/posts/$slug.tsx`, update `head()` to add `og:image`, `og:url`, `og:locale`, and hreflang links:
+
     ```ts
     import { SITE_URL } from "~/shared/data/site";
 
@@ -134,10 +135,12 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
       };
     },
     ```
+
   - [x] 2.2: Verify TypeScript accepts `link` array with `hreflang` attribute (TanStack Start's `head()` type accepts arbitrary link attributes).
 
 - [x] **Task 3: Add hreflang + OG to home page** (AC: #4, #5)
   - [x] 3.1: In `src/routes/$lang/index.tsx`, update `head()`:
+
     ```ts
     import { SITE_URL } from "~/shared/data/site";
 
@@ -164,6 +167,7 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
 
 - [x] **Task 4: Add hreflang + OG to about page** (AC: #4, #5)
   - [x] 4.1: In `src/routes/$lang/about.tsx`, update `head()`:
+
     ```ts
     import { SITE_URL } from "~/shared/data/site";
 
@@ -190,6 +194,7 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
 
 - [x] **Task 5: Add hreflang + OG to projects page** (AC: #4, #5)
   - [x] 5.1: In `src/routes/$lang/projects.tsx`, update `head()`:
+
     ```ts
     import { SITE_URL } from "~/shared/data/site";
 
@@ -216,6 +221,7 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
 
 - [x] **Task 6: Add hreflang to posts listing** (AC: #4)
   - [x] 6.1: In `src/routes/$lang/posts/index.tsx`, add `link` array to the existing `head()`. The listing already has meta tags — only add the `link` entries:
+
     ```ts
     import { SITE_URL } from "~/shared/data/site";
 
@@ -228,7 +234,7 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
     ```
 
 - [x] **Task 7: Audit decorative image accessibility** (AC: #9)
-  - [x] 7.1: Check `src/routes/__root.tsx` and layout components for any `<img>` tags used as decoration. Ensure they have `alt=""` and `aria-hidden="true"`. (__root.tsx has no img tags — only CSS background divs. No change needed.)
+  - [x] 7.1: Check `src/routes/__root.tsx` and layout components for any `<img>` tags used as decoration. Ensure they have `alt=""` and `aria-hidden="true"`. (\_\_root.tsx has no img tags — only CSS background divs. No change needed.)
   - [x] 7.2: Check `src/components/layout/Header.tsx` (and Footer) for logo images — add `alt=""` `aria-hidden="true"` if logo is decorative (text label exists alongside it), or `alt="Site logo"` if standalone. (Header uses AvatarImage with `alt="Logo"` — logo is standalone nav link, so descriptive alt is correct. No change needed.)
   - [x] 7.3: The Avatar image in `about.tsx` is content, not decorative — it should already have meaningful alt text. Confirm `alt` is `t.pages.about.heading` or the author's name. (Was `alt=""` — fixed to `alt={t.pages.about.heading}`.)
   - [x] 7.4: Post featured images added in Story 3.2 already have `alt={post.title}` — no change needed.
@@ -245,67 +251,77 @@ This story modifies `$slug.tsx` `head()`. Story 3.2 also modifies `$slug.tsx` (c
 ### How head() link Array Works in TanStack Start
 
 TanStack Start's `head()` function returns `{ meta: [...], link: [...] }`. The `link` array maps to `<link>` HTML elements. Each object becomes attributes on the tag:
+
 ```ts
 { rel: "alternate", hreflang: "en", href: "https://..." }
 // → <link rel="alternate" hreflang="en" href="https://...">
 ```
+
 This is the standard HTML pattern Google uses to determine language alternates. Absolute URLs are required by Google — relative URLs in hreflang are ignored.
 
 ### hreflang Logic for Post Detail
 
 When a post has `translationSlug` (the slug for the other language version):
+
 - `/en/posts/my-post` has translation at `/vi/posts/my-post-vi` → translationSlug = `"my-post-vi"`
 - hreflang en → `SITE_URL/en/posts/my-post`
 - hreflang vi → `SITE_URL/vi/posts/my-post-vi`
 - hreflang x-default → `SITE_URL/en/posts/my-post` (English as canonical default)
 
 When there is NO translation (`translationSlug` is null/undefined):
+
 - Only one hreflang tag with the current language.
 - Google accepts a single hreflang tag as valid (indicates content is only in one language).
 
 ### SITE_URL — OG Image URL Construction
 
 The `og:image` must be an absolute URL. The `post.featuredImage` from R2 may already be absolute (`https://...`) or may be a path starting with `/`. Handle both:
+
 ```ts
 const rawImage = post?.featuredImage || "/logo.png";
 const absoluteImage = rawImage.startsWith("http")
   ? rawImage
   : `${SITE_URL}${rawImage}`;
 ```
+
 This is safer than the string interpolation approach in Task 2.1. Use whichever pattern is cleaner.
 
 ### `dictionaries` Pattern (Existing Convention)
 
 Static pages use `dictionaries[params.lang]` inside `head()` to get typed locale strings without `useI18n()` (which requires React context). This is the correct pattern for `head()` since it runs outside of React render:
+
 ```ts
 import { dictionaries } from "~/locales";
-const t = dictionaries[params.lang as keyof typeof dictionaries] || dictionaries.en;
+const t =
+  dictionaries[params.lang as keyof typeof dictionaries] || dictionaries.en;
 ```
+
 The `as "en" | "vi"` cast is an alternative to `as keyof typeof dictionaries`. Use whichever the existing routes use (they use `as keyof typeof dictionaries`).
 
 ### import.meta.env in TanStack Start (Cloudflare Workers)
 
-`import.meta.env.VITE_SITE_URL` is a client-side env var (Vite inlines it at build time). For Cloudflare Workers, VITE_* vars are inlined during `npm run build`. Set them in `.dev.vars` for local dev and via `wrangler secret put VITE_SITE_URL` for production... **Actually:** Cloudflare Workers doesn't support `wrangler secret put` for VITE_ vars (they must be set at build time). Set `VITE_SITE_URL` in `.dev.vars` for local dev. For production builds, the fallback hardcoded URL in `site.ts` handles it. The developer updates the fallback URL to their production domain.
+`import.meta.env.VITE_SITE_URL` is a client-side env var (Vite inlines it at build time). For Cloudflare Workers, VITE*\* vars are inlined during `npm run build`. Set them in `.dev.vars` for local dev and via `wrangler secret put VITE_SITE_URL` for production... **Actually:** Cloudflare Workers doesn't support `wrangler secret put` for VITE* vars (they must be set at build time). Set `VITE_SITE_URL` in `.dev.vars` for local dev. For production builds, the fallback hardcoded URL in `site.ts` handles it. The developer updates the fallback URL to their production domain.
 
-### Do NOT Modify __root.tsx Global Head
+### Do NOT Modify \_\_root.tsx Global Head
 
 The root route already has global defaults (og:type website, og:image /logo.png, twitter:card). Route-level `head()` entries **override** these on a per-property basis in TanStack Start. Specifically:
+
 - If a route sets `og:image`, it replaces the root's `og:image` for that page.
 - If a route does NOT set `og:image`, the root's fallback `/logo.png` is used.
-Do not remove the root head configuration — it's the correct fallback layer.
+  Do not remove the root head configuration — it's the correct fallback layer.
 
 ### Key File Locations
 
-| File | Action |
-|------|--------|
-| `src/shared/data/site.ts` | CREATE — `SITE_URL` constant |
-| `src/env.ts` | MODIFY — add `VITE_SITE_URL` to client config |
+| File                               | Action                                                          |
+| ---------------------------------- | --------------------------------------------------------------- |
+| `src/shared/data/site.ts`          | CREATE — `SITE_URL` constant                                    |
+| `src/env.ts`                       | MODIFY — add `VITE_SITE_URL` to client config                   |
 | `src/routes/$lang/posts/$slug.tsx` | MODIFY — `head()` only: add og:image, og:locale, hreflang links |
-| `src/routes/$lang/index.tsx` | MODIFY — `head()`: add OG tags + hreflang links |
-| `src/routes/$lang/about.tsx` | MODIFY — `head()`: add OG tags + hreflang links |
-| `src/routes/$lang/projects.tsx` | MODIFY — `head()`: add OG tags + hreflang links |
-| `src/routes/$lang/posts/index.tsx` | MODIFY — `head()`: add hreflang links only |
-| `src/components/layout/Header.tsx` | REVIEW — logo image alt text |
+| `src/routes/$lang/index.tsx`       | MODIFY — `head()`: add OG tags + hreflang links                 |
+| `src/routes/$lang/about.tsx`       | MODIFY — `head()`: add OG tags + hreflang links                 |
+| `src/routes/$lang/projects.tsx`    | MODIFY — `head()`: add OG tags + hreflang links                 |
+| `src/routes/$lang/posts/index.tsx` | MODIFY — `head()`: add hreflang links only                      |
+| `src/components/layout/Header.tsx` | REVIEW — logo image alt text                                    |
 
 ### Story 3.2 Dependency
 
@@ -322,7 +338,7 @@ Story 3.2 modifies the component body of `$slug.tsx` (errorComponent, SSR split,
 
 - [Source: epics.md#Epic3-Story3.3] — AC definitions
 - [Source: architecture.md#NFR5, FR24, FR25] — meta tag and hreflang requirements
-- [Source: .claude/rules/design-system.md#UX-DR16] — `aria-hidden` on decorative SVGs/images
+- [Source: DESIGN.md#UX-DR16] — `aria-hidden` on decorative SVGs/images
 - [Source: src/routes/__root.tsx] — global head() structure (do not remove)
 - [Source: src/routes/$lang/index.tsx] — `dictionaries` pattern for head() in static routes
 - [Source: src/env.ts] — `@t3-oss/env-core` pattern for adding VITE_SITE_URL
@@ -330,14 +346,17 @@ Story 3.2 modifies the component body of `$slug.tsx` (errorComponent, SSR split,
 ## Dev Agent Record
 
 ### Agent Model Used
+
 claude-sonnet-4-6
 
 ### Debug Log References
+
 - Biome formatter required expanding inline object literals to multi-line in $slug.tsx and about.tsx — auto-fixed with `biome check --write`.
 - .dev.vars was missing from .gitignore — added it during Task 1.2.
 - about.tsx avatar had `alt=""` (decorative treatment) — corrected to `alt={t.pages.about.heading}` per AC #9.
 
 ### Completion Notes List
+
 - Created `src/shared/data/site.ts` with `SITE_URL` constant (Vite env var with production fallback).
 - Added `VITE_SITE_URL: z.string().url().optional()` to `src/env.ts` client config.
 - Created root `.dev.vars` with `VITE_SITE_URL=http://localhost:3000`; added `.dev.vars` to `.gitignore`.
@@ -348,6 +367,7 @@ claude-sonnet-4-6
 - Build: `npm run build` passed with 0 TypeScript errors. Biome check passed.
 
 ### File List
+
 - src/shared/data/site.ts (CREATED)
 - src/env.ts (MODIFIED — added VITE_SITE_URL to client config)
 - .dev.vars (CREATED — gitignored, VITE_SITE_URL for local dev)
@@ -359,4 +379,5 @@ claude-sonnet-4-6
 - src/routes/$lang/posts/index.tsx (MODIFIED — head() with hreflang links)
 
 ### Change Log
+
 - 2026-03-28: Implemented Story 3.3 — hreflang links on all public routes, OG tags on home/about/projects, og:image+og:locale on post detail, SITE_URL constant, accessibility fix on about avatar.

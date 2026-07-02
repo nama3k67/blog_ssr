@@ -1,6 +1,7 @@
 import { auth } from "@clerk/tanstack-react-start/server";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { isAdmin } from "~/env";
 import { uploadToR2 } from "~/server/r2/client";
 
 const ALLOWED_TYPES = [
@@ -151,10 +152,13 @@ export const Route = createFileRoute("/api/upload")({
 		handlers: {
 			POST: async ({ request }) => {
 				try {
-					// Authenticate
+					// Authenticate + authorize: image uploads are admin-only
 					const { userId } = await auth();
 					if (!userId) {
 						return Response.json({ error: "Unauthorized" }, { status: 401 });
+					}
+					if (!isAdmin(userId)) {
+						return Response.json({ error: "Forbidden" }, { status: 403 });
 					}
 
 					// Parse multipart form data

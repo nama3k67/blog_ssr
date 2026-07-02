@@ -42,6 +42,7 @@ so that I can efficiently discover and index all content in both languages.
 
 - [x] **Task 2: Create `/sitemap.xml` route** (AC: #1, #2, #3, #4, #6)
   - [x] 2.1: Create `src/routes/sitemap[.]xml.ts` with a GET handler:
+
     ```ts
     import { createFileRoute } from "@tanstack/react-router";
     import { getPublishedPostsForSitemap } from "~/server/db/queries";
@@ -64,6 +65,7 @@ so that I can efficiently discover and index all content in both languages.
       },
     });
     ```
+
   - [x] 2.2: Implement `buildSitemapXml(posts)` (can be a module-level function in the same file):
     - Build static route entries for en+vi: `home`, `/posts`, `/projects`, `/about`
     - Build dynamic post entries grouped by `translationGroupId` to determine hreflang
@@ -72,6 +74,7 @@ so that I can efficiently discover and index all content in both languages.
 
 - [x] **Task 3: Update `public/robots.txt`** (AC: #5, #6)
   - [x] 3.1: Replace content of `public/robots.txt` with:
+
     ```
     User-agent: *
     Allow: /
@@ -90,6 +93,7 @@ so that I can efficiently discover and index all content in both languages.
 
     Sitemap: https://blog.nama3k67.com/sitemap.xml
     ```
+
   - [x] 3.2: The `Sitemap:` URL must use the production domain. `SITE_URL` from `src/shared/data/site.ts` = `https://blog.nama3k67.com`. Since robots.txt is a static file, hardcode the production URL directly — dynamic env var is not needed here.
 
 - [x] **Task 4: Build verification** (AC: all)
@@ -141,7 +145,10 @@ function buildSitemapXml(
   });
 
   // 2. Build translationGroupId → { en: slug, vi: slug } map
-  const groupMap = new Map<string, { en?: string; vi?: string; date?: string }>();
+  const groupMap = new Map<
+    string,
+    { en?: string; vi?: string; date?: string }
+  >();
   for (const post of posts) {
     const entry = groupMap.get(post.translationGroupId) ?? {};
     entry[post.lang as "en" | "vi"] = post.slug;
@@ -198,15 +205,15 @@ ${postEntries.join("")}
 
 ### What Already Exists (DO NOT RECREATE)
 
-| Item | Location | Notes |
-|------|----------|-------|
-| `SITE_URL` | `src/shared/data/site.ts` | `https://blog.nama3k67.com` (Vite env var with fallback) |
-| `public/robots.txt` | `public/robots.txt` | Static file — UPDATE content only |
-| `getPublishedPosts()` | `src/server/db/queries.ts:83` | All published posts — too many joins, use new query instead |
-| `getPublishedPostsByLang()` | `src/server/db/queries.ts:101` | Per-lang only, no `translationGroupId` columns by default |
-| API route pattern | `src/routes/api/upload.ts` | `createFileRoute("/api/upload")` with `server.handlers.GET/POST` |
-| DB client | `src/server/db/client.ts` | Neon HTTP driver — imported via `src/server/db/queries.ts` |
-| `eq`, `desc` | `drizzle-orm` | Already in `queries.ts` imports |
+| Item                        | Location                       | Notes                                                            |
+| --------------------------- | ------------------------------ | ---------------------------------------------------------------- |
+| `SITE_URL`                  | `src/shared/data/site.ts`      | `https://blog.nama3k67.com` (Vite env var with fallback)         |
+| `public/robots.txt`         | `public/robots.txt`            | Static file — UPDATE content only                                |
+| `getPublishedPosts()`       | `src/server/db/queries.ts:83`  | All published posts — too many joins, use new query instead      |
+| `getPublishedPostsByLang()` | `src/server/db/queries.ts:101` | Per-lang only, no `translationGroupId` columns by default        |
+| API route pattern           | `src/routes/api/upload.ts`     | `createFileRoute("/api/upload")` with `server.handlers.GET/POST` |
+| DB client                   | `src/server/db/client.ts`      | Neon HTTP driver — imported via `src/server/db/queries.ts`       |
+| `eq`, `desc`                | `drizzle-orm`                  | Already in `queries.ts` imports                                  |
 
 ### TanStack Router — Filename Escaping for `/sitemap.xml`
 
@@ -215,6 +222,7 @@ ${postEntries.join("")}
 In TanStack Router file conventions, `[` and `]` escape special characters in route filenames so they appear literally in the URL. `[.]` should produce a literal `.` in the path, giving `/sitemap.xml`.
 
 **If the build rejects this** (TS error or router mismatch warning):
+
 - Fallback: Create `src/routes/api/sitemap.ts` with `createFileRoute("/api/sitemap")`
 - Update `public/robots.txt` `Sitemap:` line to `https://blog.nama3k67.com/api/sitemap`
 - This is a minor UX trade-off (non-standard path) but functionally correct
@@ -224,6 +232,7 @@ In TanStack Router file conventions, `[` and `]` escape special characters in ro
 ### Slug Sharing (Story 4.6 Context)
 
 The translation system (Story 4.6) uses **shared slugs** — an EN post at `/en/posts/my-post` and its VI translation at `/vi/posts/my-post` share the **exact same slug** (`"my-post"`). They are linked by `translationGroupId`. This is guaranteed by the DB schema (`uniqueIndex("slug_lang_idx")` on `(slug, lang)`). Therefore:
+
 - In `buildSitemapXml`, `group.en` and `group.vi` may be the same string (shared slug). That's correct — the URLs differ only in the `/$lang/` prefix.
 - `getPostTranslation()` filters `status: "published"` — safe to assume all posts from `getPublishedPostsForSitemap` are published.
 
@@ -239,11 +248,11 @@ The translation system (Story 4.6) uses **shared slugs** — an EN post at `/en/
 
 `_protected` is a **pathless layout** in TanStack Router (underscore prefix = no URL segment). The actual URLs for protected routes are:
 
-| Route File | Actual URL |
-|-----------|-----------|
-| `$lang/_protected/admin/queue.tsx` | `/en/admin/queue` |
-| `$lang/_protected/edit/$postId.tsx` | `/en/edit/$postId` |
-| `$lang/_protected/new.tsx` | `/en/new` |
+| Route File                               | Actual URL              |
+| ---------------------------------------- | ----------------------- |
+| `$lang/_protected/admin/queue.tsx`       | `/en/admin/queue`       |
+| `$lang/_protected/edit/$postId.tsx`      | `/en/edit/$postId`      |
+| `$lang/_protected/new.tsx`               | `/en/new`               |
 | `$lang/_protected/translate/$postId.tsx` | `/en/translate/$postId` |
 
 So robots.txt Disallow rules must use the actual URL paths (not `_protected`-prefixed paths).
@@ -254,11 +263,11 @@ So robots.txt Disallow rules must use the actual URL paths (not `_protected`-pre
 
 ### Project Structure Notes
 
-| File | Action |
-|------|--------|
-| `src/server/db/queries.ts` | ADD `getPublishedPostsForSitemap()` |
-| `src/routes/sitemap[.]xml.ts` | CREATE — sitemap XML endpoint |
-| `public/robots.txt` | UPDATE — Disallow rules + correct Sitemap URL |
+| File                          | Action                                        |
+| ----------------------------- | --------------------------------------------- |
+| `src/server/db/queries.ts`    | ADD `getPublishedPostsForSitemap()`           |
+| `src/routes/sitemap[.]xml.ts` | CREATE — sitemap XML endpoint                 |
+| `public/robots.txt`           | UPDATE — Disallow rules + correct Sitemap URL |
 
 ### References
 
@@ -270,7 +279,7 @@ So robots.txt Disallow rules must use the actual URL paths (not `_protected`-pre
 - [Source: src/shared/data/site.ts] — `SITE_URL` constant
 - [Source: implementation-artifacts/3-3-bilingual-content-seo-meta-tags.md] — hreflang convention, SITE_URL pattern
 - [Source: implementation-artifacts/4-6-translation-management.md] — slug sharing, translationGroupId grouping pattern
-- [Source: .claude/rules/design-system.md] — N/A (no UI in this story)
+- [Source: DESIGN.md] — N/A (no UI in this story)
 
 ## Dev Agent Record
 

@@ -28,40 +28,40 @@ The `queue.tsx` file must be **completely replaced** (approval workflow is remov
 
 ### What Already Exists (DO NOT RECREATE):
 
-| Item | Location | Notes |
-|------|----------|-------|
-| `deletePost(postId)` | `src/server/db/queries.ts` | Generic delete — `postTags` cascade via DB FK (`onDelete: "cascade"`) |
-| `updatePost(postId, data)` | `src/server/db/queries.ts` | Used for inline publish/unpublish |
-| `getAllPostsByLang(lang)` | `src/server/db/queries.ts` | Per-language admin query — too narrow, need a new all-language version |
-| `publishPostFn` | `src/shared/services/post.ts` | Draft → published — REUSE for inline publish |
-| `unpublishPostFn` | `src/shared/services/admin.ts` | Published → draft — REUSE for inline unpublish |
-| `withAdmin()` | `src/server/utils/withAdmin.ts` | Auth guard — ALL admin mutations MUST use this |
-| `Container` | `src/components/shared/Container.tsx` | Layout pattern |
-| `Badge`, `Button`, `Dialog` | `src/components/ui/` | shadcn components already in use |
-| `useI18n` | `src/shared/providers/i18n.ts` | i18n hook |
-| `toast` | `sonner` | Toast pattern |
+| Item                        | Location                              | Notes                                                                  |
+| --------------------------- | ------------------------------------- | ---------------------------------------------------------------------- |
+| `deletePost(postId)`        | `src/server/db/queries.ts`            | Generic delete — `postTags` cascade via DB FK (`onDelete: "cascade"`)  |
+| `updatePost(postId, data)`  | `src/server/db/queries.ts`            | Used for inline publish/unpublish                                      |
+| `getAllPostsByLang(lang)`   | `src/server/db/queries.ts`            | Per-language admin query — too narrow, need a new all-language version |
+| `publishPostFn`             | `src/shared/services/post.ts`         | Draft → published — REUSE for inline publish                           |
+| `unpublishPostFn`           | `src/shared/services/admin.ts`        | Published → draft — REUSE for inline unpublish                         |
+| `withAdmin()`               | `src/server/utils/withAdmin.ts`       | Auth guard — ALL admin mutations MUST use this                         |
+| `Container`                 | `src/components/shared/Container.tsx` | Layout pattern                                                         |
+| `Badge`, `Button`, `Dialog` | `src/components/ui/`                  | shadcn components already in use                                       |
+| `useI18n`                   | `src/shared/providers/i18n.ts`        | i18n hook                                                              |
+| `toast`                     | `sonner`                              | Toast pattern                                                          |
 
 ### What to REMOVE (Legacy Approval Workflow):
 
-| Item | Location | Action |
-|------|----------|--------|
-| `getPendingPosts()` | `src/server/db/queries.ts` | DELETE — `"pending"` removed from status enum in Story 4.1; has TODO comment |
-| `approvePostFn` | `src/shared/services/admin.ts` | DELETE |
-| `rejectPostFn` | `src/shared/services/admin.ts` | DELETE |
-| `submitForApproval` | `src/shared/services/admin.ts` | DELETE |
-| `getPendingPostsFn` | `src/shared/services/admin.ts` | DELETE |
-| `pendingPostsOptions` | `src/shared/tanstackQueries/admin.ts` | DELETE |
+| Item                  | Location                              | Action                                                                       |
+| --------------------- | ------------------------------------- | ---------------------------------------------------------------------------- |
+| `getPendingPosts()`   | `src/server/db/queries.ts`            | DELETE — `"pending"` removed from status enum in Story 4.1; has TODO comment |
+| `approvePostFn`       | `src/shared/services/admin.ts`        | DELETE                                                                       |
+| `rejectPostFn`        | `src/shared/services/admin.ts`        | DELETE                                                                       |
+| `submitForApproval`   | `src/shared/services/admin.ts`        | DELETE                                                                       |
+| `getPendingPostsFn`   | `src/shared/services/admin.ts`        | DELETE                                                                       |
+| `pendingPostsOptions` | `src/shared/tanstackQueries/admin.ts` | DELETE                                                                       |
 
 ### What Needs Building:
 
-| Item | Location | Action |
-|------|----------|--------|
-| `getAllAdminPosts()` | `src/server/db/queries.ts` | NEW — all posts across both langs, with category; sorted by updatedAt desc |
-| `getAdminPostsFn` | `src/shared/services/admin.ts` | NEW — server fn wrapping `getAllAdminPosts()` with `withAdmin()` |
-| `deletePostFn` | `src/shared/services/admin.ts` | NEW — delete post by ID with `withAdmin()` |
-| `adminPostsOptions()` | `src/shared/tanstackQueries/admin.ts` | REPLACE `pendingPostsOptions` |
-| `queue.tsx` | `src/routes/$lang/_protected/admin/queue.tsx` | REPLACE content entirely |
-| i18n keys | `src/locales/en.ts` + `vi.ts` | ADD admin dashboard keys |
+| Item                  | Location                                      | Action                                                                     |
+| --------------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
+| `getAllAdminPosts()`  | `src/server/db/queries.ts`                    | NEW — all posts across both langs, with category; sorted by updatedAt desc |
+| `getAdminPostsFn`     | `src/shared/services/admin.ts`                | NEW — server fn wrapping `getAllAdminPosts()` with `withAdmin()`           |
+| `deletePostFn`        | `src/shared/services/admin.ts`                | NEW — delete post by ID with `withAdmin()`                                 |
+| `adminPostsOptions()` | `src/shared/tanstackQueries/admin.ts`         | REPLACE `pendingPostsOptions`                                              |
+| `queue.tsx`           | `src/routes/$lang/_protected/admin/queue.tsx` | REPLACE content entirely                                                   |
+| i18n keys             | `src/locales/en.ts` + `vi.ts`                 | ADD admin dashboard keys                                                   |
 
 ## Tasks / Subtasks
 
@@ -168,7 +168,9 @@ return posts.map((post) => ({
   publishedAt: post.publishedAt?.toISOString() ?? null,
   createdAt: post.createdAt.toISOString(),
   updatedAt: post.updatedAt.toISOString(),
-  category: post.category ? { id: post.category.id, name: post.category.name } : null,
+  category: post.category
+    ? { id: post.category.id, name: post.category.name }
+    : null,
 }));
 ```
 
@@ -176,7 +178,9 @@ return posts.map((post) => ({
 
 ```tsx
 // Client-side filtering (no server round-trips for filters)
-const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "published">("all");
+const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "published">(
+  "all",
+);
 const [langFilter, setLangFilter] = useState<"all" | "en" | "vi">("all");
 
 const filtered = posts
@@ -189,7 +193,11 @@ const filtered = posts
 ```ts
 // Import from their respective modules — DO NOT create duplicates
 import { publishPostFn } from "~/shared/services/post";
-import { deletePostFn, getAdminPostsFn, unpublishPostFn } from "~/shared/services/admin";
+import {
+  deletePostFn,
+  getAdminPostsFn,
+  unpublishPostFn,
+} from "~/shared/services/admin";
 ```
 
 ### Query Key Invalidation
@@ -223,7 +231,7 @@ const { lang } = Route.useParams();
 // ...
 <Link to="/$lang/_protected/edit/$postId" params={{ lang, postId: post.id }}>
   {t.common.edit}
-</Link>
+</Link>;
 ```
 
 ### Previous Story Intelligence (Story 4.4)
@@ -250,7 +258,7 @@ const { lang } = Route.useParams();
 - [Source: src/server/db/schema.ts:118] — postTags cascade `onDelete: "cascade"`
 - [Source: src/server/db/queries.ts:233] — `deletePost()` exists
 - [Source: src/server/db/queries.ts:242] — getPendingPosts TODO to remove
-- [Source: .claude/rules/design-system.md] — zinc/teal palette, Container, dark mode
+- [Source: DESIGN.md] — zinc/teal palette, Container, dark mode
 
 ## Dev Agent Record
 

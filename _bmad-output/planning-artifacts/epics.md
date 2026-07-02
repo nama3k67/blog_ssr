@@ -1,9 +1,15 @@
 ---
-stepsCompleted: ["step-01-validate-prerequisites", "step-02-design-epics", "step-03-create-stories", "step-04-final-validation"]
+stepsCompleted:
+  [
+    "step-01-validate-prerequisites",
+    "step-02-design-epics",
+    "step-03-create-stories",
+    "step-04-final-validation",
+  ]
 inputDocuments:
   - "_bmad-output/planning-artifacts/prd.md"
   - "_bmad-output/planning-artifacts/architecture.md"
-  - ".claude/rules/design-system.md"
+  - "DESIGN.md"
   - "specs/001-portfolio-blog/data-model.md"
   - "specs/001-portfolio-blog/contracts/api.md"
   - "specs/001-portfolio-blog/research.md"
@@ -100,7 +106,7 @@ NFR25: Bundle size monitored on every build via wrangler --dry-run output
 
 ### UX Design Requirements
 
-No dedicated UX Design document. Design system rules from .claude/rules/design-system.md serve as the visual specification:
+No dedicated UX Design document. Design system rules from DESIGN.md serve as the visual specification:
 
 UX-DR1: All neutral colors must use zinc scale only (never gray, slate, stone, neutral)
 UX-DR2: All accent/interactive colors must use teal scale only (never blue, indigo, green)
@@ -122,61 +128,66 @@ UX-DR17: Mobile-first CSS (default mobile, sm:/md:/lg: for larger), responsive a
 
 ### FR Coverage Map
 
-| FR | Epic | Description |
-|----|------|-------------|
-| FR1 | Epic 4 | Create blog post |
-| FR2 | Epic 4 | Edit blog post |
-| FR3 | Epic 4 | Upload images |
-| FR4 | Epic 4 | Preview markdown with code highlighting |
-| FR5 | Epic 4 | Save as draft |
-| FR6 | Epic 4 | Publish post (draft->published) |
-| FR7 | Epic 4 | Admin manage all posts |
-| FR8 | Epic 4 | Create/manage translations |
-| FR9 | Epic 4 | Delete posts |
-| FR10 | Epic 3 | Paginated post listing |
-| FR11 | Epic 3 | Read posts with syntax highlighting |
-| FR12 | Epic 3 | Switch between en/vi content |
-| FR13 | Epic 2 | Home page with GitHub info |
-| FR14 | Epic 2 | Project cards |
-| FR15 | Epic 2 | About page with CTA |
-| FR16 | Epic 1 | Site navigation |
-| FR17 | Epic 1 | Dark/light mode toggle |
-| FR18 | Epic 1 | Language switch |
-| FR19 | Epic 1 | Persist preferences |
-| FR20 | Epic 1 | Clerk sign in/out |
-| FR21 | Epic 1 | Admin route restriction |
-| FR22 | Epic 1 | Public access |
-| FR23 | Epic 1 | SSR for public pages |
-| FR24 | Epic 3 | Meta tags per page |
-| FR25 | Epic 3 | hreflang tags |
-| FR26 | Epic 5 | Sitemap.xml |
-| FR27 | Epic 5 | JSON-LD structured data |
-| FR28 | Epic 5 | robots.txt |
-| FR29 | Epic 4 | R2 image upload |
-| FR30 | Epic 3 | Image lazy loading |
-| FR31 | Epic 4 | Image cache headers |
-| FR32 | Epic 5 | Page view tracking |
-| FR33 | Epic 5 | CTA conversion tracking |
+| FR   | Epic   | Description                             |
+| ---- | ------ | --------------------------------------- |
+| FR1  | Epic 4 | Create blog post                        |
+| FR2  | Epic 4 | Edit blog post                          |
+| FR3  | Epic 4 | Upload images                           |
+| FR4  | Epic 4 | Preview markdown with code highlighting |
+| FR5  | Epic 4 | Save as draft                           |
+| FR6  | Epic 4 | Publish post (draft->published)         |
+| FR7  | Epic 4 | Admin manage all posts                  |
+| FR8  | Epic 4 | Create/manage translations              |
+| FR9  | Epic 4 | Delete posts                            |
+| FR10 | Epic 3 | Paginated post listing                  |
+| FR11 | Epic 3 | Read posts with syntax highlighting     |
+| FR12 | Epic 3 | Switch between en/vi content            |
+| FR13 | Epic 2 | Home page with GitHub info              |
+| FR14 | Epic 2 | Project cards                           |
+| FR15 | Epic 2 | About page with CTA                     |
+| FR16 | Epic 1 | Site navigation                         |
+| FR17 | Epic 1 | Dark/light mode toggle                  |
+| FR18 | Epic 1 | Language switch                         |
+| FR19 | Epic 1 | Persist preferences                     |
+| FR20 | Epic 1 | Clerk sign in/out                       |
+| FR21 | Epic 1 | Admin route restriction                 |
+| FR22 | Epic 1 | Public access                           |
+| FR23 | Epic 1 | SSR for public pages                    |
+| FR24 | Epic 3 | Meta tags per page                      |
+| FR25 | Epic 3 | hreflang tags                           |
+| FR26 | Epic 5 | Sitemap.xml                             |
+| FR27 | Epic 5 | JSON-LD structured data                 |
+| FR28 | Epic 5 | robots.txt                              |
+| FR29 | Epic 4 | R2 image upload                         |
+| FR30 | Epic 3 | Image lazy loading                      |
+| FR31 | Epic 4 | Image cache headers                     |
+| FR32 | Epic 5 | Page view tracking                      |
+| FR33 | Epic 5 | CTA conversion tracking                 |
 
 ## Epic List
 
 ### Epic 1: Site Foundation & Navigation
+
 Visitors arrive at a polished, responsive site with dark/light mode, bilingual support, and seamless navigation. Admin can sign in to protected routes. This is the shell that enables everything else: layout (Container system, Spotlight background), i18n routing ($lang), theme provider, Clerk auth boundary, SSR.
 **FRs covered:** FR16, FR17, FR18, FR19, FR20, FR21, FR22, FR23
 
 ### Epic 2: Portfolio & Landing Pages
+
 Recruiters can explore Home, Projects, and About pages — forming an impression of engineering quality within 90 seconds. Standalone showcase pages with personal intro, GitHub info, project cards with thumbnails/tags/links, and About with skills visualization and contact CTA.
 **FRs covered:** FR13, FR14, FR15
 
 ### Epic 3: Blog Reading Experience
+
 Visitors can browse published posts, read articles with syntax-highlighted code blocks, and switch between English/Vietnamese versions. Post listing with pagination, post detail with Shiki code highlighting (lazy-loaded), bilingual content toggle with language fallback, per-page meta tags + hreflang, image lazy loading.
 **FRs covered:** FR10, FR11, FR12, FR24, FR25, FR30
 
 ### Epic 4: Content Authoring & Management
+
 Admin can create, edit, preview, upload images, translate, and publish blog posts from a protected admin interface. Markdown editor with preview, R2 image upload with validation and error handling, post CRUD (draft->published), translation management, post management dashboard, delete with confirmation.
 **FRs covered:** FR1, FR2, FR3, FR4, FR5, FR6, FR7, FR8, FR9, FR29, FR31
 
 ### Epic 5: SEO & Discoverability
+
 Search engines can crawl, index, and display rich snippets for all content. Author can track engagement. Sitemap.xml generation (both languages), JSON-LD structured data, robots.txt, Cloudflare Analytics integration, CTA conversion tracking.
 **FRs covered:** FR26, FR27, FR28, FR32, FR33
 
@@ -201,7 +212,7 @@ So that I get an instant, professional first impression regardless of which page
 
 **Given** the root layout renders
 **When** the page loads
-**Then** ThemeProvider, I18nProvider, and QueryClientProvider are mounted in __root.tsx
+**Then** ThemeProvider, I18nProvider, and QueryClientProvider are mounted in \_\_root.tsx
 **And** the Container system (ContainerOuter > ContainerInner) is available for all child routes
 **And** global styles (styles.css with Tailwind imports) and typography config (typography.ts) are applied
 
@@ -609,7 +620,7 @@ So that I can start writing and save drafts before publishing.
 **And** migrations are generated (db:generate) and applied (db:push)
 **And** seed data (db:seed) includes at least 3 sample categories
 
-**Given** the admin navigates to /$lang/_protected/new
+**Given** the admin navigates to /$lang/\_protected/new
 **When** the page renders
 **Then** a post creation form is displayed with fields: title, slug (auto-generated from title), language selector (en/vi), content (basic textarea — upgraded to markdown editor in Story 4.2), description, and category selector
 **And** the form uses TanStack Form with Zod validation (createPostSchema)
@@ -669,7 +680,7 @@ So that I can see how my post will look before publishing.
 **Given** the editor component
 **When** inspecting the production bundle
 **Then** @uiw/react-md-editor is NOT included in any public route chunk
-**And** it only loads on _protected/ routes (bundle boundary enforcement)
+**And** it only loads on \_protected/ routes (bundle boundary enforcement)
 
 **Given** the admin is editing on a mobile device
 **When** the editor renders
@@ -768,7 +779,7 @@ So that I can efficiently manage content across both languages and statuses.
 
 **Acceptance Criteria:**
 
-**Given** the admin navigates to /$lang/_protected/admin/queue (repurposed as post dashboard)
+**Given** the admin navigates to /$lang/\_protected/admin/queue (repurposed as post dashboard)
 **When** the page renders
 **Then** a table or list of all posts is displayed (drafts and published)
 **And** each row shows: title, language, status, publishedAt (if published), and createdAt
@@ -857,10 +868,11 @@ So that I can efficiently discover and index all content in both languages.
 **Given** a crawler requests /sitemap.xml
 **When** the endpoint responds
 **Then** it returns valid XML containing URLs for all public routes in both languages:
-  - /$lang (home), /$lang/posts (listing), /$lang/projects, /$lang/about
-  - /$lang/posts/$slug for every published post in each language
-**And** each URL includes a <lastmod> timestamp (from updatedAt or publishedAt)
-**And** each URL includes xhtml:link hreflang alternates pointing to the en/vi equivalents
+
+- /$lang (home), /$lang/posts (listing), /$lang/projects, /$lang/about
+- /$lang/posts/$slug for every published post in each language
+  **And** each URL includes a <lastmod> timestamp (from updatedAt or publishedAt)
+  **And** each URL includes xhtml:link hreflang alternates pointing to the en/vi equivalents
 
 **Given** a new post is published or an existing post is updated
 **When** /sitemap.xml is next requested
@@ -869,9 +881,10 @@ So that I can efficiently discover and index all content in both languages.
 **Given** a crawler requests /robots.txt
 **When** the endpoint responds
 **Then** it returns a valid robots.txt that:
-  - Allows crawling of all public routes (/$lang/*)
-  - Disallows crawling of protected routes (/$lang/_protected/*, /api/*)
-  - References the sitemap URL (Sitemap: https://{domain}/sitemap.xml)
+
+- Allows crawling of all public routes (/$lang/\*)
+- Disallows crawling of protected routes (/$lang/\_protected/_, /api/_)
+- References the sitemap URL (Sitemap: https://{domain}/sitemap.xml)
 
 ### Story 5.2: Structured Data (JSON-LD)
 
@@ -884,21 +897,23 @@ So that I can display rich snippets (article info, author details) in search res
 **Given** a blog post page renders (/$lang/posts/$slug)
 **When** the HTML is generated (SSR)
 **Then** a <script type="application/ld+json"> block is included with Article schema containing:
-  - headline (post title)
-  - author (name, url)
-  - datePublished (ISO 8601)
-  - dateModified (ISO 8601)
-  - description
-  - image (featured image URL if present)
-  - inLanguage (en or vi)
+
+- headline (post title)
+- author (name, url)
+- datePublished (ISO 8601)
+- dateModified (ISO 8601)
+- description
+- image (featured image URL if present)
+- inLanguage (en or vi)
 
 **Given** the About page renders (/$lang/about)
 **When** the HTML is generated
 **Then** a <script type="application/ld+json"> block is included with Person schema containing:
-  - name
-  - jobTitle
-  - url
-  - sameAs (GitHub, LinkedIn, or other social profiles)
+
+- name
+- jobTitle
+- url
+- sameAs (GitHub, LinkedIn, or other social profiles)
 
 **Given** any JSON-LD output
 **When** validated against schema.org
@@ -968,15 +983,15 @@ So that I can gauge reader engagement and see which content resonates most.
 
 ## Summary
 
-| Epic | Stories | FRs Covered | Description |
-|------|---------|-------------|-------------|
-| Epic 1: Site Foundation & Navigation | 1.1 – 1.5 (5) | FR16-FR23 (8) | Layout, i18n, theme, auth, SSR |
-| Epic 2: Portfolio & Landing Pages | 2.1 – 2.3 (3) | FR13-FR15 (3) | Home, Projects, About pages |
-| Epic 3: Blog Reading Experience | 3.1 – 3.3 (3) | FR10-FR12, FR24-FR25, FR30 (6) | Post listing, detail, bilingual, SEO meta |
-| Epic 4: Content Authoring & Management | 4.1 – 4.6 (6) | FR1-FR9, FR29, FR31 (11) | DB schema, post CRUD, editor, upload, translations |
-| Epic 5: SEO & Discoverability | 5.1 – 5.3 (3) | FR26-FR28, FR32-FR33 (5) | Sitemap, JSON-LD, robots.txt, analytics |
-| Epic 6: Post Engagement | 6.1 (1) | — | Post views counter |
-| **Total** | **21 stories** | **33 FRs** | — |
+| Epic                                   | Stories        | FRs Covered                    | Description                                        |
+| -------------------------------------- | -------------- | ------------------------------ | -------------------------------------------------- |
+| Epic 1: Site Foundation & Navigation   | 1.1 – 1.5 (5)  | FR16-FR23 (8)                  | Layout, i18n, theme, auth, SSR                     |
+| Epic 2: Portfolio & Landing Pages      | 2.1 – 2.3 (3)  | FR13-FR15 (3)                  | Home, Projects, About pages                        |
+| Epic 3: Blog Reading Experience        | 3.1 – 3.3 (3)  | FR10-FR12, FR24-FR25, FR30 (6) | Post listing, detail, bilingual, SEO meta          |
+| Epic 4: Content Authoring & Management | 4.1 – 4.6 (6)  | FR1-FR9, FR29, FR31 (11)       | DB schema, post CRUD, editor, upload, translations |
+| Epic 5: SEO & Discoverability          | 5.1 – 5.3 (3)  | FR26-FR28, FR32-FR33 (5)       | Sitemap, JSON-LD, robots.txt, analytics            |
+| Epic 6: Post Engagement                | 6.1 (1)        | —                              | Post views counter                                 |
+| **Total**                              | **21 stories** | **33 FRs**                     | —                                                  |
 
 ### Dependency Graph
 

@@ -31,12 +31,14 @@ So that I immediately understand who the author is and their engineering capabil
 The route shell exists. Only layout structure and meta wiring are done. The actual content (intro, GitHub, CTAs) is placeholder.
 
 ### What Already Exists (DO NOT recreate):
+
 - `src/routes/$lang/index.tsx` — route with `head()` meta (title, description) and `useI18n()` wired
 - `src/components/shared/Container.tsx` — Container system for layout
 - `src/locales/en.ts` + `vi.ts` — `pages.home.title`, `pages.home.description` keys already present
 - `src/shared/providers/i18n.tsx` — `useI18n()` for `t` object
 
 ### What Is Missing:
+
 - `pages.home.heading` = `"Index Route"` — placeholder, must be replaced with real author intro heading
 - No locale keys for: author name/role, GitHub URL, GitHub label, CTA labels
 - No GitHub section in the component
@@ -45,6 +47,7 @@ The route shell exists. Only layout structure and meta wiring are done. The actu
 - `t.pages.home.signedIn` / `signedOut` locale keys become unused after cleanup
 
 ### Static Data Approach:
+
 GitHub profile URL, author name, role, and bio are personal/static — store them as locale strings (bilingual content) in `en.ts`/`vi.ts`. No database or environment variable needed. GitHub URL can be a hardcoded constant in a `src/shared/data/author.ts` config file (URL is the same in both languages).
 
 ## Tasks / Subtasks
@@ -79,18 +82,21 @@ GitHub profile URL, author name, role, and bio are personal/static — store the
 ## Dev Notes
 
 ### Architecture Compliance
+
 - **No server functions** — home page is 100% static content from locale strings + constants. No DB calls, no `createServerFn`.
 - **SSR-safe** — no `useEffect` needed here; all content is synchronous from context/locale.
 - **i18n:** Always use `localizedPath(path)` from `useI18n()` for internal `<Link>` hrefs (NOT manual `/${language}/...` construction). Import `Link` from `@tanstack/react-router`.
 - **Clerk imports removed:** Do not re-import Clerk components in home page. Auth UI lives in `src/components/layout/Header.tsx` and `menu.tsx`.
 
 ### Key File Locations
+
 - `src/routes/$lang/index.tsx` — home route (MODIFY: remove Clerk block, add content)
 - `src/locales/en.ts` — add new `pages.home.*` keys (MODIFY)
 - `src/locales/vi.ts` — same keys in Vietnamese (MODIFY)
 - `src/shared/data/author.ts` — NEW static config file for GITHUB_URL and any other author constants
 
 ### Design System Patterns to Apply
+
 ```tsx
 // Page title
 <h1 className='text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
@@ -120,30 +126,35 @@ GitHub profile URL, author name, role, and bio are personal/static — store the
 ```
 
 ### Previous Story Intelligence (Epic 1)
+
 - `useI18n()` returns `{ t, language, localizedPath }` — use `localizedPath(path)` for all internal links
 - SSR-safe meta: `head()` function in route file using `dictionaries[params.lang]` (not `useI18n`) — already wired, do not modify
 - Biome enforces tabs + single quotes in JSX (double in TS) — match exactly
 
 ### References
+
 - [Source: epics.md#Epic2-Story2.1] — AC definitions
-- [Source: .claude/rules/design-system.md#4-Component-Patterns] — Social icons, buttons
-- [Source: .claude/rules/design-system.md#3-Layout-System] — Container, page layout
+- [Source: DESIGN.md#4-Component-Patterns] — Social icons, buttons
+- [Source: DESIGN.md#3-Layout-System] — Container, page layout
 - [Source: src/routes/$lang/index.tsx] — existing shell to modify
 
 ## Dev Agent Record
 
 ### Agent Model Used
+
 claude-sonnet-4-6
 
 ### Debug Log References
 
 ### Completion Notes List
+
 - All tasks completed. Locale files updated with heading, role, bio, github, ctaProjects, ctaBlogs, ctaAbout keys. Removed signedIn/signedOut keys.
 - Created `src/shared/data/author.ts` with `GITHUB_URL` constant.
 - Rewrote `src/routes/$lang/index.tsx`: removed Clerk debug block, added personal intro + GitHub link + 3 CTA links.
 - Biome auto-fixed import sort (`createFileRoute, Link` → alphabetical). Build passed (4.60s).
 
 ### File List
+
 - src/routes/$lang/index.tsx
 - src/locales/en.ts
 - src/locales/vi.ts

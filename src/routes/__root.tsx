@@ -85,6 +85,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	const langFromPath = pathname.split("/")[1];
 	const currentLanguage = getValidLanguage(langFromPath);
 
+	// Localize Clerk's prebuilt components (e.g. SignIn submit button) per language.
+	const clerkLocalization =
+		currentLanguage === "vi" ? { formButtonPrimary: "Tiếp tục" } : undefined;
+
 	return (
 		<I18nProvider language={currentLanguage}>
 			<html lang={currentLanguage}>
@@ -92,7 +96,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<HeadContent />
 				</head>
 				<body className='bg-zinc-50 dark:bg-black' suppressHydrationWarning>
-					<ClerkProvider>
+					<ClerkProvider localization={clerkLocalization}>
 						<TanstackQueryProvider>
 							<ThemeProvider defaultTheme='system' storageKey='my-app-theme'>
 								<div className='flex min-h-screen w-full'>

@@ -31,6 +31,7 @@ so that I get an instant, professional first impression regardless of which page
 **CRITICAL:** This is NOT a greenfield story. The codebase audit reveals that ~95% of Story 1.1 is already implemented and functional. The story focuses on **fixing bugs and aligning existing code with the design system spec**.
 
 ### What Already Exists (DO NOT recreate):
+
 - `src/routes/__root.tsx` — Full root layout with providers, Spotlight bg, `<head>` meta tags
 - `src/shared/providers/theme.tsx` — Theme provider (has a bug, see tasks)
 - `src/shared/providers/i18n.tsx` — I18n provider, fully functional
@@ -84,13 +85,15 @@ so that I get an instant, professional first impression regardless of which page
 ## Dev Notes
 
 ### Architecture Compliance
+
 - **SSR Safety:** Never access `window`/`document`/`localStorage` during render — `useEffect` only. The theme provider already follows this for reads, but the persistence fix (Task 1) must also be in `useEffect`.
 - **Bundle Boundary:** All layout components are in the main bundle (not lazy-loaded). This is correct — they render on every page.
 - **Biome:** Tabs, double quotes for JS/TS, single quotes for JSX attributes. Run `npx biome check --apply` after changes.
 - **i18n:** Use `useI18n()` (not the deprecated `useTranslation` hook) for all new code. Every user-facing string must use `t()`.
 
 ### Design System Reference
-- Full spec: `.claude/rules/design-system.md`
+
+- Full spec: `DESIGN.md`
 - Colors: zinc (neutrals), teal (accents) — NEVER gray/slate/blue/green
 - Glass nav: `bg-white/90 dark:bg-zinc-800/90 backdrop-blur-sm shadow-lg shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:ring-white/10`
 - Active nav: `text-teal-500 dark:text-teal-400` + gradient underline
@@ -98,10 +101,12 @@ so that I get an instant, professional first impression regardless of which page
 - Page spacing: `mt-16 sm:mt-32` (top), `mt-16 sm:mt-20` (after header), `mt-32` (footer)
 
 ### Key Library Versions
+
 - TanStack Start: ^1.159.5 | React: ^19.2.0 | Tailwind CSS: ^4.1.18
 - Clerk: ^0.27.17 | Drizzle: ^0.45.1 | Zod: ^4.3.6
 
 ### Project Structure Notes
+
 - All changes are within existing files — no new files needed for this story
 - `src/shared/providers/theme.tsx` — bug fix (localStorage write)
 - `src/shared/hooks/useHeader.tsx` — bug fix (home page detection)
@@ -113,8 +118,9 @@ so that I get an instant, professional first impression regardless of which page
 - `src/shared/providers/tanstackQuery.tsx` — formatting (tabs)
 
 ### References
-- [Source: .claude/rules/design-system.md#4 — Glass Nav pattern]
-- [Source: .claude/rules/design-system.md#5 — Dark Mode Rules]
+
+- [Source: DESIGN.md#4 — Glass Nav pattern]
+- [Source: DESIGN.md#5 — Dark Mode Rules]
 - [Source: _bmad-output/planning-artifacts/architecture.md#Implementation Patterns — SSR Safety Rules]
 - [Source: _bmad-output/planning-artifacts/architecture.md#Enforcement Guidelines]
 - [Source: _bmad-output/planning-artifacts/epics.md#Story 1.1 — Acceptance Criteria]
@@ -122,14 +128,17 @@ so that I get an instant, professional first impression regardless of which page
 ## Dev Agent Record
 
 ### Agent Model Used
+
 claude-sonnet-4-6
 
 ### Completion Notes List
+
 - Brownfield project: ~95% already implemented; story was bug-fix + alignment work
 - Extra: unified styles.css to use `var(--color-zinc-*)` / `var(--color-teal-*)` instead of raw oklch values; adjusted `--foreground` → zinc-800, `--muted-foreground` → zinc-600 to match design system spec
 - Extra: removed unused BMAD modules (cis, wds, bmb) to reduce skill token overhead
 
 ### File List
+
 - src/shared/providers/theme.tsx
 - src/shared/hooks/useHeader.tsx
 - src/components/layout/navbar/mobile/item.tsx

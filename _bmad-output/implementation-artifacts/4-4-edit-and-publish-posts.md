@@ -25,35 +25,35 @@ Significant infrastructure already exists. No new DB schema. The key gap is the 
 
 ### What Already Exists (DO NOT RECREATE):
 
-| Item | Location | Notes |
-|------|----------|-------|
-| `updatePost(postId, data)` | `src/server/db/queries.ts` | Generic update, no tag handling |
-| `createPostTags(postId, tagIds)` | `src/server/db/queries.ts` | Insert-only, no delete |
-| `createPostWithTags(post, tagIds)` | `src/server/db/queries.ts` | Create-only transaction |
-| `unpublishPostFn` | `src/shared/services/admin.ts` | `published → draft`, clears `publishedAt` — FULLY WORKING |
-| `withAdmin()` | `src/server/utils/withAdmin.ts` | Auth guard for all admin mutations |
-| `NewPostForm.tsx` | `src/components/post/NewPostForm.tsx` | TanStack Form + slug check + categories/tags/editor — reference for edit form |
-| `new.tsx` route | `src/routes/$lang/_protected/new.tsx` | Reference pattern for edit route |
-| `categoriesOptions()`, `tagsOptions()` | `src/shared/tanstackQueries/post.ts` | Reuse for edit form dropdowns |
-| `createPostSchema` / `createPostFormSchema` | `src/shared/schemas/post.ts` | Reference for `updatePostSchema` |
-| `generateSlug()` | `src/shared/utils/slug.ts` | Slug auto-generation util |
+| Item                                        | Location                              | Notes                                                                         |
+| ------------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- |
+| `updatePost(postId, data)`                  | `src/server/db/queries.ts`            | Generic update, no tag handling                                               |
+| `createPostTags(postId, tagIds)`            | `src/server/db/queries.ts`            | Insert-only, no delete                                                        |
+| `createPostWithTags(post, tagIds)`          | `src/server/db/queries.ts`            | Create-only transaction                                                       |
+| `unpublishPostFn`                           | `src/shared/services/admin.ts`        | `published → draft`, clears `publishedAt` — FULLY WORKING                     |
+| `withAdmin()`                               | `src/server/utils/withAdmin.ts`       | Auth guard for all admin mutations                                            |
+| `NewPostForm.tsx`                           | `src/components/post/NewPostForm.tsx` | TanStack Form + slug check + categories/tags/editor — reference for edit form |
+| `new.tsx` route                             | `src/routes/$lang/_protected/new.tsx` | Reference pattern for edit route                                              |
+| `categoriesOptions()`, `tagsOptions()`      | `src/shared/tanstackQueries/post.ts`  | Reuse for edit form dropdowns                                                 |
+| `createPostSchema` / `createPostFormSchema` | `src/shared/schemas/post.ts`          | Reference for `updatePostSchema`                                              |
+| `generateSlug()`                            | `src/shared/utils/slug.ts`            | Slug auto-generation util                                                     |
 
 ### What Needs Building:
 
-| Item | Location | Action |
-|------|----------|--------|
-| `getPostByIdForAdmin()` | `src/server/db/queries.ts` | NEW query — fetch post with category + postTags for edit form |
-| `updatePostWithTags()` | `src/server/db/queries.ts` | NEW transaction — update post + replace all postTags atomically |
-| `updatePostSchema` / `UpdatePostInput` | `src/shared/schemas/post.ts` | NEW Zod schema for update |
-| `getPostForEditFn` | `src/shared/services/post.ts` | NEW server fn — admin fetch by ID for edit form |
-| `updatePostFn` | `src/shared/services/post.ts` | NEW server fn — admin update |
-| `publishPostFn` | `src/shared/services/post.ts` | NEW server fn — draft → published |
-| `checkSlugAvailability` updated | `src/shared/services/post.ts` | MODIFY — add optional `excludePostId` param |
-| `postForEditOptions()` | `src/shared/tanstackQueries/post.ts` | NEW query options helper |
-| `slugCheckOptions()` updated | `src/shared/tanstackQueries/post.ts` | MODIFY — forward `excludePostId` |
-| `EditPostForm.tsx` | `src/components/post/EditPostForm.tsx` | NEW component — mirrors NewPostForm with initial values + publish/unpublish |
-| `edit/$postId.tsx` route | `src/routes/$lang/_protected/edit/$postId.tsx` | NEW route — loads post, renders EditPostForm |
-| i18n keys | `src/locales/en.ts` + `vi.ts` | ADD new editor/common keys |
+| Item                                   | Location                                       | Action                                                                      |
+| -------------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------- |
+| `getPostByIdForAdmin()`                | `src/server/db/queries.ts`                     | NEW query — fetch post with category + postTags for edit form               |
+| `updatePostWithTags()`                 | `src/server/db/queries.ts`                     | NEW transaction — update post + replace all postTags atomically             |
+| `updatePostSchema` / `UpdatePostInput` | `src/shared/schemas/post.ts`                   | NEW Zod schema for update                                                   |
+| `getPostForEditFn`                     | `src/shared/services/post.ts`                  | NEW server fn — admin fetch by ID for edit form                             |
+| `updatePostFn`                         | `src/shared/services/post.ts`                  | NEW server fn — admin update                                                |
+| `publishPostFn`                        | `src/shared/services/post.ts`                  | NEW server fn — draft → published                                           |
+| `checkSlugAvailability` updated        | `src/shared/services/post.ts`                  | MODIFY — add optional `excludePostId` param                                 |
+| `postForEditOptions()`                 | `src/shared/tanstackQueries/post.ts`           | NEW query options helper                                                    |
+| `slugCheckOptions()` updated           | `src/shared/tanstackQueries/post.ts`           | MODIFY — forward `excludePostId`                                            |
+| `EditPostForm.tsx`                     | `src/components/post/EditPostForm.tsx`         | NEW component — mirrors NewPostForm with initial values + publish/unpublish |
+| `edit/$postId.tsx` route               | `src/routes/$lang/_protected/edit/$postId.tsx` | NEW route — loads post, renders EditPostForm                                |
+| i18n keys                              | `src/locales/en.ts` + `vi.ts`                  | ADD new editor/common keys                                                  |
 
 ## Tasks / Subtasks
 
@@ -124,7 +124,7 @@ import { and, asc, desc, eq, ne } from "drizzle-orm";
 ```ts
 import { unpublishPostFn } from "~/shared/services/admin";
 // In unpublishMutation:
-mutationFn: () => unpublishPostFn({ data: { postId } })
+mutationFn: () => unpublishPostFn({ data: { postId } });
 ```
 
 Do NOT create a duplicate. Do NOT move it to `post.ts`.
@@ -167,7 +167,7 @@ Never show both Publish and Unpublish simultaneously.
 
 ```ts
 // After any mutation that affects post data:
-queryClient.invalidateQueries({ queryKey: ["posts"] })
+queryClient.invalidateQueries({ queryKey: ["posts"] });
 // This invalidates all: lists, detail, edit, slug-check
 ```
 
@@ -198,15 +198,15 @@ TanStack Form holds form state in memory. As long as the mutation `onError` hand
 
 ### Key File Locations
 
-| File | Action |
-|------|--------|
-| `src/server/db/queries.ts` | ADD `getPostByIdForAdmin`, `updatePostWithTags`, `getAnyPostBySlugAndLang`; add `ne` to drizzle import |
-| `src/shared/schemas/post.ts` | ADD `updatePostSchema`, `updatePostFormSchema`, `UpdatePostInput`, `UpdatePostFormInput` |
-| `src/shared/services/post.ts` | ADD `getPostForEditFn`, `updatePostFn`, `publishPostFn`; MODIFY `checkSlugAvailability` |
-| `src/shared/tanstackQueries/post.ts` | ADD `postForEditOptions`; MODIFY `slugCheckOptions` |
-| `src/components/post/EditPostForm.tsx` | CREATE — mirrors NewPostForm with initialValues + status-conditional buttons |
-| `src/routes/$lang/_protected/edit/$postId.tsx` | CREATE — edit post route |
-| `src/locales/en.ts` + `vi.ts` | ADD new editor keys |
+| File                                           | Action                                                                                                 |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `src/server/db/queries.ts`                     | ADD `getPostByIdForAdmin`, `updatePostWithTags`, `getAnyPostBySlugAndLang`; add `ne` to drizzle import |
+| `src/shared/schemas/post.ts`                   | ADD `updatePostSchema`, `updatePostFormSchema`, `UpdatePostInput`, `UpdatePostFormInput`               |
+| `src/shared/services/post.ts`                  | ADD `getPostForEditFn`, `updatePostFn`, `publishPostFn`; MODIFY `checkSlugAvailability`                |
+| `src/shared/tanstackQueries/post.ts`           | ADD `postForEditOptions`; MODIFY `slugCheckOptions`                                                    |
+| `src/components/post/EditPostForm.tsx`         | CREATE — mirrors NewPostForm with initialValues + status-conditional buttons                           |
+| `src/routes/$lang/_protected/edit/$postId.tsx` | CREATE — edit post route                                                                               |
+| `src/locales/en.ts` + `vi.ts`                  | ADD new editor keys                                                                                    |
 
 ### References
 
@@ -217,7 +217,7 @@ TanStack Form holds form state in memory. As long as the mutation `onError` hand
 - [Source: src/shared/services/admin.ts#unpublishPostFn] — Existing unpublish fn — import and reuse
 - [Source: src/server/db/queries.ts#createPostWithTags] — Transaction pattern to mirror for `updatePostWithTags`
 - [Source: src/shared/schemas/post.ts] — Existing schemas to extend
-- [Source: .claude/rules/design-system.md] — Button variants, zinc/teal palette, dark mode
+- [Source: DESIGN.md] — Button variants, zinc/teal palette, dark mode
 
 ## Dev Agent Record
 
