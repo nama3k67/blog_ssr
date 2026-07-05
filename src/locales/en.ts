@@ -52,7 +52,7 @@ export const en = {
 			bio1: "I'm a full-stack software developer based in Vietnam, building web applications with a focus on performance and developer experience. I enjoy working across the stack — from crafting UI with React and Tailwind CSS to designing APIs with Drizzle ORM and Cloudflare Workers.",
 			bio2: "Outside of coding, I'm a passionate long-distance runner. Training for marathons has shaped how I approach software: with patience, systems thinking, and a belief that consistent small improvements compound into something great.",
 			skills: "Skills",
-			cta: "Get in touch",
+			followOn: "Follow on",
 			ctaAriaLabel: "Send an email to Nama",
 		},
 		projects: {
