@@ -31,7 +31,6 @@ const useHeader = () => {
 
 		const { top, height } = headerRef.current.getBoundingClientRect();
 		const downDelay = avatarRef.current?.offsetTop ?? 0;
-		const upDelay = 64;
 		const scrollY = clamp(
 			window.scrollY,
 			0,
@@ -47,11 +46,7 @@ const useHeader = () => {
 		if (isInitial.current || scrollY < downDelay) {
 			setProperty("--header-height", `${downDelay + height}px`);
 			setProperty("--header-mb", `${-downDelay}px`);
-		} else if (top + height < -upDelay) {
-			const offset = Math.max(height, scrollY - upDelay);
-			setProperty("--header-height", `${offset}px`);
-			setProperty("--header-mb", `${height - offset}px`);
-		} else if (top === 0) {
+		} else {
 			setProperty("--header-height", `${scrollY + height}px`);
 			setProperty("--header-mb", `${-scrollY}px`);
 		}

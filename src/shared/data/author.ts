@@ -7,6 +7,8 @@ export const AVATAR_URL: string | undefined = "/avatar.jpg";
 
 export const CONTACT_EMAIL = "nama3k67@gmail.com";
 
+export const CV_URL = "/Nam Tran's CV - Frontend Software Engineer.pdf";
+
 export interface SkillGroup {
 	category: { en: string; vi: string };
 	skills: string[];
@@ -30,9 +32,13 @@ export const SKILLS: SkillGroup[] = [
 export interface SocialLink {
 	label: string;
 	href: string;
-	icon: "github";
+	icon: "github" | "linkedin" | "x" | "instagram";
 }
 
+// ponytail: X/LinkedIn/Instagram use "#" placeholders — fill real URLs later.
 export const SOCIAL_LINKS: SocialLink[] = [
+	{ label: "X", href: "#", icon: "x" },
+	{ label: "Instagram", href: "#", icon: "instagram" },
 	{ label: "GitHub", href: GITHUB_URL, icon: "github" },
+	{ label: "LinkedIn", href: "#", icon: "linkedin" },
 ];

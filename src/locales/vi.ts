@@ -27,13 +27,22 @@ export const vi = {
 			title: "Trang chủ - Blog về Dinh dưỡng, Luyện tập & Công nghệ",
 			description:
 				"Một vận động viên chạy đường dài say mê chia sẻ kiến thức về dinh dưỡng, phương pháp luyện tập và công nghệ.",
-			heading: "Xin chào, tôi là Nama",
-			role: "Lập trình viên Full-Stack & Vận động viên chạy đường dài",
+			heading: "Xin chào, tôi là Nam Tran",
 			bio: "Tôi là một lập trình viên phần mềm và vận động viên chạy đường dài đam mê, hiện sống tại Việt Nam. Tôi viết về giao điểm giữa công nghệ, luyện tập và dinh dưỡng — vì xây dựng phần mềm tốt và chạy marathon đòi hỏi cùng một tư duy hệ thống.",
-			github: "Theo dõi trên GitHub",
-			ctaProjects: "Xem dự án của tôi",
-			ctaBlogs: "Đọc blog",
-			ctaAbout: "Giới thiệu về tôi",
+			readArticle: "Đọc bài viết",
+			newsletterHeading: "Cập nhật thông tin",
+			newsletterBody:
+				"Nhận thông báo khi tôi đăng bài viết mới, có thể hủy đăng ký bất cứ lúc nào.",
+			newsletterPlaceholder: "Địa chỉ email",
+			newsletterCta: "Đăng ký",
+			workHeading: "Công việc & Học vấn",
+			downloadCv: "Tải CV",
+			followOn: {
+				github: "Theo dõi trên GitHub",
+				linkedin: "Theo dõi trên LinkedIn",
+				x: "Theo dõi trên X",
+				instagram: "Theo dõi trên Instagram",
+			},
 		},
 		about: {
 			title:

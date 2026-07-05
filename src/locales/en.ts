@@ -27,13 +27,22 @@ export const en = {
 			title: "Home - Nutrition, Training & Technology Blog",
 			description:
 				"A passionate long-distance runner sharing knowledge about nutrition, training methods, and technology.",
-			heading: "Hi, I'm Nama",
-			role: "Full-Stack Developer & Long-Distance Runner",
+			heading: "Hi, I'm Nam Tran",
 			bio: "I'm a software developer and passionate long-distance runner based in Vietnam. I write about the intersection of technology, training, and nutrition — because building great software and running marathons require the same systematic thinking.",
-			github: "Follow on GitHub",
-			ctaProjects: "See my projects",
-			ctaBlogs: "Read the blog",
-			ctaAbout: "About me",
+			readArticle: "Read article",
+			newsletterHeading: "Stay up to date",
+			newsletterBody:
+				"Get notified when I publish something new, and unsubscribe at any time.",
+			newsletterPlaceholder: "Email address",
+			newsletterCta: "Join",
+			workHeading: "Work & Education",
+			downloadCv: "Download CV",
+			followOn: {
+				github: "Follow on GitHub",
+				linkedin: "Follow on LinkedIn",
+				x: "Follow on X",
+				instagram: "Follow on Instagram",
+			},
 		},
 		about: {
 			title: "About - Long-Distance Runner & Tech Enthusiast",
