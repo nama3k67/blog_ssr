@@ -1,3 +1,7 @@
+import enlabLogo from "~/shared/images/logos/Enlabsoftware Logo.jpg";
+import fptuLogo from "~/shared/images/logos/FPTU Logo.png";
+import techvifyLogo from "~/shared/images/logos/Techvify Logo.png";
+
 export interface Role {
 	company: string;
 	title: { en: string; vi: string };
@@ -16,7 +20,7 @@ export const RESUME: Role[] = [
 		start: "2025",
 		end: "Present",
 		url: "https://techvify.com",
-		logo: "src/shared/images/logos/Techvify Logo.png",
+		logo: techvifyLogo,
 	},
 	{
 		company: "Enlab Software",
@@ -24,7 +28,7 @@ export const RESUME: Role[] = [
 		start: "2022",
 		end: "2025",
 		url: "https://enlabsoftware.com",
-		logo: "src/shared/images/logos/Enlabsoftware Logo.jpg",
+		logo: enlabLogo,
 	},
 	{
 		company: "FPT University",
@@ -32,6 +36,6 @@ export const RESUME: Role[] = [
 		start: "2018",
 		end: "2022",
 		url: "https://fpt.edu.vn",
-		logo: "src/shared/images/logos/FPTU Logo.png",
+		logo: fptuLogo,
 	},
 ];
