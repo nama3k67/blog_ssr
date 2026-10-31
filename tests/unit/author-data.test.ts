@@ -34,4 +34,11 @@ describe("Author static data", () => {
 			expect(link.label).toBeTruthy();
 		}
 	});
+
+	it("social links are absolute https URLs, not placeholders", () => {
+		expect(SOCIAL_LINKS.length).toBeGreaterThan(0);
+		for (const link of SOCIAL_LINKS) {
+			expect(link.href, `${link.label} must be https`).toMatch(/^https:\/\//);
+		}
+	});
 });
