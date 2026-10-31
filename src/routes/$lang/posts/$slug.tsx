@@ -80,7 +80,7 @@ export const Route = createFileRoute("/$lang/posts/$slug")({
 				{ property: "og:url", content: canonicalUrl },
 				{ property: "og:locale", content: ogLocale },
 				{
-					name: "article:published_time",
+					property: "article:published_time",
 					content: post?.publishedAt || new Date().toISOString(),
 				},
 				{ name: "twitter:title", content: post?.title || "Blog Post" },
@@ -243,6 +243,8 @@ function RouteComponent() {
 											alt={[post.author.firstName, post.author.lastName]
 												.filter(Boolean)
 												.join(" ")}
+											width={32}
+											height={32}
 											loading='eager'
 											className='h-8 w-8 rounded-full object-cover'
 										/>
