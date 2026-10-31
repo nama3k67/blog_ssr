@@ -35,10 +35,9 @@ export interface SocialLink {
 	icon: "github" | "linkedin" | "x" | "instagram";
 }
 
-// ponytail: X/LinkedIn/Instagram use "#" placeholders — fill real URLs later.
+// Only real profiles belong here: every href is rendered as a link and emitted
+// in the About page JSON-LD `sameAs`. Add X / Instagram / LinkedIn once the URLs exist, e.g.
+// { label: "LinkedIn", href: "https://www.linkedin.com/in/<handle>", icon: "linkedin" },
 export const SOCIAL_LINKS: SocialLink[] = [
-	{ label: "X", href: "#", icon: "x" },
-	{ label: "Instagram", href: "#", icon: "instagram" },
 	{ label: "GitHub", href: GITHUB_URL, icon: "github" },
-	{ label: "LinkedIn", href: "#", icon: "linkedin" },
 ];
