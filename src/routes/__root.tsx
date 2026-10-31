@@ -14,7 +14,7 @@ import type * as React from "react";
 import { Footer } from "~/components/layout/Footer";
 import Header from "~/components/layout/Header";
 import { Toaster } from "~/components/ui/sonner";
-import { SITE_URL } from "~/shared/data/site";
+import { SITE_NAME, SITE_URL } from "~/shared/data/site";
 import { I18nProvider } from "~/shared/providers/i18n";
 import { TanstackQueryProvider } from "~/shared/providers/tanstackQuery";
 import { ThemeProvider } from "~/shared/providers/theme";
@@ -28,6 +28,7 @@ export const Route = createRootRoute({
 		meta: [
 			{ charSet: "UTF-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1.0" },
+			{ title: "Blog - Nutrition, Training & Technology" },
 			{
 				name: "description",
 				content:
@@ -64,7 +65,12 @@ export const Route = createRootRoute({
 		links: [
 			{ rel: "icon", type: "image/png", href: "/logo.png" },
 			{ rel: "apple-touch-icon", href: "/logo.png" },
-			{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+			{
+				rel: "alternate",
+				type: "application/rss+xml",
+				title: SITE_NAME,
+				href: `${SITE_URL}/rss.xml`,
+			},
 			{ rel: "dns-prefetch", href: "https://api.github.com" },
 		],
 	}),
@@ -119,7 +125,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						</TanstackQueryProvider>
 					</ClerkProvider>
 
-					<TanStackRouterDevtools position='bottom-right' />
+					{import.meta.env.DEV && (
+						<TanStackRouterDevtools position='bottom-right' />
+					)}
 					<Scripts />
 				</body>
 			</html>

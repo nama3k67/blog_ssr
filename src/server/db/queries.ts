@@ -94,6 +94,22 @@ export async function getPublishedPostsForSitemap() {
 	});
 }
 
+export async function getPublishedPostsForFeed() {
+	return db.query.posts.findMany({
+		where: eq(posts.status, "published"),
+		columns: {
+			title: true,
+			description: true,
+			slug: true,
+			lang: true,
+			publishedAt: true,
+			updatedAt: true,
+		},
+		orderBy: [desc(posts.publishedAt)],
+		limit: 50,
+	});
+}
+
 export async function getPublishedPosts() {
 	const result = await db.query.posts.findMany({
 		where: eq(posts.status, "published"),
