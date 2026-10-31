@@ -73,7 +73,7 @@ bun run db:seed       # Populate test data
 
 ## Agent Guardrails
 
-These are enforced by `.claude/settings.json` and `.claude/hooks/`, not just requested:
+In **local sessions** these are enforced by `.claude/settings.json` and `.claude/hooks/`. In **cloud threads and scheduled tasks** (Claude Code on the web, Projects) hooks, permission rules, `.claude/agents/` and `.claude/skills/` are **not loaded** — follow every rule below yourself. The hard gates that apply everywhere are GitHub branch protection on `main` and required CI checks.
 
 - **Never deploy.** Deploys run from CI after Nam merges. `wrangler deploy --dry-run` for bundle checks is fine.
 - **Never write to the database.** No `db:push`, `db:migrate`, `db:seed` or `psql`. Generate migrations with `db:generate` and list them under "Risks" in the PR.
@@ -85,6 +85,7 @@ These are enforced by `.claude/settings.json` and `.claude/hooks/`, not just req
 ### Definition of done for a change
 
 1. Work from a spec (BMAD story in `_bmad-output/implementation-artifacts/` or an issue). If there is none, write a short one first and stop for approval.
-2. Tests for the new behaviour. The Stop hook runs Biome, `tsc` and unit tests on changed code and won't let you finish while they fail.
-3. Run the `reviewer` subagent on the diff and fix blocking findings.
-4. Open a PR using `.github/pull_request_template.md`, including the reviewer report.
+2. Tests for the new behaviour. Before finishing, `bunx biome check .`, `bunx tsc --noEmit` and `bun run test` must pass (locally the Stop hook enforces this; in the cloud, run them yourself and paste the result lines in the PR).
+3. E2E for affected pages (`bunx playwright test <specs>`). For UI changes, attach screenshots: light + dark, desktop + 390px mobile. If the environment can't reach the DB or Clerk, say so in the PR — never mock to make it pass.
+4. Independent review: use the `reviewer` subagent, or where it isn't available (cloud threads) spawn a fresh subagent with the instructions in `.claude/agents/reviewer.md`. Fix blocking findings.
+5. Open a PR using `.github/pull_request_template.md`, including the reviewer report, and keep fixing CI failures and review comments until it's green.
