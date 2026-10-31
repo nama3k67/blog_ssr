@@ -70,3 +70,21 @@ bun run db:push       # Apply migrations
 bun run db:studio     # Visual DB browser
 bun run db:seed       # Populate test data
 ```
+
+## Agent Guardrails
+
+These are enforced by `.claude/settings.json` and `.claude/hooks/`, not just requested:
+
+- **Never deploy.** Deploys run from CI after Nam merges. `wrangler deploy --dry-run` for bundle checks is fine.
+- **Never write to the database.** No `db:push`, `db:migrate`, `db:seed` or `psql`. Generate migrations with `db:generate` and list them under "Risks" in the PR.
+- **Never read `.env*` or `.dev.vars`.** Variable names are in `.env.example` and `.env.test.example`.
+- **Never push to `main`, force-push, or merge PRs.** Work on a `feat/*` or `fix/*` branch and open a PR.
+- **Don't edit `.claude/settings.json`, `.claude/hooks/`, `.github/workflows/` or `.husky/`.** Propose changes in the PR description instead.
+- **Blog post content is Nam's.** Posts live in the database and are written by Nam in the admin editor. Don't generate or rewrite post text; suggest edits in a separate note if asked.
+
+### Definition of done for a change
+
+1. Work from a spec (BMAD story in `_bmad-output/implementation-artifacts/` or an issue). If there is none, write a short one first and stop for approval.
+2. Tests for the new behaviour. The Stop hook runs Biome, `tsc` and unit tests on changed code and won't let you finish while they fail.
+3. Run the `reviewer` subagent on the diff and fix blocking findings.
+4. Open a PR using `.github/pull_request_template.md`, including the reviewer report.
