@@ -1,0 +1,71 @@
+{
+	"$schema": "https://json.schemastore.org/claude-code-settings.json",
+	"permissions": {
+		"allow": [
+			"Bash(bun run test*)",
+			"Bash(bun run lint*)",
+			"Bash(bun run build*)",
+			"Bash(bun run db:generate*)",
+			"Bash(bunx biome check*)",
+			"Bash(bunx tsc --noEmit*)",
+			"Bash(bunx playwright test*)",
+			"Bash(git status*)",
+			"Bash(git diff*)",
+			"Bash(git log*)",
+			"Bash(git switch -c *)",
+			"Bash(git add *)",
+			"Bash(git commit *)"
+		],
+		"deny": [
+			"Read(./.env)",
+			"Read(./.env.local)",
+			"Read(./.env.test)",
+			"Read(./.env.production)",
+			"Read(./.dev.vars)",
+			"Edit(./.claude/settings.json)",
+			"Edit(./.claude/hooks/**)",
+			"Edit(./.github/workflows/**)",
+			"Bash(bun run deploy*)",
+			"Bash(npm run deploy*)",
+			"Bash(wrangler deploy*)",
+			"Bash(npx wrangler deploy*)",
+			"Bash(bunx wrangler deploy*)",
+			"Bash(wrangler secret*)",
+			"Bash(bun run db:push*)",
+			"Bash(bun run db:migrate*)",
+			"Bash(bun run db:seed*)",
+			"Bash(npx drizzle-kit push*)",
+			"Bash(npx drizzle-kit migrate*)",
+			"Bash(bunx drizzle-kit push*)",
+			"Bash(bunx drizzle-kit migrate*)",
+			"Bash(git push --force*)",
+			"Bash(git push -f*)",
+			"Bash(git push origin main*)",
+			"Bash(gh pr merge*)"
+		]
+	},
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Bash|Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Glob",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.mjs\""
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/verify-on-stop.mjs\"",
+						"timeout": 600
+					}
+				]
+			}
+		]
+	}
+}
